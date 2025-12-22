@@ -1,0 +1,863 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# 풀스택 단계적 테스트 계획서
+
+## 1. 프로젝트 개요
+
+### 1.1 테스트 전략의 기본 방침
+
+본 계획서는 **구현 분석 → 기능별 테스트 계획 수립 → 레벨별 테스트 생성**의 단계적 접근을 통해, 프런트엔드와 백엔드 모두에서 3단계 테스트 전략을 수행하여 풀스택 시스템의 품질을 점진적으로 보증하는 것을 목적으로 합니다.
+
+### 1.2 실행 페이즈 개요
+
+```mermaid
+graph TD
+    A[Phase 0: 시스템분석] --> B[Phase 1: 테스트계획수립]
+    B --> C[Phase 2: 레벨선택 및 테스트생성]
+    C --> D[Phase 3: 테스트실행 및 리포트]
+    
+    A --> A1[구현코드 분석]
+    A --> A2[명세서 분석]
+    A --> A3[API명세분석]
+    A --> A4[DB설계분석]
+    
+    B --> B1[기능별 테스트 대상정리]
+    B --> B2[레벨별 테스트 계획]
+    B --> B3[사용자확인 및 선택]
+    
+    C --> C1[지정레벨 테스트생성]
+    C --> C2[테스트 환경준비]
+    
+    D --> D1[테스트실행]
+    D --> D2[결과분석 및 리포트]
+```
+
+### 1.2 테스트 피라미드 구성(수정판)
+
+```text
+        Level 3 E2E Tests (10%)
+    ─────────────────────────────────
+      Frontend E2E | Backend E2E
+   Level 2 Integration Tests (20%)
+  ───────────────────────────────────
+   Frontend Integ | Backend Integ
+ Level 1 Unit/Mock Tests (70%)
+────────────────────────────────────────
+Frontend Unit   |   Backend Unit
+```
+
+## 2. 테스트 레벨 정의(프런트엔드 및 백엔드 공통)
+
+### 2.1 Level 1: 유닛/모킹(Mock) 테스트
+
+#### 2.1.1 Backend Level 1
+
+- **목적**: 비즈니스 로직 단위 검증
+- **신뢰도**: 60-70%
+- **실행빈도**: 매 커밋
+- **실행시간**: 초 단위
+- **기술스택**: pytest, unittest.mock, pytest-mock
+- **대상**: 
+  - 순수 함수, 계산 로직
+  - API 핸들러(의존성 모킹)
+  - 서비스 클래스 메서드
+  - 밸리데이션 함수
+
+#### 2.1.2 Frontend Level 1  
+
+- **목적**: 컴포넌트 단위 검증
+- **신뢰도**: 60-70%
+- **실행빈도**: 매 커밋
+- **실행시간**: 초 단위
+- **기술스택**: Vitest, React Testing Library, happy-dom
+- **대상**:
+  - 개별 컴포넌트 렌더링
+  - props 처리
+  - 이벤트 핸들러
+  - 커스텀 훅
+
+### 2.2 Level 2: 통합 테스트
+
+#### 2.2.1 Backend Level 2
+
+- **목적**: 컴포넌트 간 연동 검증
+- **신뢰도**: 75-85%
+- **실행빈도**: 주간
+- **실행시간**: 분 단위
+- **기술스택**: pytest, TestContainers, httpx
+- **대상**:
+  - API + 데이터베이스 연동
+  - 서비스 간 연동
+  - 외부 API 통합(테스트 환경)
+  - 트랜잭션 일관성
+
+#### 2.2.2 Frontend Level 2
+
+- **목적**: 컴포넌트 간 연동 및 API 통합 검증
+- **신뢰도**: 75-85%
+- **실행빈도**: 주간
+- **실행시간**: 분 단위
+- **기술스택**: Vitest, React Testing Library, MSW
+- **대상**:
+  - 다중 컴포넌트 연동
+  - API 통신(MSW 모킹)
+  - 상태 관리(Redux/Zustand 등)
+  - 라우팅 기능
+
+### 2.3 Level 3: E2E테스트
+
+#### 2.3.1 Backend Level 3
+
+- **목적**: 완전한 워크플로우 검증
+- **신뢰도**: 90-95%
+- **실행빈도**: 릴리스 전
+- **실행시간**: 분~시간 단위
+- **기술스택**: pytest, requests, 실환경 유사 서비스
+- **대상**:
+  - API 경유 전체 플로우
+  - 스테이징/실환경 유사 환경에서의 테스트
+  - 성능 검증
+  - 보안 검증
+
+#### 2.3.2 Frontend Level 3
+
+- **목적**: 사용자 여정(User Journey) 완전 검증
+- **신뢰도**: 90-95%
+- **실행빈도**: 릴리스 전
+- **실행시간**: 분 단위
+- **기술스택**: Playwright, Cypress
+- **대상**:
+  - 완전한 사용자 플로우
+  - 크로스 브라우저 테스트
+  - 실제 브라우저 환경
+  - 시각적 회귀 테스트
+
+## 3. 테스트 환경 구성
+
+### 3.1 Level 1 테스트 환경
+
+#### Backend Level 1
+
+```yaml
+backend_level1:
+  name: "Backend Mock Environment"
+  database: "In-memory SQLite"
+  external_services: "All Mocked"
+  storage: "Mock Storage"
+  setup_time: "< 1초"
+  cleanup: "자동"
+```
+
+#### Frontend Level 1
+
+```yaml
+frontend_level1:
+  name: "Frontend Unit Environment"
+  browser: "happy-dom"
+  api_services: "All Mocked (vi.mock)"
+  components: "Isolated Testing"
+  setup_time: "< 1초"
+  cleanup: "자동"
+```
+
+### 3.2 Level 2 테스트 환경
+
+#### Backend Level 2
+
+```yaml
+backend_level2:
+  name: "Backend Integration Environment"
+  database: "TestContainers PostgreSQL"
+  external_services: "Test Services"
+  storage: "Test Bucket"
+  setup_time: "10-30초"
+  cleanup: "자동 + 수동확인"
+```
+
+#### Frontend Level 2
+
+```yaml
+frontend_level2:
+  name: "Frontend Integration Environment"
+  browser: "happy-dom"
+  api_services: "MSW Mock Server"
+  components: "Multi-component Testing"
+  state_management: "Real Store"
+  setup_time: "5-15초"
+  cleanup: "자동"
+```
+
+### 3.3 Level 3 테스트 환경
+
+#### Backend Level 3
+
+```yaml
+backend_level3:
+  name: "Backend E2E Environment"
+  database: "Staging Database"
+  external_services: "Staging Services"
+  storage: "Staging Bucket"
+  setup_time: "1-5분"
+  cleanup: "수동확인필수"
+```
+
+#### Frontend Level 3
+
+```yaml
+frontend_level3:
+  name: "Frontend E2E Environment"
+  browser: "Real Browsers (Chrome, Firefox, Safari)"
+  api_services: "Staging Backend"
+  environment: "Full Application"
+  setup_time: "30초-2분"
+  cleanup: "자동 + 스크린샷 저장"
+```
+
+## 4. Phase 0: 시스템 분석 및 테스트 계획 수립
+
+### 4.1 구현 분석 페이즈
+
+#### 4.1.1 분석 대상 문서
+
+```yaml
+required_documents:
+  implementation:
+    - backend_source_code: "API 구현, 서비스, 모델"
+    - frontend_source_code: "컴포넌트, 페이지, 훅"
+    - database_schema: "테이블 정의, 관계"
+  
+  specifications:
+    - api_specification: "OpenAPI/Swagger명세"
+    - database_design: "ERD, 제약 조건 정의"
+    - system_design: "아키텍처 설계서"
+    - user_requirements: "요구사항 정의서"
+  
+  optional_documents:
+    - deployment_config: "인프라 설정"
+    - security_requirements: "보안 요구사항"
+    - performance_requirements: "성능 요구사항"
+```
+
+#### 4.1.2 자동 분석 프로세스
+
+```python
+class SystemAnalyzer:
+    def analyze_system(self, documents):
+        """시스템 전반을 분석하여 테스트 대상을 특정"""
+        analysis_result = {
+            "backend_features": self._analyze_backend(documents),
+            "frontend_features": self._analyze_frontend(documents),
+            "integration_points": self._analyze_integrations(documents),
+            "critical_paths": self._identify_critical_paths(documents),
+            "risk_assessment": self._assess_risks(documents)
+        }
+        return analysis_result
+    
+    def _analyze_backend(self, documents):
+        """Backend기능분석"""
+        return {
+            "api_endpoints": self._extract_api_endpoints(),
+            "business_logic": self._extract_business_logic(),
+            "data_models": self._extract_data_models(),
+            "external_dependencies": self._extract_external_deps(),
+            "security_features": self._extract_security_features()
+        }
+    
+    def _analyze_frontend(self, documents):
+        """Frontend기능분석"""
+        return {
+            "components": self._extract_components(),
+            "pages": self._extract_pages(),
+            "user_flows": self._extract_user_flows(),
+            "state_management": self._extract_state_management(),
+            "api_integrations": self._extract_api_integrations()
+        }
+```
+
+### 4.2 기능별 테스트 계획 수립
+
+#### 4.2.1 테스트 대상 기능 매핑 예시
+
+```markdown
+# 시스템 분석 결과 예시
+
+## Backend기능 목록
+### 인증/인가 기능
+- **Level 1대상**: JWT 토큰 생성 로직, 비밀번호 해시화
+- **Level 2대상**: 로그인 API + DB 연동, 권한 체크
+- **Level 3대상**: 완전한 인증 플로우, 세션 관리
+
+### 사용자 관리 기능
+- **Level 1대상**: 사용자 생성 밸리데이션, 갱신 로직
+- **Level 2대상**: 사용자 CRUD API + DB, 메일 전송 연동
+- **Level 3대상**: 사용자 등록~인증 완료 플로우
+
+### 데이터 처리 기능
+- **Level 1대상**: 계산 로직, 데이터 변환 처리
+- **Level 2대상**: 파일 업로드 + 스토리지 연동
+- **Level 3대상**: 배치 처리 파이프라인
+
+## Frontend기능 목록
+### 인증 UI
+- **Level 1대상**: 로그인 폼 컴포넌트, 밸리데이션
+- **Level 2대상**: 인증 상태 관리, API 연동
+- **Level 3대상**: 로그인~대시보드 전환 플로우
+
+### 사용자 관리UI
+- **Level 1대상**: 사용자 목록 및 상세 컴포넌트
+- **Level 2대상**: CRUD 조작 + API 연동, 상태 동기화
+- **Level 3대상**: 사용자 관리 완전 워크플로우
+
+### 데이터 표시 기능
+- **Level 1대상**: 차트 및 테이블 컴포넌트
+- **Level 2대상**: 데이터 조회 및 갱신, 필터링
+- **Level 3대상**: 대시보드 전체 인터랙션
+```
+
+#### 4.2.2 레벨별 테스트 계획 생성
+
+```python
+class TestPlanGenerator:
+    def generate_level_plans(self, analysis_result):
+        """분석 결과로부터 레벨별 테스트 계획 생성"""
+        plans = {}
+        
+        for level in [1, 2, 3]:
+            plans[f"level_{level}"] = {
+                "backend": self._generate_backend_plan(analysis_result, level),
+                "frontend": self._generate_frontend_plan(analysis_result, level),
+                "estimated_time": self._estimate_time(analysis_result, level),
+                "dependencies": self._identify_dependencies(analysis_result, level),
+                "risks": self._assess_level_risks(analysis_result, level)
+            }
+        
+        return plans
+    
+    def _generate_backend_plan(self, analysis, level):
+        """Backend용 레벨별 계획"""
+        if level == 1:
+            return {
+                "test_targets": analysis["backend_features"]["business_logic"],
+                "mock_dependencies": analysis["backend_features"]["external_dependencies"],
+                "test_count_estimate": len(analysis["backend_features"]["business_logic"]) * 3
+            }
+        elif level == 2:
+            return {
+                "test_targets": analysis["integration_points"]["api_database"],
+                "real_dependencies": ["database", "test_services"],
+                "test_count_estimate": len(analysis["integration_points"]["api_database"]) * 2
+            }
+        # Level 3의 경우...
+```
+
+### 4.3 사용자 확인 및 선택 페이즈
+
+#### 4.3.1 테스트 계획 제시 포맷
+
+```markdown
+# 테스트 실행 계획(사용자 확인용)
+
+## 시스템 분석 결과 요약
+- **Backend기능 수**: 15개
+- **Frontend기능 수**: 12개  
+- **중요도 높은 기능**: 8개
+- **외부 연동 수**: 5개 서비스
+
+## 레벨별 실행 계획
+
+### Level 1 (Backend + Frontend Unit Tests)
+**추정 실행 시간**: 2-3일
+**테스트 건수**: Backend 45건, Frontend 36건
+**주요 대상 기능**:
+- ✅ 인증 로직 (Backend: JWT 토큰 생성, Frontend: 로그인 폼)
+- ✅ 사용자 관리 (Backend: 밸리데이션, Frontend: 사용자 목록)
+- ✅ 데이터 처리 (Backend: 계산 로직, Frontend: 차트 표시)
+
+**필요환경**: 개발 환경만
+**리스크**: 낮음
+
+### Level 2 (Backend + Frontend Integration Tests)  
+**추정 실행 시간**: 3-5일
+**테스트 건수**: Backend 30건, Frontend 24건
+**주요 대상 기능**:
+- ✅ API + DB 연동 테스트
+- ✅ 외부 서비스 통합 테스트(모킹/테스트 환경)
+- ✅ 프런트엔드 상태 관리 + API 연동
+
+**필요환경**: 테스트 DB, 모킹 서비스
+**리스크**: 중간
+
+### Level 3 (Backend + Frontend E2E Tests)
+**추정 실행 시간**: 5-7일  
+**테스트 건수**: Backend 20건, Frontend 15건
+**주요 대상 기능**:
+- ✅ 완전한 사용자 플로우
+- ✅ 성능 테스트
+- ✅ 보안 테스트
+
+**필요환경**: 스테이징 환경
+**리스크**: 높음 
+
+## 권장 실행 순서
+1. **Level 1부터 시작** → 기초 품질 확보
+2. **Level 2로 통합 확인** → 서비스 간 연동 검증  
+3. **Level 3로 최종 확인** → 프로덕션 릴리스 전
+
+## 사용자 선택 옵션
+- `"Level 1만 수행"` → 기본 품질 확보, 개발 페이즈용
+- `"Level 1-2수행"` → 통합 품질 확보, 테스트 페이즈용
+- `"전체 레벨 수행"` → 완전 품질 확보, 릴리스 대비
+- `"커스텀 선택"` → 특정 기능 및 레벨 조합
+```
+
+## 5. 테스트 실행 플로우
+
+### 5.1 단계적 실행 전략
+
+#### Level 1 실행 플로우
+
+```mermaid
+graph TD
+    A[구현 코드 해석] --> B[Backend Level 1 생성]
+    A --> C[Frontend Level 1 생성]
+    B --> D[Backend Unit 테스트실행]
+    C --> E[Frontend Unit 테스트실행]
+    D --> F[Level 1 통합리포트]
+    E --> F
+    F --> G[Level 2 실행판정]
+```
+
+#### Level 2 실행 플로우
+
+```mermaid
+graph TD
+    A[Level 1 성공확인] --> B[Backend Level 2 생성]
+    A --> C[Frontend Level 2 생성]
+    B --> D[Backend 통합 테스트 실행]
+    C --> E[Frontend 통합 테스트 실행]
+    D --> F[Level 2 통합 리포트]
+    E --> F
+    F --> G[Level 3 실행판정]
+```
+
+#### Level 3 실행 플로우
+
+```mermaid
+graph TD
+    A[Level 2 성공 확인] --> B[Backend Level 3 생성]
+    A --> C[Frontend Level 3 생성]
+    B --> D[Backend E2E 테스트 실행]
+    C --> E[Frontend E2E 테스트 실행]
+    D --> F[Level 3 통합 리포트]
+    E --> F
+    F --> G[종합품질평가]
+```
+
+## 6. 테스트 케이스 설계 방침
+
+### 6.1 Level 1 테스트 케이스 설계
+
+#### Backend Level 1 테스트 케이스 설계
+
+```python
+class BackendLevel1Categories:
+    BUSINESS_LOGIC = {
+        "calculation_functions": "계산 및 변환 처리",
+        "validation_logic": "밸리데이션 처리", 
+        "data_transformation": "데이터 변환 처리"
+    }
+    
+    API_HANDLERS = {
+        "request_processing": "리퀘스트 처리 로직(모킹 사용)",
+        "response_formatting": "응답 포맷팅",
+        "error_handling": "에러 핸들링"
+    }
+    
+    SERVICE_METHODS = {
+        "service_logic": "서비스 메서드 단위",
+        "state_transitions": "상태 전이 로직",
+        "business_rules": "비즈니스 규칙 검증"
+    }
+```
+
+#### Frontend Level 1 테스트 케이스 설계
+
+```typescript
+class FrontendLevel1Categories {
+  COMPONENT_RENDERING = {
+    "basic_rendering": "기본 렌더링 확인",
+    "props_handling": "props 처리 확인",
+    "conditional_rendering": "조건부 렌더링"
+  }
+  
+  EVENT_HANDLING = {
+    "click_events": "클릭 이벤트 처리",
+    "form_submission": "폼 제출 처리",
+    "input_validation": "입력값 검증"
+  }
+  
+  CUSTOM_HOOKS = {
+    "state_management": "상태 관리 훅",
+    "data_fetching": "데이터 페칭 훅(모킹)",
+    "side_effects": "사이드 이펙트 처리"
+  }
+}
+```
+
+### 6.2 Level 2 테스트 케이스 설계
+
+#### Backend Level 2 테스트 케이스 설계
+
+```python
+class BackendLevel2Categories:
+    API_DATABASE = {
+        "crud_operations": "CRUD 동작의 완전성",
+        "transaction_rollback": "트랜잭션 처리",
+        "constraint_validation": "DB제약 검증"
+    }
+    
+    SERVICE_INTEGRATION = {
+        "service_chaining": "서비스 간 체이닝",
+        "async_processing": "비동기 처리 확인",
+        "event_handling": "이벤트 처리"
+    }
+    
+    EXTERNAL_API = {
+        "third_party_integration": "외부 API 연동(테스트 환경)",
+        "authentication": "인증 플로우",
+        "rate_limiting": "레이트 리미트 대응"
+    }
+```
+
+#### Frontend Level 2 테스트 케이스 설계
+
+```typescript
+class FrontendLevel2Categories {
+  COMPONENT_INTEGRATION = {
+    "parent_child_communication": "부모-자식 컴포넌트 연동",
+    "sibling_communication": "형제 컴포넌트 연동",
+    "context_providers": "Context Provider기능"
+  }
+  
+  API_INTEGRATION = {
+    "data_fetching": "데이터 페칭(MSW 사용)",
+    "error_handling": "API 에러 핸들링",
+    "loading_states": "로딩 상태 관리"
+  }
+  
+  STATE_MANAGEMENT = {
+    "redux_integration": "Redux 상태 관리",
+    "local_storage": "로컬 스토리지",
+    "routing": "라우팅 기능"
+  }
+}
+```
+
+### 6.3 Level 3 테스트 케이스 설계
+
+#### Backend Level 3 테스트 케이스 설계
+
+```python
+class BackendLevel3Categories:
+    COMPLETE_WORKFLOWS = {
+        "user_registration": "사용자 등록 완전 플로우",
+        "data_processing": "데이터 처리 파이프라인",
+        "report_generation": "리포트 생성 처리"
+    }
+    
+    PERFORMANCE = {
+        "load_testing": "부하 테스트",
+        "stress_testing": "스트레스 테스트",
+        "scalability": "확장성 확인"
+    }
+    
+    SECURITY = {
+        "authentication_flow": "인증 및 인가 플로우",
+        "data_protection": "데이터 보호 검증",
+        "input_sanitization": "입력값 세니타이제이션"
+    }
+```
+
+#### Frontend Level 3 테스트 케이스 설계
+
+```typescript
+class FrontendLevel3Categories {
+  USER_JOURNEYS = {
+    "registration_flow": "사용자 등록 플로우",
+    "login_logout": "로그인 및 로그아웃",
+    "data_crud_flow": "데이터 CRUD 조작 플로우"
+  }
+  
+  CROSS_BROWSER = {
+    "chrome_testing": "Chrome환경 테스트",
+    "firefox_testing": "Firefox환경 테스트",
+    "safari_testing": "Safari환경 테스트"
+  }
+  
+  VISUAL_REGRESSION = {
+    "component_screenshots": "컴포넌트 스크린샷",
+    "page_screenshots": "페이지 전체 스크린샷",
+    "responsive_testing": "반응형 테스트"
+  }
+}
+```
+
+## 7. 품질 기준(레벨 및 영역별)
+
+### 7.1 Backend 품질 기준
+
+| Level | 커버리지 목표 | 성공률 기준 | 실행 시간 제한 | 품질 지표 |
+|-------|---------------|------------|-------------|----------|
+| Backend L1 | 90%+ | 95%+ | 각 테스트 < 1초 | 로직 품질 |
+| Backend L2 | 80%+ | 90%+ | 각 테스트 < 30초 | 연동 품질 |
+| Backend L3 | 70%+ | 85%+ | 각 테스트 < 5분 | 시스템 품질 |
+
+### 7.2 Frontend 품질 기준
+
+| Level | 커버리지 목표 | 성공률 기준 | 실행 시간 제한 | 품질 지표 |
+|-------|---------------|------------|-------------|----------|
+| Frontend L1 | 85%+ | 95%+ | 각 테스트 < 1초 | UI 품질 |
+| Frontend L2 | 75%+ | 90%+ | 각 테스트 < 15초 | UX 품질 |
+| Frontend L3 | 70%+ | 85%+ | 각 테스트 < 2분 | 최종 사용자 품질 |
+
+### 7.3 통합 품질 지표
+
+#### 시스템 전체 신뢰도 계산
+
+```python
+def calculate_system_reliability():
+    # Backend 가중치
+    backend_l1_weight = 0.25  # Backend기반 품질
+    backend_l2_weight = 0.20  # Backend통합 품질
+    backend_l3_weight = 0.15  # Backend E2E 품질
+    
+    # Frontend 가중치
+    frontend_l1_weight = 0.20  # Frontend기반 품질
+    frontend_l2_weight = 0.15  # Frontend통합 품질
+    frontend_l3_weight = 0.05  # Frontend E2E품질
+    
+    total_reliability = (
+        backend_l1_reliability * backend_l1_weight +
+        backend_l2_reliability * backend_l2_weight +
+        backend_l3_reliability * backend_l3_weight +
+        frontend_l1_reliability * frontend_l1_weight +
+        frontend_l2_reliability * frontend_l2_weight +
+        frontend_l3_reliability * frontend_l3_weight
+    )
+    
+    return total_reliability
+```
+
+## 8. 실행 스케줄
+
+### 8.1 개발 페이즈 실행 계획
+
+#### Phase 1: Level 1 기반 구축(Week 1-2)
+
+```yaml
+backend_level1:
+  - pytest환경 구축
+  - 모킹 기능 구현
+  - 유닛 테스트 스위트 작성
+
+frontend_level1:
+  - Vitest + RTL환경 구축
+  - 컴포넌트 테스트 작성
+  - 커스텀 훅 테스트
+```
+
+#### Phase 2: Level 2 통합 구축(Week 3-4)
+
+```yaml
+backend_level2:
+  - TestContainers환경 구축
+  - 통합 테스트 스위트 작성
+  - 테스트 데이터 관리
+
+frontend_level2:
+  - MSW환경 구축
+  - API통합 테스트 작성
+  - 상태 관리 테스트
+```
+
+#### Phase 3: Level 3 E2E구축(Week 5-6)
+
+```yaml
+backend_level3:
+  - 스테이징 환경 구축
+  - E2E테스트 스위트 작성
+  - 성능 테스트
+
+frontend_level3:
+  - Playwright환경 구축
+  - 사용자 여정 테스트
+  - 시각적 회귀 테스트
+```
+
+### 8.2 지속 실행 스케줄
+
+#### 일일 실행
+
+- Backend Level 1: 전체 유닛 테스트
+- Frontend Level 1: 전체 컴포넌트 테스트
+
+#### 주간 실행
+
+- Backend Level 2: 통합 테스트 스위트
+- Frontend Level 2: API 통합 및 상태 관리 테스트
+
+#### 릴리스 전 실행
+
+- Backend Level 3: 완전 E2E 테스트 스위트
+- Frontend Level 3: 완전 사용자 여정 테스트
+- 전 레벨: 종합 품질 확인
+
+## 9. 실행 지시 형식
+
+### 9.1 레벨 및 영역별 실행 지시
+
+#### Backend 전용 실행
+
+```
+"Backend Level 1로 테스트 생성"
+"Backend Level 2로 테스트 생성"
+"Backend Level 3로 테스트 생성"
+```
+
+#### Frontend 전용 실행
+```
+"Frontend Level 1로 테스트 생성"
+"Frontend Level 2로 테스트 생성"
+"Frontend Level 3로 테스트 생성"
+```
+
+#### 레벨별 풀스택 실행
+
+```bash
+"Level 1로 전체 테스트 생성"  // Backend + Frontend Level 1
+"Level 2로 전체 테스트 생성"  // Backend + Frontend Level 2
+"Level 3로 전체 테스트 생성"  // Backend + Frontend Level 3
+```
+
+#### 전체 실행
+
+```bash
+"풀스택 테스트 생성"          // 전 level × 전 영역
+"전 레벨로 테스트 생성"       // 단계적으로 전부
+```
+
+### 9.2 커스터마이즈 실행 지시
+
+#### 특정 조합
+
+```bash
+"Backend Level 1-2 + Frontend Level 1로 테스트 생성"
+"Backend Level 3 + Frontend Level 1-2로 테스트 생성"
+```
+
+## 10. 리포트 생성 요건
+
+### 10.1 레벨 및 영역별 리포트
+
+#### 개별 리포트
+
+- Backend Level 1 Report
+- Frontend Level 1 Report
+- Backend Level 2 Report
+- Frontend Level 2 Report
+- Backend Level 3 Report
+- Frontend Level 3 Report
+
+#### 통합 리포트
+
+- Level 1 Complete Report (Backend + Frontend)
+- Level 2 Complete Report (Backend + Frontend)
+- Level 3 Complete Report (Backend + Frontend)
+- Full Stack Summary Report
+
+### 10.2 품질 대시보드
+
+```markdown
+# 풀스택 품질 대시보드
+
+## 개요
+| 영역 | Level 1 | Level 2 | Level 3 | 종합 |
+|------|---------|---------|---------|------|
+| Backend | ✅ 95% | ✅ 88% | ⚠️ 82% | 88% |
+| Frontend | ✅ 92% | ✅ 85% | ❌ 65% | 81% |
+| **시스템 전체** | **93%** | **87%** | **74%** | **85%** |
+
+## 권장 개선 액션
+1. Frontend Level 3의 성공률 향상
+2. Backend Level 3의 실행 시간 단축
+3. 통합 테스트 케이스 추가 
+```
+
+## 11. 실제 실행 절차
+
+### 11.1 Phase 0: 시스템 분석 시작
+
+#### Step 1: 문서 제공
+
+다음 문서를 공유해 주세요:
+
+**필수 문서**:
+
+- 구현 코드(Backend/Frontend)
+- API 명세서(OpenAPI/Swagger등)
+- 데이터베이스 설계서(ERD,DDL등)
+
+**권장 문서**:
+
+- 시스템 설계서
+- 요구사항 정의서
+- 기존 테스트(있는 경우)
+
+#### Step 2: 자동 분석 실행
+
+```bash
+"시스템 분석을 실행해 주세요"
+```
+
+→ 모든 문서를 분석하여 테스트 대상 기능을 특정
+
+#### Step 3: 테스트 계획 확인
+
+분석 결과를 바탕으로 레벨별 테스트 계획을 제시
+→ 사용자가 실행 레벨을 선택
+
+### 11.2 Phase 1: 테스트 생성 및 실행
+
+#### 사용자 선택 기반 테스트 생성
+
+```bash
+"Level 1로 실시"
+"Level 1-2로 실시"  
+"Backend Level 2만 실시"
+"인증 기능만 Level 1-3으로 실시"
+```
+
+### 11.3 실행 지시 예시
+
+#### 단계적 분석 및 실행
+
+```bash
+# Step 1: 시스템 분석
+"시스템 분석을 실행해 주세요"
+
+# Step 2: 분석 결과 확인 후, 레벨 선택
+"Level 1로 실시해 주세요"
+"Level 2까지 실시해 주세요"
+"전 레벨로 실시해 주세요"
+
+# Step 3: 커스텀 선택(필요 시)
+"인증 기능과 사용자 관리 기능만 Level 1-2로 실시"
+"Backend Level 1-3 + Frontend Level 1-2로 실시"
+```
+
+---
+
+**준비 완료입니다. 먼저 시스템 분석부터 시작하겠습니다. 구현 코드, API 명세서, 데이터베이스 설계서 등을 공유해 주시면, 시스템 전반을 분석하여 구체적인 테스트 계획을 제시해 드립니다.**

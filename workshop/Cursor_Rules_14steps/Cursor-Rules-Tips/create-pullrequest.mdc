@@ -1,0 +1,47 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+## Pull Request(PR) 생성 절차
+
+### 1. 필수 사전 조건
+
+- **Issue 번호 확인**
+  - Issue 링크가 제공되지 않은 경우, 사용자에게 "관련 Issue 링크가 있습니까?"라고 확ㅣ할 것
+  - Issue가 존재하지 않는 경우, 해당 내용을 PR 설명란(description)에 명시해야 함
+
+### 2. 변경 사항(차이) 확인
+
+- {{병합브랜치}}는 특별히 지시가 없으면 main으로 한다
+- **변경 사항 비교 명령**
+```bash
+git diff origin/{{병합브랜치}}...HEAD | cat
+```
+- 위 명령어로 현재 작업 브랜치와 병합브랜치 간의 변경 사항을 확인
+
+### 3. PR 설명(description)에 포함할 링크 준비
+
+- Issue 링크 확인
+  - 1단계(필수 사전 조건)에서 이미 확인한 Issue 링크를 사용
+
+### 4. Pull Request 생성 및 브라우저에서 열기
+
+- 아래 명령어를 사용하여 PR을 생성하고, 자동으로 브라우저에서 PR 페이지를 연다
+- PR 제목과 PR 템플릿 내용은 마지 대상 브랜치와의 변경 사항을 바탕으로 알맞게 작성
+- 지시가 없는 한 Draft 상태로 PR 생성
+-`{{PR템플릿을1행으로변환}}` 부분은 PR 템플릿의 내용을 '\n'으로 줄바꿈 처리한 1줄 문자열로 변환
+- 각 섹션은 명확히 구분하고, 필요한 정보를 빠짐없이 기재
+
+---
+
+git push origin HEAD && \
+echo -e "{{PR템플릿을1행으로변환}}" |\
+gh pr create --draft --title "{{PR제목}}" --body-file - &&\
+gh pr view --web
+
+---
+
+#### PR 템플릿
+
+@PULL_REQUEST_TEMPLATE.md파일에서 템플릿 내용을 가져올 것

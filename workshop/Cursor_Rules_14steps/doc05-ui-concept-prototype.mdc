@@ -1,0 +1,320 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# UI 개념 설계 및 프로토타입 제작 가이드
+
+## 개요
+이 문서는 요구사항 정의서, ADR, 데이터베이스 설계, API 명세서를 기반으로 화면 설계를 시작하고, 클라이언트와의 합의를 위한 프로토타입(80% 품질)을 제작하는 프로세스를 정의합니다.
+
+## 기본 방침
+
+### 단계적 접근 방식
+1. **Phase 1: 요구 사항 분석** - 기존 문서에서 UI 요구 사항 추출
+2. **Phase 2: 와이어프레임 설계** - 화면 구성의 개략 설계
+3. **Phase 3: 프로토타입 구현** - 체험 가능한 형태로 구현(80% 품질)
+4. **Phase 4: 클라이언트 합의** - 프로토타입을 이용한 합의 형성
+
+### 품질 수준 정의
+- **80% 품질**: 클라이언트 체험 및 합의에 필요한 수준
+  - 핵심 기능은 동작 확인 가능해야 함
+  - 시각적 완성도는 실제 구현 수준에 근접
+  - 성능/보안은 간이 구현으로 대응
+
+## 기술 스택
+
+### 프레임워크 및 라이브러리
+```json
+{
+  "framework": "Next.js 14+ (App Router)",
+  "ui_library": "shadcn/ui + Tailwind CSS",
+  "state_management": "React hooks (useState, useEffect)",
+  "data_fetching": "fetch API (간이구현)",
+  "styling": "Tailwind CSS + CSS Modules"
+}
+```
+
+### 개발환경 요구사항
+- **VSCode Live Server지원**: 즉시 실행 및 확인 가능
+- **Hot Reload**: 실시간 반영
+- **반응형 UI**: 모바일 및 데스크톱 동시 대응
+
+## 구현 프로세스
+
+### Phase 1: 요구사항 분석
+
+#### 1.1 기존 문서 분석
+```markdown
+## 분석 대상 문서
+- doc01-requirements.mdc: 기능/비기능 요구사항
+- doc02-adr.mdc: 아키텍처 결정 사항
+- doc03-database.mdc: 데이터 구조 및 관계
+- doc04-api-spec.mdc: API 명세 및 데이터 흐름
+
+## 추출 항목
+1. 사용자 역할 및 권한
+2. 주요 기능 및 화면 전환
+3. 데이터 표시 및 입력 항목
+4. 업무 흐름 및 조작 절차
+```
+
+#### 1.2 UI 요구사항 정리
+```markdown
+## UI 요구사항 매트릭스
+| 기능 | 화면 | 입력항목 | 출력 항목 | 권한 | 우선순위 |
+|------|------|----------|----------|------|--------|
+| 로그인 | login | email, password | 에러메시지 | 전체 사용자 | 높음 |
+| 대시보드 | dashboard | - | 통계정보 | 인증사용자 | 높음 |
+```
+
+### Phase 2: 와이어프레임 설계
+
+#### 2.1 화면 구성 설계
+```markdown
+## 전체화면 및 계층 구조
+```
+/
+├── login (로그인 화면)
+├── dashboard (대시보드)
+│   ├── overview (개요)
+│   ├── analytics (분석)
+│   └── settings (설정)
+└── [feature] (기능별 화면)
+    ├── list (목록)
+    ├── detail (상세)
+    └── edit (편집)
+```
+
+## 레이아웃 구성 요소
+1. **고정 헤더**: 네비게이션 및 사용자 정보
+2. **사이드바**: 데스크톱용 메인 메뉴
+3. **메인 콘텐츠**: 핵심 화면 영역
+4. **푸터**: 보조 정보 및 링크
+```
+
+#### 2.2 컴포넌트 설계
+```markdown
+## 공통 컴포넌트
+- Header: 사이트 공통 헤더
+- Sidebar: 메인 메뉴
+- Button: 각종 버튼(Primary, Secondary, Danger)
+- Input: 폼 입력(Text, Email, Password, Select)
+- Modal: 모달 대화상자
+- Table: 데이터 테이블
+- Card: 정보 카드
+
+## 화면별 컴포넌트
+- LoginForm: 로그인 폼
+- Dashboard: 대시보드 컨테이너
+- StatsCard: 통계 카드
+```
+
+### Phase 3: 프로토타입 구현
+
+#### 3.1 프로젝트 초기화
+```bash
+# Next.js 프로젝트 만들기
+npx create-next-app@latest prototype-app --typescript --tailwind --eslint --app
+
+# shadcn/ui 초기화
+npx shadcn-ui@latest init
+
+# 기본 구성 요소 추가
+npx shadcn-ui@latest add button input card table
+```
+
+#### 3.2 디렉토리 구조
+```
+prototype-app/
+├── app/
+│   ├── (auth)/
+│   │   └── login/
+│   ├── dashboard/
+│   └── layout.tsx
+├── components/
+│   ├── ui/ (shadcn/ui)
+│   ├── layout/
+│   └── features/
+├── lib/
+│   ├── utils.ts
+│   └── api.ts (모의 구현)
+└── types/
+    └── index.ts
+```
+
+#### 3.3 구현 가이드라인
+
+##### 3.3.1 반응형 구현 예시
+```tsx
+// Tailwind CSS 브레이크 포인트 활용
+<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+  <Card className="p-4">
+    <h3 className="text-lg font-semibold mb-2">통계 정보</h3>
+    <p className="text-2xl font-bold text-blue-600">1,234</p>
+  </Card>
+</div>
+```
+
+##### 3.3.2 모의 데이터 구현
+```typescript
+// lib/mockData.ts
+export const mockUsers = [
+  { id: 1, name: "이순신", email: "leess@example.com", role: "admin" },
+  { id: 2, name: "홍길동", email: "honggd@example.com", role: "user" }
+];
+
+// lib/api.ts (간단한 구현)
+export async function fetchUsers() {
+  // 실제 API 호출 시뮬레이션
+  await new Promise(resolve => setTimeout(resolve, 500));
+  return mockUsers;
+}
+```
+
+##### 3.3.3 상태 관리(간이 구현)
+```tsx
+// hooks/useAuth.ts
+export function useAuth() {
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  const login = async (email: string, password: string) => {
+    setLoading(true);
+    // 모의 인증
+    const mockUser = { id: 1, email, name: "테스트 사용자" };
+    setUser(mockUser);
+    setLoading(false);
+  };
+
+  return { user, login, loading };
+}
+```
+
+#### 3.4 VSCode Live Server대응 
+
+##### 3.4.1 개발 서버 설정
+```json
+// package.json
+{
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "export": "next build && next export"
+  }
+}
+```
+
+##### 3.4.2 정적 내보내기 설정(필요한 경우)
+```javascript
+// next.config.js
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  output: 'export',
+  trailingSlash: true,
+  images: {
+    unoptimized: true
+  }
+}
+
+module.exports = nextConfig
+```
+
+### Phase 4: 고객 합의
+
+#### 4.1 데모 환경 준비
+```markdown
+## 데모 실행 절차
+1. 프로젝트 디렉토리로 이동
+2. `npm run dev` 에서 로컬 개발 서버 시작
+3. http://localhost:3000 에 접속 
+4. 주요 화면·기능을 순차적으로 데모
+
+## 데모 시나리오
+1. 로그인 화면에서의 인증 흐름
+2. 대시보드에서 정보 확인
+3. 각 기능 화면에서의 조작 체험
+4. 반응형 대응 확인
+```
+
+#### 4.2 피드백 수집
+```markdown
+## 피드백 항목
+- [ ] 화면 레이아웃 디자인
+- [ ] 조작 흐름 사용성
+- [ ] 표시 항목·정보의 과부족
+- [ ] 반응형 대응
+- [ ] 추가요망・변경점
+
+## 합의 사항 기록
+- 승인된 화면 및 기능
+- 수정이 필요한 항목
+- 추가요구사항
+- 다음 단계로의 인계 사항
+```
+
+## Figma 연동 최적화
+
+### HTML to Figma 대응 전략
+```markdown
+## 최적화 포인트
+1. **시맨틱 HTML** : 적절한 태그 사용
+2. **CSS 명명 규칙**: BEM 기법으로 클래스명 통일
+3. **컴포넌트 분리**: 재사용 가능한 단위로 분할
+4. **컬러 팔레트**: CSS 변수로 색채 통일
+
+## 변환 절차
+1. 프로토타입 완성
+2. HTML/CSS 최적화
+3. Figma 플러그인으로 변환
+4. 디자인 시스템으로서의 정리
+```
+
+### 디자인 시스템 준비
+```css
+/* styles/design-system.css */
+:root {
+  /* Primary Colors */
+  --primary-50: #eff6ff;
+  --primary-500: #3b82f6;
+  --primary-900: #1e3a8a;
+  
+  /* Typography */
+  --font-heading: 'Inter', sans-serif;
+  --font-body: 'Inter', sans-serif;
+  
+  /* Spacing */
+  --space-1: 0.25rem;
+  --space-4: 1rem;
+  --space-8: 2rem;
+}
+```
+
+## 산출물 및 전달사항
+
+### Phase 3단계 완료 시 산출물
+1. **작동하는 프로토타입**: Next.js + shadcn/ui
+2. **화면 설계서**: 와이어프레임 컴포넌트 사양
+3. **기술사양서**: 사용기술·실장방침
+4. **데모 환경**: VSCode Live Server 지원
+
+### doc06에 대한 인수
+1. **합의된 화면 사양**: 클라이언트 승인된 디자인
+2. **프로토타입 코드**: 80% 품질 구현
+3. **기술 스택**: 확정된 기술 선택
+4. **개선 요망**: 본 구현에서 대응해야 할 품질 향상 항목
+
+## 주의사항
+
+### 품질 기준 명확화 
+- **80% 품질**: 체험·합의 형성에 필요한 충분
+- **성능**: 기본 동작 확인 레벨
+- **보안**: 개발 환경에서의 간이 구현
+- **오류 처리**: 주요 사례만 지원
+
+### 클라이언트 소통 원칙
+- 프로토타입의 위치 지정을 사전 설명
+- 본 구현과의 품질 차이에 대한 합의
+- 피드백 수집 및 기록 철저
+- 다음 단계에 대한 기대치 설정을 명확화
