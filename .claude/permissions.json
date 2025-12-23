@@ -1,0 +1,40 @@
+{
+  "version": "1.0",
+  "rules": [
+    {
+      "description": "프로젝트 문서 파일 읽기 및 수정 허용",
+      "allow": {
+        "paths": ["workshop/**/*.mdc", "workshop/**/*.md", "*.md"],
+        "operations": ["read", "write"]
+      }
+    },
+    {
+      "description": "설정 파일 읽기 허용",
+      "allow": {
+        "paths": [".gitignore", "package.json", "tsconfig.json", "*.config.js"],
+        "operations": ["read"]
+      }
+    },
+    {
+      "description": "Git 관련 작업 허용",
+      "allow": {
+        "commands": ["git status", "git diff", "git log", "git add", "git commit"],
+        "operations": ["execute"]
+      }
+    },
+    {
+      "description": "민감한 파일 접근 차단",
+      "deny": {
+        "paths": [".env", ".env.*", "**/*.key", "**/*.pem", "**/secrets/**"],
+        "operations": ["read", "write", "delete"]
+      }
+    },
+    {
+      "description": "node_modules 및 빌드 산출물 수정 차단",
+      "deny": {
+        "paths": ["node_modules/**", "dist/**", "build/**", ".next/**"],
+        "operations": ["write", "delete"]
+      }
+    }
+  ]
+}

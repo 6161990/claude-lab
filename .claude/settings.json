@@ -1,0 +1,8 @@
+{
+  "model": "sonnet",
+  "autoSummarization": true,
+  "contextOptimization": true,
+  "experimental": {
+    "parallelToolCalls": true
+  }
+}
