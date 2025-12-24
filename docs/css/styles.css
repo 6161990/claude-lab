@@ -1,0 +1,95 @@
+/* Custom styles for OneOnOne application */
+
+/* Smooth scrolling */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Custom animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.fade-in {
+    animation: fadeIn 0.6s ease-out;
+}
+
+/* File upload drop zone hover effect */
+#dropZone {
+    transition: all 0.3s ease;
+}
+
+#dropZone:hover {
+    border-color: #3B82F6;
+    background-color: #EFF6FF;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+/* Code block styling */
+pre {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+/* Button loading state */
+button:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+/* Card hover effects */
+.hover\:shadow-lg {
+    transition: box-shadow 0.3s ease;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    h1 {
+        font-size: 1.5rem;
+    }
+
+    h2 {
+        font-size: 1.875rem;
+    }
+
+    .grid {
+        gap: 1rem;
+    }
+}
+
+/* Print styles for generated documents */
+@media print {
+    header, footer, button, #upload {
+        display: none;
+    }
+
+    #generatedDocument {
+        page-break-inside: avoid;
+    }
+}
