@@ -118,3 +118,4 @@ kotlin-ide/
 
 # HTTP Client
 http/http-client.private.env.json
+output/
