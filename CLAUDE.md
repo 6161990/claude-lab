@@ -1,13 +1,13 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+이 파일은 Claude Code (claude.ai/code)가 이 저장소의 코드를 작업할 때 참고하는 가이드를 제공합니다.
 
-## Repository Overview
+## 저장소 개요
 
-This is a workshop repository for learning AI-assisted development workflows using Cursor and Claude Code. The repository contains:
+이 저장소는 Cursor와 Claude Code를 사용한 AI 기반 개발 워크플로우를 학습하기 위한 워크샵 저장소입니다. 다음 내용을 포함합니다:
 
-- **Cursor Rules 14-step framework**: A structured prompt engineering methodology for full-stack development
-- **Practice exercises**: Hands-on tutorials for prompt engineering techniques
+- **Cursor Rules 14단계 프레임워크**: 풀스택 개발을 위한 구조화된 프롬프트 엔지니어링 방법론
+- **실습 예제**: 프롬프트 엔지니어링 기법을 위한 실습 튜토리얼
 
 ## 언어 및 커뮤니케이션 규칙
 
@@ -15,113 +15,113 @@ This is a workshop repository for learning AI-assisted development workflows usi
 - **코드 주석**: 한국어로 작성
 - **커밋 메시지**: 한국어로 작성
 - **문서화**: 한국어로 작성
-- **변수명/함수명**: 영어 (코드 표준 준수)
+- **변수명/함수명**: 영어 camelCase 사용 (코드 표준 준수)
 
-## Repository Structure
+## 저장소 구조
 
 ```
 claude-lab/
 ├── workshop/
-│   ├── Cursor_Rules_14steps/    # 14-step development process prompts (.mdc files)
-│   │   ├── doc01-requirements.mdc              # Requirements definition
-│   │   ├── doc02-adr.mdc                       # Architecture Decision Records
-│   │   ├── doc03-database.mdc                  # Database design
-│   │   ├── doc04-api-spec.mdc                  # API specifications
-│   │   ├── doc05-ui-concept-prototype.mdc      # UI concept & prototyping
-│   │   ├── doc06-detailed-design.mdc           # Detailed design (4+1 view)
-│   │   ├── doc07-design-review-procedure.mdc   # Design review process
-│   │   ├── doc08-prototype-analysis.mdc        # Prototype analysis
-│   │   ├── doc09-implementation-plan.mdc       # Implementation planning
-│   │   ├── doc10-implementation-generation.mdc # Code generation
-│   │   ├── doc11-test-generation.mdc           # Test generation
-│   │   ├── doc12-quality-assurance-validation.mdc # Quality assurance
-│   │   ├── doc13-debug.mdc                     # Debugging assistance
-│   │   └── doc14-ai-task-failure-analysis.mdc  # AI task failure analysis
-│   └── practice/                # Practice exercises (Korean)
-│       ├── 실습1-*.md           # Prompt engineering basics
-│       └── 실습3-*.md           # Advanced exercises
+│   ├── Cursor_Rules_14steps/    # 14단계 개발 프로세스 프롬프트 (.mdc 파일)
+│   │   ├── doc01-requirements.mdc              # 요구사항 정의
+│   │   ├── doc02-adr.mdc                       # 아키텍처 의사결정 기록
+│   │   ├── doc03-database.mdc                  # 데이터베이스 설계
+│   │   ├── doc04-api-spec.mdc                  # API 명세
+│   │   ├── doc05-ui-concept-prototype.mdc      # UI 컨셉 및 프로토타이핑
+│   │   ├── doc06-detailed-design.mdc           # 상세 설계 (4+1 뷰)
+│   │   ├── doc07-design-review-procedure.mdc   # 설계 검토 절차
+│   │   ├── doc08-prototype-analysis.mdc        # 프로토타입 분석
+│   │   ├── doc09-implementation-plan.mdc       # 구현 계획
+│   │   ├── doc10-implementation-generation.mdc # 코드 생성
+│   │   ├── doc11-test-generation.mdc           # 테스트 생성
+│   │   ├── doc12-quality-assurance-validation.mdc # 품질 보증
+│   │   ├── doc13-debug.mdc                     # 디버깅 지원
+│   │   └── doc14-ai-task-failure-analysis.mdc  # AI 작업 실패 분석
+│   └── practice/                # 실습 예제 (한국어)
+│       ├── 실습1-*.md           # 프롬프트 엔지니어링 기초
+│       └── 실습3-*.md           # 고급 실습
 ```
 
-## The 14-Step Development Framework
+## 14단계 개발 프레임워크
 
-The Cursor Rules framework provides structured prompts for each phase of development:
+Cursor Rules 프레임워크는 개발의 각 단계별로 구조화된 프롬프트를 제공합니다:
 
-### Design Phase (5 steps)
-1. **Requirements Definition** - Transform user requests into actionable requirements
-2. **Architecture Decisions** - Document technical choices and rationale (ADR)
-3. **Database Design** - ER diagrams, normalization, schema definition
-4. **API Specifications** - RESTful API design in OpenAPI format
-5. **UI Prototyping** - Design system and component prototyping
+### 설계 단계 (5단계)
+1. **요구사항 정의** - 사용자 요청을 실행 가능한 요구사항으로 변환
+2. **아키텍처 의사결정** - 기술적 선택과 근거 문서화 (ADR)
+3. **데이터베이스 설계** - ER 다이어그램, 정규화, 스키마 정의
+4. **API 명세** - OpenAPI 형식의 RESTful API 설계
+5. **UI 프로토타이핑** - 디자인 시스템 및 컴포넌트 프로토타이핑
 
-### Detailed Design & Review (2 steps)
-6. **Detailed Design** - System specifications using 4+1 view model
-7. **Design Review** - Verify understanding and improve quality
+### 상세 설계 및 검토 (2단계)
+6. **상세 설계** - 4+1 뷰 모델을 사용한 시스템 명세
+7. **설계 검토** - 이해도 검증 및 품질 개선
 
-### Analysis & Planning (2 steps)
-8. **Prototype Analysis** - Evaluate production readiness using 5 quality axes (Security, Performance, Availability, Maintainability, Operability)
-9. **Implementation Planning** - Staged production migration strategy
+### 분석 및 계획 (2단계)
+8. **프로토타입 분석** - 5가지 품질 축(보안, 성능, 가용성, 유지보수성, 운영성)을 사용한 프로덕션 준비도 평가
+9. **구현 계획** - 단계별 프로덕션 마이그레이션 전략
 
-### Implementation & Testing (2 steps)
-10. **Code Generation** - Generate production code from specifications
-11. **Test Generation** - Create layered tests (unit, integration, E2E)
+### 구현 및 테스팅 (2단계)
+10. **코드 생성** - 명세로부터 프로덕션 코드 생성
+11. **테스트 생성** - 계층별 테스트 생성 (단위, 통합, E2E)
 
-### Quality Assurance & Improvement (3 steps)
-12. **Quality Validation** - Automated validation of design-implementation consistency
-13. **Debugging** - Root cause analysis and systematic error resolution
-14. **Failure Analysis** - Learn from AI task failures for continuous improvement
+### 품질 보증 및 개선 (3단계)
+12. **품질 검증** - 설계-구현 일관성 자동 검증
+13. **디버깅** - 근본 원인 분석 및 체계적 오류 해결
+14. **실패 분석** - AI 작업 실패로부터 학습하여 지속적 개선
 
-## Technology Stack (from framework documentation)
+## 기술 스택 (프레임워크 문서 기준)
 
-The framework is designed for these technologies, but can be adapted:
+이 프레임워크는 다음 기술을 위해 설계되었지만, 다른 기술로도 적용 가능합니다:
 
-**Frontend:**
+**프론트엔드:**
 - Next.js 14+ (App Router), React, TypeScript
 - shadcn/ui + Radix UI, Tailwind CSS
 - Jest, React Testing Library, Cypress/Playwright
 
-**Backend:**
+**백엔드:**
 - Python 3.8+, FastAPI, Pydantic, SQLAlchemy
-- PostgreSQL (production), SQLite (development)
+- PostgreSQL (프로덕션), SQLite (개발)
 - pytest, pytest-mock, TestContainers
 
-**DevOps:**
+**데브옵스:**
 - Docker, Docker Compose
-- Git, GitHub, CI/CD pipelines
+- Git, GitHub, CI/CD 파이프라인
 
-**Design:**
-- Mermaid diagrams, Figma API integration
-- 4+1 view model, ADR documentation
+**설계:**
+- Mermaid 다이어그램, Figma API 통합
+- 4+1 뷰 모델, ADR 문서화
 
-## Working with .mdc Files
+## .mdc 파일 사용법
 
-The `.mdc` files are Cursor-specific prompt templates. When referencing them in Cursor:
+`.mdc` 파일은 Cursor 전용 프롬프트 템플릿입니다. Cursor에서 다음과 같이 참조합니다:
 
 ```
 @doc01-requirements.mdc를 사용하여 다음 요구 사항을 분석하십시오.
-[your requirements here]
+[여기에 요구사항 입력]
 ```
 
-For Claude Code users: these files contain structured prompts that define roles, tasks, and step-by-step instructions for each development phase. Read the relevant .mdc file to understand the methodology before applying it.
+Claude Code 사용자를 위한 참고사항: 이 파일들은 각 개발 단계별로 역할, 작업, 단계별 지침을 정의하는 구조화된 프롬프트를 포함합니다. 방법론을 적용하기 전에 관련 .mdc 파일을 읽어 이해하세요.
 
-## Practice Exercises
+## 실습 예제
 
-The `workshop/practice/` directory contains Korean-language exercises:
-- **실습1 series**: Basic prompt engineering patterns (Role-Task-Instructions format, few-shot examples, Chain-of-Thought)
-- **실습3 series**: Advanced exercises including structured output, Python code examples
+`workshop/practice/` 디렉토리에는 한국어 실습 자료가 포함되어 있습니다:
+- **실습1 시리즈**: 기본 프롬프트 엔지니어링 패턴 (Role-Task-Instructions 형식, few-shot 예제, Chain-of-Thought)
+- **실습3 시리즈**: 구조화된 출력, Python 코드 예제를 포함한 고급 실습
 
-## Development Workflow Philosophy
+## 개발 워크플로우 철학
 
-This framework emphasizes:
-- **Human-in-the-loop validation** at critical decision points
-- **Incremental quality gates** - validate before proceeding to next phase
-- **Documentation-driven development** - comprehensive design before implementation
-- **Risk-based prioritization** - evaluate impact, probability, and effort
-- **Prototype-to-production gap analysis** - systematic production readiness evaluation
+이 프레임워크는 다음을 강조합니다:
+- **중요한 의사결정 시점에서의 사람 개입 검증**
+- **점진적 품질 게이트** - 다음 단계로 진행하기 전 검증
+- **문서 주도 개발** - 구현 전 포괄적인 설계
+- **리스크 기반 우선순위화** - 영향도, 발생 가능성, 노력 평가
+- **프로토타입-프로덕션 갭 분석** - 체계적인 프로덕션 준비도 평가
 
-## Key Principles
+## 핵심 원칙
 
-1. **Structured prompting**: Use Role-Task-Instructions format with examples
-2. **Phase gates**: Complete design validation before implementation
-3. **Quality metrics**: Maintain >90% coverage, >95% structural consistency
-4. **Iterative refinement**: Each phase includes questioning and clarification steps
-5. **Learning from failures**: Document and analyze AI task failures (doc14)
+1. **구조화된 프롬프팅**: 예제와 함께 Role-Task-Instructions 형식 사용
+2. **단계별 게이트**: 구현 전 설계 검증 완료
+3. **품질 메트릭**: >90% 커버리지, >95% 구조적 일관성 유지
+4. **반복적 개선**: 각 단계에서 질문 및 명확화 과정 포함
+5. **실패로부터의 학습**: AI 작업 실패 문서화 및 분석 (doc14)
