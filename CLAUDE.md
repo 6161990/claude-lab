@@ -17,12 +17,22 @@
 - **문서화**: 한국어로 작성
 - **변수명/함수명**: 영어 camelCase 사용 (코드 표준 준수)
 
+## Git 커밋 규칙
+
+Git 커밋과 관련된 상세 규칙은 [references/git-commit-rules.md](references/git-commit-rules.md)를 참고하세요.
+
+**핵심 요약:**
+- 작업 컨텍스트가 1개: 단순 명시
+- 작업 컨텍스트가 2개: '및' 키워드로 연결
+- 작업 컨텍스트가 3개 이상: 커밋을 분리하여 각각 커밋
+
 ## 저장소 구조
 
 ```
 claude-lab/
-├── workshop/
-│   ├── Cursor_Rules_14steps/    # 14단계 개발 프로세스 프롬프트 (.mdc 파일)
+├── references/                  # 참고 문서 및 가이드
+│   ├── git-commit-rules.md     # Git 커밋 규칙
+│   ├── Cursor_Rules_14steps/   # 14단계 개발 프로세스 프롬프트 (.mdc 파일)
 │   │   ├── doc01-requirements.mdc              # 요구사항 정의
 │   │   ├── doc02-adr.mdc                       # 아키텍처 의사결정 기록
 │   │   ├── doc03-database.mdc                  # 데이터베이스 설계
@@ -37,9 +47,9 @@ claude-lab/
 │   │   ├── doc12-quality-assurance-validation.mdc # 품질 보증
 │   │   ├── doc13-debug.mdc                     # 디버깅 지원
 │   │   └── doc14-ai-task-failure-analysis.mdc  # AI 작업 실패 분석
-│   └── practice/                # 실습 예제 (한국어)
-│       ├── 실습1-*.md           # 프롬프트 엔지니어링 기초
-│       └── 실습3-*.md           # 고급 실습
+│   └── practice/               # 실습 예제 (한국어)
+│       ├── 실습1-*.md          # 프롬프트 엔지니어링 기초
+│       └── 실습3-*.md          # 고급 실습
 ```
 
 ## 14단계 개발 프레임워크
@@ -105,7 +115,7 @@ Claude Code 사용자를 위한 참고사항: 이 파일들은 각 개발 단계
 
 ## 실습 예제
 
-`workshop/practice/` 디렉토리에는 한국어 실습 자료가 포함되어 있습니다:
+`references/practice/` 디렉토리에는 한국어 실습 자료가 포함되어 있습니다:
 - **실습1 시리즈**: 기본 프롬프트 엔지니어링 패턴 (Role-Task-Instructions 형식, few-shot 예제, Chain-of-Thought)
 - **실습3 시리즈**: 구조화된 출력, Python 코드 예제를 포함한 고급 실습
 
