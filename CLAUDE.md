@@ -19,7 +19,8 @@
 
 ## Git 커밋 규칙
 
-Git 커밋과 관련된 상세 규칙은 [references/git-commit-rules.md](references/git-commit-rules.md)를 참고하세요.
+Git 커밋과 관련된 상세 규칙은 [references/git-commit-rules.md](references/git/git-commit-rules.md)를 참고하세요.
+
 
 **핵심 요약:**
 - 작업 컨텍스트가 1개: 단순 명시
@@ -31,8 +32,9 @@ Git 커밋과 관련된 상세 규칙은 [references/git-commit-rules.md](refere
 ```
 claude-lab/
 ├── references/                  # 참고 문서 및 가이드
-│   ├── git-commit-rules.md     # Git 커밋 규칙
-│   ├── Cursor_Rules_14steps/   # 14단계 개발 프로세스 프롬프트 (.mdc 파일)
+│   ├── git/                     # Git 관련 문서
+│   │   └── git-commit-rules.md # Git 커밋 규칙
+│   ├── devleopWorkflow/         # 14단계 개발 프로세스 프롬프트 (.mdc 파일)
 │   │   ├── doc01-requirements.mdc              # 요구사항 정의
 │   │   ├── doc02-adr.mdc                       # 아키텍처 의사결정 기록
 │   │   ├── doc03-database.mdc                  # 데이터베이스 설계
