@@ -1,5 +1,6 @@
 ---
 description: '이모지와 컨벤셔널 커밋 메시지로 잘 포맷된 커밋을 생성합니다'
+argument-hints: [commitMessage]
 allowed-tools:
   [
     'Bash(git add:*)',
@@ -22,6 +23,7 @@ allowed-tools:
 
 ## 프로세스
 
+0. 설명부분은 $ARGUMENTS
 1. 스테이지된 파일 확인, 스테이지된 파일이 있으면 해당 파일만 커밋
 2. 여러 논리적 변경사항에 대한 diff 분석
 3. 필요시 분할 제안
