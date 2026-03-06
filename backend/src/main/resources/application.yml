@@ -52,3 +52,10 @@ logging:
     com.oneonone: DEBUG
     org.springframework.web: DEBUG
     org.hibernate.SQL: DEBUG
+
+# Jira/Confluence 연동
+jira:
+  base-url: ${JIRA_BASE_URL:https://your-company.atlassian.net}
+  email: ${JIRA_EMAIL:}
+  api-token: ${JIRA_API_TOKEN:}
+  enabled: ${JIRA_ENABLED:true}

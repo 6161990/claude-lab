@@ -138,6 +138,18 @@ class ApiClient {
       method: "DELETE",
     })
   }
+
+  /**
+   * multipart/form-data 업로드
+   * Content-Type 헤더를 명시하지 않음 - 브라우저가 boundary 포함하여 자동 설정
+   */
+  async uploadForm<T>(endpoint: string, formData: FormData, options?: RequestOptions): Promise<T> {
+    return this.request<T>(endpoint, {
+      ...options,
+      method: "POST",
+      body: formData,
+    })
+  }
 }
 
 // 기본 API 클라이언트 인스턴스 생성 및 export

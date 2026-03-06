@@ -1,0 +1,23 @@
+### ========================================================
+### Jira 이슈 조회 API
+### ========================================================
+
+### 내가 담당한 이슈 - Q1 필터
+GET {{baseUrl}}/api/jira/issues/mine?quarter={{jiraQuarter}}
+Accept: application/json
+
+### 내가 담당한 이슈 - 특정 프로젝트 + Q1
+GET {{baseUrl}}/api/jira/issues/mine?quarter={{jiraQuarter}}&project={{jiraProject}}
+Accept: application/json
+
+### JQL 직접 검색 (자유 형식)
+### 예: 이번 분기 내가 Done한 Bug 타입 이슈
+GET {{baseUrl}}/api/jira/issues?jql=assignee = currentUser() AND issuetype = Bug AND status = Done&maxResults=20
+Accept: application/json
+
+###
+
+### JQL - 특정 에픽 하위 이슈
+GET {{baseUrl}}/api/jira/issues?jql=assignee = currentUser() AND "Epic Link" = PROJ-100&maxResults=50
+Accept: application/json
+

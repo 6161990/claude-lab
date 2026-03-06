@@ -14,8 +14,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Modern Web Starter Kit",
-  description: "Next.js 16 + React 19 기반 모던 웹 스타터킷",
+  title: "OneOnOne 회고",
+  description: "Git 저장소 분석 기반 분기 회고 생성 도구",
 };
 
 export default function RootLayout({
