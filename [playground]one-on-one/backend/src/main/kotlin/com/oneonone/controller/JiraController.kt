@@ -12,14 +12,8 @@ import org.springframework.web.bind.annotation.*
  * 엔드포인트:
  * - GET  /api/jira/status                   연결 상태 확인
  * - GET  /api/jira/issues                   JQL 검색
- * - GET  /api/jira/issues/mine              내가 담당한 이슈
- * - GET  /api/jira/issues/done              완료된 이슈
- * - GET  /api/jira/issues/in-progress       진행 중 이슈
- * - GET  /api/jira/issues/sprint            스프린트 이슈
  * - GET  /api/jira/retrospective            currentUser() 기반 회고
  * - POST /api/jira/retrospective            이메일 기반 회고 생성 (신규)
- * - GET  /api/jira/projects                 프로젝트 목록
- * - GET  /api/confluence/pages              Confluence 페이지 목록
  */
 @RestController
 @RequestMapping("/api")

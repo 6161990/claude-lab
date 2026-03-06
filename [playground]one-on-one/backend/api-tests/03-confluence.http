@@ -6,8 +6,6 @@
 GET {{baseUrl}}/api/confluence/pages?spaceKey={{jiraSpaceKey}}
 Accept: application/json
 
-###
-
 ### 2. 스페이스 + 분기 필터 (Q1 기간에 수정된 페이지)
 GET {{baseUrl}}/api/confluence/pages?spaceKey={{jiraSpaceKey}}&quarter={{jiraQuarter}}
 Accept: application/json

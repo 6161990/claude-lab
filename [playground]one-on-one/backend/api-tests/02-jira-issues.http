@@ -15,8 +15,6 @@ Accept: application/json
 GET {{baseUrl}}/api/jira/issues?jql=assignee = currentUser() AND issuetype = Bug AND status = Done&maxResults=20
 Accept: application/json
 
-###
-
 ### JQL - 특정 에픽 하위 이슈
 GET {{baseUrl}}/api/jira/issues?jql=assignee = currentUser() AND "Epic Link" = PROJ-100&maxResults=50
 Accept: application/json
