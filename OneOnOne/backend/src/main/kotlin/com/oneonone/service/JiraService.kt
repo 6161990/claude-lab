@@ -8,12 +8,7 @@ import org.springframework.stereotype.Service
 import org.springframework.web.client.RestClient
 import org.springframework.web.client.RestClientException
 import org.springframework.web.util.UriComponentsBuilder
-import java.time.LocalDate
 
-/**
- * Jira Cloud REST API 서비스
- * 이슈 조회, 프로젝트 목록, Confluence 페이지 조회, 회고 생성을 담당
- */
 @Service
 class JiraService(
     private val jiraProperties: JiraProperties,
@@ -22,53 +17,64 @@ class JiraService(
     private val log = LoggerFactory.getLogger(JiraService::class.java)
 
     // ============================================================
-    // 연결 상태 확인
+    // 핵심: 이메일 기반 회고 데이터 생성 (날짜 범위)
     // ============================================================
 
     /**
-     * Jira 연결 상태 확인 (현재 사용자 정보 조회)
+     * 지정 기간 내 특정 사용자의 Jira 이슈 + Confluence 기여 페이지를 통합 반환합니다.
      */
-    fun checkConnection(): JiraStatusResponse {
-        if (!jiraProperties.enabled || jiraProperties.baseUrl.isBlank()) {
-            return JiraStatusResponse(
-                connected = false,
-                message = "Jira 연동이 비활성화되어 있습니다. 환경변수를 설정해주세요."
-            )
-        }
+    fun generateRetrospectiveByEmail(request: JiraRetrospectiveRequest): RetrospectiveJiraResponse {
+        requireJiraEnabled()
+        log.info("회고 생성: email=${request.email}, ${request.startDate} ~ ${request.endDate}")
 
-        return try {
-            val myself = restClient.get()
-                .uri("/rest/api/3/myself")
-                .retrieve()
-                .body(JiraMyself::class.java)!!
+        // 완료된 이슈 (기간 내 resolutiondate 기준)
+        val doneJql = buildJql(
+            assignee = "\"${request.email}\"",
+            startDate = request.startDate,
+            endDate = request.endDate,
+            statusFilter = "Done",
+            dateField = "resolutiondate",
+            projectKey = request.projectKey
+        )
+        val doneIssues = searchIssues(doneJql, maxResults = 100)
 
-            JiraStatusResponse(
-                connected = true,
-                message = "Jira 연결 성공",
-                accountId = myself.accountId,
-                displayName = myself.displayName,
-                email = myself.emailAddress
-            )
-        } catch (e: RestClientException) {
-            log.error("Jira 연결 실패: ${e.message}")
-            JiraStatusResponse(connected = false, message = "연결 실패: ${e.message}")
-        }
+        // 진행 중 이슈 (Done 아닌 것, 기간 내 updated)
+        val inProgressConditions = mutableListOf(
+            "assignee = \"${request.email}\"",
+            "statusCategory != Done",
+            "updated >= \"${request.startDate}\"",
+            "updated <= \"${request.endDate}\""
+        )
+        if (request.projectKey != null) inProgressConditions.add("project = ${request.projectKey}")
+        val inProgressIssues = searchIssues(
+            inProgressConditions.joinToString(" AND ") + " ORDER BY updated DESC",
+            maxResults = 50
+        )
+
+        // Confluence 기여 페이지 (생성 또는 편집)
+        val confluencePages = getContributedPages(
+            email = request.email,
+            startDate = request.startDate,
+            endDate = request.endDate
+        )
+
+        return RetrospectiveJiraResponse(
+            startDate = request.startDate,
+            endDate = request.endDate,
+            doneIssues = doneIssues.issues,
+            inProgressIssues = inProgressIssues.issues,
+            confluencePages = confluencePages.pages,
+            totalDone = doneIssues.total,
+            totalInProgress = inProgressIssues.total
+        )
     }
 
     // ============================================================
-    // Jira 이슈 조회 (JQL 기반)
+    // Jira 이슈 검색
     // ============================================================
 
-    /**
-     * JQL로 이슈 검색
-     */
-    fun searchIssues(
-        jql: String,
-        startAt: Int = 0,
-        maxResults: Int = 50
-    ): JiraIssuesResponse {
+    fun searchIssues(jql: String, startAt: Int = 0, maxResults: Int = 50): JiraIssuesResponse {
         requireJiraEnabled()
-        log.debug("Jira 이슈 검색: jql=$jql")
 
         val fields = "summary,status,assignee,reporter,priority,issuetype,project,created,updated,resolutiondate,labels"
         val uri = UriComponentsBuilder.fromPath("/rest/api/3/search")
@@ -88,156 +94,49 @@ class JiraService(
         )
     }
 
-    /**
-     * 현재 API 토큰 사용자의 이슈 조회
-     */
-    fun getMyIssues(projectKey: String? = null, quarter: String? = null): JiraIssuesResponse {
-        val jql = buildAssigneeJql("currentUser()", projectKey, quarter, statusFilter = null)
-        return searchIssues(jql, maxResults = 100)
-    }
-
-    /**
-     * 현재 API 토큰 사용자의 완료 이슈
-     */
-    fun getDoneIssues(projectKey: String? = null, quarter: String? = null): JiraIssuesResponse {
-        val jql = buildAssigneeJql("currentUser()", projectKey, quarter, statusFilter = "Done", useResolutionDate = true)
-        return searchIssues(jql, maxResults = 100)
-    }
-
-    /**
-     * 현재 API 토큰 사용자의 진행 중 이슈
-     */
-    fun getInProgressIssues(projectKey: String? = null): JiraIssuesResponse {
-        val conditions = mutableListOf("assignee = currentUser()", "statusCategory != Done")
-        if (projectKey != null) conditions.add("project = $projectKey")
-        return searchIssues(conditions.joinToString(" AND ") + " ORDER BY updated DESC", maxResults = 50)
-    }
-
-    /**
-     * 스프린트 이슈 조회
-     */
-    fun getSprintIssues(sprintName: String): JiraIssuesResponse {
-        val jql = "assignee = currentUser() AND sprint = \"$sprintName\" ORDER BY status ASC"
-        return searchIssues(jql, maxResults = 100)
-    }
-
     // ============================================================
-    // 이메일 기반 회고 생성 (핵심 신규 기능)
+    // Confluence 기여 페이지 (생성 또는 편집)
     // ============================================================
 
     /**
-     * 이메일로 특정 사용자의 회고 데이터 생성
-     * 클라이언트에서 email + quarter만 넘기면 Jira/Confluence 데이터를 통합하여 반환
-     *
-     * @param request email, quarter, projectKey(optional), spaceKey(optional)
+     * 특정 사용자가 지정 기간 내 생성하거나 편집한 Confluence 페이지를 반환합니다.
+     * Jira accountId를 먼저 조회한 뒤 Confluence CQL contributor 필터에 활용합니다.
      */
-    fun generateRetrospectiveByEmail(request: JiraRetrospectiveRequest): RetrospectiveJiraResponse {
-        requireJiraEnabled()
-        log.info("이메일 기반 회고 생성: email=${request.email}, quarter=${request.quarter}")
-
-        // 완료 이슈 (Done + 해당 분기 내 resolve)
-        val doneJql = buildAssigneeJql(
-            assignee = "\"${request.email}\"",
-            projectKey = request.projectKey,
-            quarter = request.quarter,
-            statusFilter = "Done",
-            useResolutionDate = true
-        )
-        val doneIssues = searchIssues(doneJql, maxResults = 100)
-
-        // 진행 중 이슈 (Done 아닌 것 전체)
-        val inProgressConditions = mutableListOf(
-            "assignee = \"${request.email}\"",
-            "statusCategory != Done"
-        )
-        if (request.projectKey != null) inProgressConditions.add("project = ${request.projectKey}")
-        val inProgressJql = inProgressConditions.joinToString(" AND ") + " ORDER BY updated DESC"
-        val inProgressIssues = searchIssues(inProgressJql, maxResults = 50)
-
-        // Confluence 페이지 (spaceKey 있을 경우)
-        val confluencePages = if (request.spaceKey != null) {
-            getConfluencePages(request.spaceKey, quarter = request.quarter)
-        } else {
-            ConfluencePagesResponse(emptyList(), 0)
-        }
-
-        return RetrospectiveJiraResponse(
-            quarter = request.quarter,
-            doneIssues = doneIssues.issues,
-            inProgressIssues = inProgressIssues.issues,
-            confluencePages = confluencePages.pages,
-            totalDone = doneIssues.total,
-            totalInProgress = inProgressIssues.total
-        )
-    }
-
-    /**
-     * 현재 API 토큰 사용자의 회고 종합 데이터 (currentUser() 기반)
-     */
-    fun getRetrospectiveData(
-        quarter: String,
-        projectKey: String? = null,
-        spaceKey: String? = null
-    ): RetrospectiveJiraResponse {
-        val doneIssues = getDoneIssues(projectKey, quarter)
-        val inProgressIssues = getInProgressIssues(projectKey)
-        val confluencePages = if (spaceKey != null) {
-            getConfluencePages(spaceKey, quarter = quarter)
-        } else {
-            ConfluencePagesResponse(emptyList(), 0)
-        }
-
-        return RetrospectiveJiraResponse(
-            quarter = quarter,
-            doneIssues = doneIssues.issues,
-            inProgressIssues = inProgressIssues.issues,
-            confluencePages = confluencePages.pages,
-            totalDone = doneIssues.total,
-            totalInProgress = inProgressIssues.total
-        )
-    }
-
-    // ============================================================
-    // 프로젝트 목록
-    // ============================================================
-
-    fun getProjects(): List<JiraProjectRaw> {
-        requireJiraEnabled()
-        return restClient.get()
-            .uri("/rest/api/3/project")
-            .retrieve()
-            .body(Array<JiraProjectRaw>::class.java)
-            ?.toList() ?: emptyList()
-    }
-
-    // ============================================================
-    // Confluence 페이지 조회
-    // ============================================================
-
-    fun getConfluencePages(
-        spaceKey: String,
-        limit: Int = 25,
-        quarter: String? = null
+    fun getContributedPages(
+        email: String,
+        startDate: String,
+        endDate: String,
+        limit: Int = 50
     ): ConfluencePagesResponse {
-        requireJiraEnabled()
-        log.debug("Confluence 페이지 조회: spaceKey=$spaceKey, quarter=$quarter")
+        if (!jiraProperties.enabled) return ConfluencePagesResponse(emptyList(), 0)
 
-        val uriBuilder = UriComponentsBuilder.fromPath("/wiki/rest/api/content")
-            .queryParam("type", "page")
-            .queryParam("spaceKey", spaceKey)
-            .queryParam("limit", limit)
-            .queryParam("expand", "history,history.lastUpdated,space")
-            .queryParam("orderby", "history.lastUpdated desc")
+        return try {
+            val accountId = resolveAccountId(email)
+            val cql = if (accountId != null) {
+                "type = page AND contributor.accountid = \"$accountId\" " +
+                        "AND lastModified >= \"$startDate\" AND lastModified <= \"$endDate\""
+            } else {
+                log.warn("accountId 조회 실패 ($email), 날짜 범위로만 검색합니다.")
+                "type = page AND lastModified >= \"$startDate\" AND lastModified <= \"$endDate\""
+            }
 
-        val raw = restClient.get()
-            .uri(uriBuilder.build().toUriString())
-            .retrieve()
-            .body(ConfluenceSearchResponse::class.java)!!
+            val uri = UriComponentsBuilder.fromPath("/wiki/rest/api/search")
+                .queryParam("cql", cql)
+                .queryParam("limit", limit)
+                .queryParam("expand", "history,history.lastUpdated,space")
+                .build().toUriString()
 
-        return ConfluencePagesResponse(
-            pages = raw.results.map { it.toResponse(jiraProperties.baseUrl) },
-            total = raw.size
-        )
+            val raw = restClient.get().uri(uri).retrieve()
+                .body(ConfluenceSearchResponse::class.java)!!
+
+            ConfluencePagesResponse(
+                pages = raw.results.map { it.toResponse(jiraProperties.baseUrl) },
+                total = raw.size
+            )
+        } catch (e: Exception) {
+            log.warn("Confluence 페이지 조회 실패: ${e.message}")
+            ConfluencePagesResponse(emptyList(), 0)
+        }
     }
 
     // ============================================================
@@ -245,59 +144,59 @@ class JiraService(
     // ============================================================
 
     /**
-     * assignee 기반 JQL 조건 빌더
-     * @param assignee "currentUser()" 또는 "\"email@domain.com\""
-     * @param useResolutionDate true면 resolutiondate, false면 updated 기준 날짜 필터
+     * 이메일로 Jira accountId를 조회합니다.
      */
-    private fun buildAssigneeJql(
-        assignee: String,
-        projectKey: String?,
-        quarter: String?,
-        statusFilter: String?,
-        useResolutionDate: Boolean = false
-    ): String {
-        val conditions = mutableListOf("assignee = $assignee")
-
-        if (statusFilter != null) conditions.add("status = $statusFilter")
-        if (projectKey != null) conditions.add("project = $projectKey")
-
-        if (quarter != null) {
-            val (startDate, endDate) = getQuarterDateRange(quarter)
-            val dateField = if (useResolutionDate) "resolutiondate" else "updated"
-            conditions.add("$dateField >= \"$startDate\"")
-            conditions.add("$dateField <= \"$endDate\"")
+    private fun resolveAccountId(email: String): String? {
+        return try {
+            val users = restClient.get()
+                .uri("/rest/api/3/user/search?query=$email&maxResults=1")
+                .retrieve()
+                .body(Array<JiraMyself>::class.java)
+            users?.firstOrNull()?.accountId
+        } catch (e: RestClientException) {
+            log.warn("accountId 조회 실패: ${e.message}")
+            null
         }
-
-        val orderBy = if (useResolutionDate) "resolutiondate" else "updated"
-        return conditions.joinToString(" AND ") + " ORDER BY $orderBy DESC"
     }
 
-    /**
-     * 분기별 날짜 범위 반환 (yyyy-MM-dd 형식)
-     */
-    private fun getQuarterDateRange(quarter: String): Pair<String, String> {
-        val year = LocalDate.now().year
-        return when (quarter.uppercase()) {
-            "Q1" -> "$year-01-01" to "$year-03-31"
-            "Q2" -> "$year-04-01" to "$year-06-30"
-            "Q3" -> "$year-07-01" to "$year-09-30"
-            "Q4" -> "$year-10-01" to "$year-12-31"
-            else -> throw IllegalArgumentException("유효하지 않은 분기: $quarter (Q1~Q4만 허용)")
-        }
+    private fun buildJql(
+        assignee: String,
+        startDate: String,
+        endDate: String,
+        statusFilter: String? = null,
+        dateField: String = "updated",
+        projectKey: String? = null
+    ): String {
+        val conditions = mutableListOf("assignee = $assignee")
+        if (statusFilter != null) conditions.add("status = $statusFilter")
+        if (projectKey != null) conditions.add("project = $projectKey")
+        conditions.add("$dateField >= \"$startDate\"")
+        conditions.add("$dateField <= \"$endDate\"")
+        return conditions.joinToString(" AND ") + " ORDER BY $dateField DESC"
     }
 
     private fun requireJiraEnabled() {
-        if (!jiraProperties.enabled) {
+        if (!jiraProperties.enabled)
             throw IllegalStateException("Jira 연동이 비활성화되어 있습니다. JIRA_ENABLED=true 환경변수를 설정해주세요.")
+        if (jiraProperties.baseUrl.isBlank() || jiraProperties.apiToken.isBlank())
+            throw IllegalStateException("Jira 설정이 불완전합니다. JIRA_BASE_URL, JIRA_EMAIL, JIRA_API_TOKEN을 확인해주세요.")
+    }
+
+    fun checkConnection(): JiraStatusResponse {
+        if (!jiraProperties.enabled || jiraProperties.baseUrl.isBlank()) {
+            return JiraStatusResponse(connected = false, message = "Jira 연동이 비활성화되어 있습니다.")
         }
-        if (jiraProperties.baseUrl.isBlank() || jiraProperties.apiToken.isBlank()) {
-            throw IllegalStateException("Jira 설정이 불완전합니다. JIRA_BASE_URL, JIRA_EMAIL, JIRA_API_TOKEN 환경변수를 확인해주세요.")
+        return try {
+            val myself = restClient.get().uri("/rest/api/3/myself").retrieve().body(JiraMyself::class.java)!!
+            JiraStatusResponse(connected = true, message = "연결 성공", accountId = myself.accountId, displayName = myself.displayName, email = myself.emailAddress)
+        } catch (e: RestClientException) {
+            JiraStatusResponse(connected = false, message = "연결 실패: ${e.message}")
         }
     }
 }
 
 // ============================================================
-// 확장 함수 (raw API 응답 → 클라이언트 응답 DTO 변환)
+// 확장 함수
 // ============================================================
 
 private fun JiraIssueRaw.toResponse(baseUrl: String) = JiraIssueResponse(

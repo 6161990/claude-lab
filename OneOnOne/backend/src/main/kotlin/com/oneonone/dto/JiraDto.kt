@@ -225,12 +225,12 @@ data class JiraStatusResponse(
 )
 
 /**
- * 이메일 기반 회고 생성 요청 (클라이언트 → 백엔드)
- * email + quarter만 필수, 나머지는 선택
+ * 이메일 기반 회고 생성 요청
  */
 data class JiraRetrospectiveRequest(
     val email: String,
-    val quarter: String,
+    val startDate: String,   // yyyy-MM-dd
+    val endDate: String,     // yyyy-MM-dd
     val projectKey: String? = null,
     val spaceKey: String? = null
 )
@@ -239,7 +239,8 @@ data class JiraRetrospectiveRequest(
  * 회고 종합 응답 (Jira 이슈 + Confluence 페이지)
  */
 data class RetrospectiveJiraResponse(
-    val quarter: String,
+    val startDate: String,
+    val endDate: String,
     val doneIssues: List<JiraIssueResponse>,
     val inProgressIssues: List<JiraIssueResponse>,
     val confluencePages: List<ConfluencePageResponse>,

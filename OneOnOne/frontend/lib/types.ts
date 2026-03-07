@@ -1,12 +1,3 @@
-// Git 분석 요약
-export interface GitSummary {
-  totalCommits: number
-  totalFiles: number
-  linesAdded: number
-  linesDeleted: number
-  commitsByDate: Record<string, number>
-}
-
 // Jira 이슈
 export interface JiraIssue {
   key: string
@@ -35,9 +26,10 @@ export interface ConfluencePage {
   url: string
 }
 
-// Jira 회고 종합 응답
+// Jira + Confluence 회고 응답
 export interface RetrospectiveJiraResponse {
-  quarter: string
+  startDate: string
+  endDate: string
   doneIssues: JiraIssue[]
   inProgressIssues: JiraIssue[]
   confluencePages: ConfluencePage[]
@@ -45,10 +37,11 @@ export interface RetrospectiveJiraResponse {
   totalInProgress: number
 }
 
-// POST /api/analyze 통합 응답
+// POST /api/analyze 응답
 export interface AnalyzeResponse {
   userName: string
-  quarter: string
-  git: GitSummary
+  startDate: string
+  endDate: string
+  analysis: string | null       // Claude AI 분석 보고서
   jira: RetrospectiveJiraResponse | null
 }
