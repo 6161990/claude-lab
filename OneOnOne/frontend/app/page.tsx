@@ -35,6 +35,7 @@ export default function Home() {
   const [startDate, setStartDate] = useState(defaultStart)
   const [endDate, setEndDate] = useState(defaultEnd)
   const [jiraEmail, setJiraEmail] = useState("")
+  const [customPrompt, setCustomPrompt] = useState("")
   const [isDragging, setIsDragging] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState("")
@@ -84,6 +85,7 @@ export default function Home() {
       formData.append("startDate", startDate)
       formData.append("endDate", endDate)
       if (jiraEmail.trim()) formData.append("jiraEmail", jiraEmail.trim())
+      if (customPrompt.trim()) formData.append("customPrompt", customPrompt.trim())
 
       const res = await fetch(`${API_URL}/api/analyze`, {
         method: "POST",
@@ -154,8 +156,14 @@ export default function Home() {
           {/* 업로드 안내 */}
           <div className="rounded-lg bg-muted/50 px-4 py-3 text-xs text-muted-foreground space-y-1">
             <p className="font-medium text-foreground/70">ZIP 파일 준비 방법</p>
-            <p>GitHub 저장소 페이지 → <code className="bg-muted px-1 rounded">Code</code> → <code className="bg-muted px-1 rounded">Download ZIP</code></p>
-            <p className="text-muted-foreground/70">저장소 1개당 ZIP 1개. node_modules·build 폴더가 포함되지 않도록 .gitignore 확인을 권장합니다.</p>
+            <p>터미널에서 아래 명령어를 실행하세요 (저장소 폴더 기준):</p>
+            <code className="block bg-muted px-2 py-1 rounded font-mono text-xs">
+              zip -r repo.zip . --exclude "*/node_modules/*" "*/build/*" "*/.next/*"
+            </code>
+            <p className="text-muted-foreground/70">
+              ⚠️ GitHub의 "Download ZIP"은 커밋 이력이 없어 분석 불가.
+              반드시 로컬 저장소를 직접 압축하세요.
+            </p>
           </div>
         </div>
 
@@ -223,6 +231,20 @@ export default function Home() {
               onChange={(e) => setJiraEmail(e.target.value)}
             />
           </div>
+
+          <div className="space-y-1.5">
+            <Label htmlFor="customPrompt">
+              추가 분석 요청{" "}
+              <span className="text-muted-foreground font-normal text-xs">(선택)</span>
+            </Label>
+            <textarea
+              id="customPrompt"
+              className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm resize-none min-h-[80px]"
+              placeholder="예: 1:1 미팅 관점에서 성장 포인트를 중심으로 분석해주세요"
+              value={customPrompt}
+              onChange={(e) => setCustomPrompt(e.target.value)}
+            />
+          </div>
         </div>
 
         {/* 에러 메시지 */}
@@ -236,7 +258,7 @@ export default function Home() {
           {isLoading ? (
             <span className="flex items-center gap-2">
               <span className="inline-block h-4 w-4 rounded-full border-2 border-current border-r-transparent animate-spin" />
-              분석 중... (코드량에 따라 수십 초 소요)
+              분석 중... (코드량에 따라 수분 소요될 수 있습니다)
             </span>
           ) : (
             "분석 시작 →"

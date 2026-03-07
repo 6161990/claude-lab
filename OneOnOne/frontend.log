@@ -2,12 +2,11 @@
 > starter-kit@0.1.0 dev
 > next dev
 
-⚠ Port 3000 is in use by process 80219, using available port 3001 instead.
 ▲ Next.js 16.1.1 (Turbopack)
-- Local:         http://localhost:3001
-- Network:       http://172.20.10.12:3001
+- Local:         http://localhost:3000
+- Network:       http://172.20.10.12:3000
 
 ✓ Starting...
-⨯ Unable to acquire lock at /Users/j6161990/Documents/GitHub/claude-lab/OneOnOne/frontend/.next/dev/lock, is another instance of next dev running?
-  Suggestion: If you intended to restart next dev, terminate the other process, and then try again.
-[?25h
+✓ Ready in 703ms
+ GET / 200 in 1136ms (compile: 980ms, render: 156ms)
+ GET /results 200 in 52ms (compile: 37ms, render: 15ms)

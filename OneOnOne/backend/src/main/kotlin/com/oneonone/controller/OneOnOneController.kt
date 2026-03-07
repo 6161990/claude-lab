@@ -1,6 +1,7 @@
 package com.oneonone.controller
 
 import com.oneonone.dto.AnalyzeResponse
+import org.slf4j.LoggerFactory
 import com.oneonone.dto.JiraRetrospectiveRequest
 import com.oneonone.service.ClaudeService
 import com.oneonone.service.GitAnalysisService
@@ -25,14 +26,19 @@ class OneOnOneController(
     @Value("\${upload.max-zip-count:5}") private val maxZipCount: Int
 ) {
 
+    private val logger = LoggerFactory.getLogger(OneOnOneController::class.java)
+
     @PostMapping("/analyze", consumes = [MULTIPART_FORM_DATA_VALUE])
     fun analyze(
         @RequestParam repositories: Array<MultipartFile>,
         @RequestParam userName: String,
         @RequestParam startDate: String,
         @RequestParam endDate: String,
-        @RequestParam(required = false) jiraEmail: String?
+        @RequestParam(required = false) jiraEmail: String?,
+        @RequestParam(required = false) customPrompt: String?
     ): ResponseEntity<*> {
+        val fileNames = repositories.joinToString(", ") { it.originalFilename ?: "unknown" }
+        logger.info("[분석 요청] user={} | files={} | period={} ~ {}", userName, fileNames, startDate, endDate)
 
         // ── 검증 ──
         val validationError = validate(repositories)
@@ -61,7 +67,7 @@ class OneOnOneController(
         )
 
         // ── Claude 분석 ──
-        val analysis = claudeService.generateAnalysis(projectContext, partialResponse)
+        val analysis = claudeService.generateAnalysis(projectContext, partialResponse, customPrompt)
 
         return ResponseEntity.ok(partialResponse.copy(analysis = analysis))
     }
