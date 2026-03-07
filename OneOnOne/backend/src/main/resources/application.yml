@@ -1,0 +1,32 @@
+server:
+  port: 8080
+  error:
+    include-message: always
+  tomcat:
+    max-http-form-post-size: -1  # 무제한 (Tomcat 기본값이 Spring 설정보다 먼저 적용됨)
+
+spring:
+  application:
+    name: oneonone-backend
+
+  # 파일 업로드
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 100MB
+      max-request-size: 500MB
+      file-size-threshold: 10MB
+      location: ${java.io.tmpdir}
+
+# 로깅
+logging:
+  level:
+    root: INFO
+    com.oneonone: DEBUG
+
+# Jira/Confluence 연동
+jira:
+  base-url: ${JIRA_BASE_URL:}
+  email: ${JIRA_EMAIL:}
+  api-token: ${JIRA_API_TOKEN:}
+  enabled: ${JIRA_ENABLED:false}
