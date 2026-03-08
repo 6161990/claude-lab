@@ -51,6 +51,19 @@ class OneOnOneController(
             repositories, userName, startDate, endDate
         )
 
+        // ── 기여자 커밋 없으면 조기 반환 ──
+        if (projectContext.userCommits.isEmpty()) {
+            return ResponseEntity.ok(
+                AnalyzeResponse(
+                    userName = userName,
+                    startDate = startDate,
+                    endDate = endDate,
+                    analysis = "'${userName}'을(를) 커밋 이력에서 찾을 수 없습니다.",
+                    jira = null
+                )
+            )
+        }
+
         // ── Jira + Confluence 조회 (선택) ──
         val jira = jiraEmail?.let {
             jiraService.generateRetrospectiveByEmail(
