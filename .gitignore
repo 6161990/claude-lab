@@ -119,3 +119,7 @@ kotlin-ide/
 # HTTP Client
 http/http-client.private.env.json
 output/
+
+# 환경변수 (네이버 계정 정보 등 민감한 정보)
+.env
+.naver_session.json

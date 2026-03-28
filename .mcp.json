@@ -11,6 +11,18 @@
         "@playwright/mcp@latest"
       ],
       "env": {}
+    },
+    "naver-blog": {
+      "type": "stdio",
+      "command": "python",
+      "args": [
+        "/Users/j6161990/Documents/GitHub/claude-lab/blog/mcp-server/server.py"
+      ],
+      "env": {
+        "NAVER_ID": "${NAVER_ID}",
+        "NAVER_PASSWORD": "${NAVER_PASSWORD}",
+        "NAVER_BLOG_ID": "${NAVER_BLOG_ID}"
+      }
     }
   }
 }
