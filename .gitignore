@@ -120,7 +120,13 @@ kotlin-ide/
 http/http-client.private.env.json
 output/
 
-# 환경변수 (네이버 계정 정보 등 민감한 정보)
-.env
+### OneOnOne ###
+OneOnOne/.dev.pids
+OneOnOne/*.log
+OneOnOne/backend/.env
+OneOnOne/backend/.kotlin/
 .naver_session.json
 .log
+
+### Playwright MCP ###
+.playwright-mcp/
