@@ -13,6 +13,9 @@ start() {
 
   echo "백엔드 시작 중..."
   cd "$BACKEND_DIR"
+  if [ -f ".env" ]; then
+    set -a; source .env; set +a
+  fi
   ./gradlew bootRun > "$SCRIPT_DIR/backend.log" 2>&1 &
   BACKEND_PID=$!
 
