@@ -11,6 +11,17 @@
         "NAVER_PASSWORD": "${NAVER_PASSWORD}",
         "NAVER_BLOG_ID": "${NAVER_BLOG_ID}"
       }
+    },
+    "naver-nepcon": {
+      "type": "stdio",
+      "command": "python",
+      "args": [
+        "/Users/j6161990/Documents/GitHub/claude-lab/blog/nepcon-mcp/server.py"
+      ],
+      "env": {
+        "NEPCON_NAVER_ID": "${NEPCON_NAVER_ID}",
+        "NEPCON_NAVER_PASSWORD": "${NEPCON_NAVER_PASSWORD}"
+      }
     }
   }
 }
