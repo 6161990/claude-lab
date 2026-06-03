@@ -155,21 +155,27 @@ class NaverNepconBrowser:
         await self._context.storage_state(path=SESSION_PATH)
         print(f"[완료] 로그인 성공. 세션이 {SESSION_PATH}에 저장되었습니다.")
 
-    async def list_nepcon_posts(self, channel_url: str, limit: int = 20) -> list[dict]:
+    async def list_nepcon_posts(self, channel_url: str, limit: int = 20, category_id: str = None) -> list[dict]:
         """네프콘 채널의 게시글 목록 반환
 
         Args:
             channel_url: 채널 전체 URL (예: https://contents.premium.naver.com/son/stockson/contents)
             limit: 최대 반환 개수 (기본 20)
+            category_id: 카테고리 ID (예: 19a8818e0f5000sho) - 선택사항
 
         Returns:
-            [{"title": "...", "date": "...", "url": "..."}, ...] 형태의 리스트
+            [{"title": "...", "date": "...", "url": "...", "author": "..."}, ...] 형태의 리스트
         """
+        # categoryId가 있으면 URL에 추가
+        if category_id:
+            separator = "&" if "?" in channel_url else "?"
+            channel_url = f"{channel_url}{separator}categoryId={category_id}"
+
         await self.page.goto(channel_url)
         await self.page.wait_for_load_state("networkidle")
         await random_delay()
 
-        # 게시글 링크 추출 (content_text_link 클래스 사용)
+        # 게시글 링크 추출 (content_text_link 클래스 + 작성자 정보 포함)
         posts = await self.page.evaluate(
             f"""() => {{
                 const links = document.querySelectorAll('.content_text_link');
@@ -182,9 +188,18 @@ class NaverNepconBrowser:
                     // 유효한 게시글인지 확인
                     if (!href || !title || href.length < 10) continue;
 
+                    // 작성자 정보 추출 (같은 카드 내에서)
+                    let author = '(작성자 미상)';
+                    const card = link.closest('[class*="content"]') || link.parentElement;
+                    const authorLink = card?.querySelector('.content_author_link, [class*="author"]');
+                    if (authorLink) {{
+                        author = authorLink.textContent?.trim() || author;
+                    }}
+
                     posts.push({{
                         title: title,
-                        url: href
+                        url: href,
+                        author: author
                     }});
 
                     if (posts.length >= {limit}) break;
@@ -196,14 +211,15 @@ class NaverNepconBrowser:
 
         return posts
 
-    async def read_nepcon_post(self, post_url: str) -> dict:
+    async def read_nepcon_post(self, post_url: str, include_images: bool = True) -> dict:
         """특정 게시글 전문 읽어오기
 
         Args:
             post_url: 게시글 URL
+            include_images: 이미지 URL 포함 여부
 
         Returns:
-            {"title": "...", "content": "...", "date": "...", "url": "..."} 형태의 딕셔너리
+            {"title": "...", "content": "...", "date": "...", "url": "...", "images": [...]} 형태의 딕셔너리
         """
         await self.page.goto(post_url)
         await self.page.wait_for_load_state("networkidle")
@@ -211,35 +227,70 @@ class NaverNepconBrowser:
 
         # 제목 추출 (다양한 선택자 시도)
         title = None
-        for selector in [".content_head__title", "h1", "[class*='title']"]:
+        for selector in [".viewer_title_content", ".content_head__title", "h1", "[class*='title']"]:
             title = await self.page.text_content(selector)
             if title:
                 break
         title = title.strip() if title else "(제목 없음)"
 
-        # 본문 추출 (다양한 선택자 시도)
-        content = None
-        for selector in [".content_main__body", ".article_body", "[class*='content']", "article"]:
-            content_elem = await self.page.query_selector(selector)
-            if content_elem:
-                content = await content_elem.text_content()
-                break
+        # 본문 추출 (전체 body에서 추출 - 가장 신뢰할 수 있는 방식)
+        content = await self.page.text_content("body")
         content = content.strip() if content else "(본문 없음)"
 
         # 게시 날짜 추출 (다양한 선택자 시도)
         date = None
-        for selector in [".content_head__info", ".article_info", "time", "[class*='date']"]:
+        for selector in [".viewer_date", ".content_head__info", ".article_info", "time", "[class*='date']"]:
             date = await self.page.text_content(selector)
             if date:
                 break
         date = date.strip() if date else ""
 
-        return {
+        # 작성자 추출 (타임아웃 처리)
+        author = "(작성자 미상)"
+        try:
+            for selector in [".viewer_author_link", "[class*='author']"]:
+                try:
+                    author_elem = await self.page.query_selector(selector)
+                    if author_elem:
+                        author = await author_elem.text_content()
+                        if author:
+                            author = author.strip()
+                            break
+                except:
+                    continue
+        except:
+            pass
+
+        result = {
             "title": title,
             "content": content,
             "date": date,
-            "url": post_url
+            "author": author,
+            "url": post_url,
+            "images": []
         }
+
+        # 이미지 추출 (선택사항)
+        if include_images:
+            images = await self.page.evaluate("""
+                () => {
+                    const imgs = document.querySelectorAll('img');
+                    return Array.from(imgs)
+                        .filter(img => img.src && img.src.length > 10 && img.offsetHeight > 50)
+                        .map(img => ({
+                            src: img.src,
+                            alt: img.alt || '(설명 없음)',
+                            width: img.offsetWidth,
+                            height: img.offsetHeight,
+                            naturalWidth: img.naturalWidth,
+                            naturalHeight: img.naturalHeight
+                        }))
+                        .slice(0, 30);  // 최대 30개
+                }
+            """)
+            result["images"] = images
+
+        return result
 
     async def search_nepcon_posts(self, channel_url: str, keyword: str) -> list[dict]:
         """채널 내 키워드 검색
