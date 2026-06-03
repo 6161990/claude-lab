@@ -130,3 +130,6 @@ OneOnOne/backend/.kotlin/
 
 ### Playwright MCP ###
 .playwright-mcp/
+
+# 네프콘 로그인 세션(민감)
+.nepcon_session.json
