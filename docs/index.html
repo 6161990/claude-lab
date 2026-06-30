@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="ko"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title> 양봉남 트레이더 원칙 준수 대시보드</title>
+<style>
+ :root { font-family: -apple-system, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif; }
+ body { margin:0; background:#0d1117; color:#e6edf3; padding:24px; }
+ h1 { font-size:22px; margin:0 0 4px; }
+ .sub { color:#8b949e; font-size:13px; margin-bottom:20px; }
+ .cards { display:flex; gap:12px; flex-wrap:wrap; margin-bottom:24px; }
+ .card { background:#161b22; border:1px solid #30363d; border-radius:10px; padding:14px 18px; min-width:120px; }
+ .card .big { font-size:26px; font-weight:700; }
+ .card .lbl { color:#8b949e; font-size:12px; }
+ h2 { font-size:16px; border-bottom:1px solid #30363d; padding-bottom:6px; margin:28px 0 14px; }
+ .cals { display:flex; gap:18px; flex-wrap:wrap; }
+ table.cal { border-collapse:collapse; background:#161b22; border:1px solid #30363d; border-radius:8px; overflow:hidden; }
+ table.cal caption { font-weight:700; padding:8px; background:#21262d; }
+ table.cal th { color:#8b949e; font-size:11px; padding:4px 0; width:42px; }
+ table.cal td { height:46px; width:42px; text-align:center; vertical-align:top; border:1px solid #0d1117; position:relative; }
+ td.empty { background:#0d1117; border-color:#0d1117; }
+ td.off .dnum { color:#484f58; font-size:12px; }
+ td.on { color:#fff; }
+ td.on .dnum { font-size:11px; opacity:.85; display:block; }
+ td.on .chk { font-size:13px; font-weight:700; }
+ td.on .pct { display:block; font-size:10px; opacity:.95; }
+ .legend { font-size:12px; color:#8b949e; margin-top:10px; }
+ .legend span { display:inline-block; width:12px; height:12px; border-radius:2px; vertical-align:middle; margin:0 4px 0 10px; }
+ .vrow { margin-bottom:12px; }
+ .vlabel { font-size:13px; margin-bottom:3px; }
+ .vbar { background:#21262d; border-radius:5px; overflow:hidden; }
+ .vfill { background:#cf222e; color:#fff; font-size:12px; font-weight:700; padding:3px 8px; white-space:nowrap; border-radius:5px; min-width:32px; }
+ .vdates { color:#8b949e; font-size:11px; margin-top:2px; }
+ footer { color:#484f58; font-size:11px; margin-top:32px; }
+</style></head><body>
+ <h1>🥊 트레이딩 원칙 준수 대시보드</h1>
+ <div class="sub">본인 매매일지 기록 집계 · 기간 2026-06-30 ~ 2026-06-30 · 결과가 아니라 <b>원칙 준수</b>를 추적</div>
+
+ <div class="cards">
+   <div class="card"><div class="big">1</div><div class="lbl">기록일수</div></div>
+   <div class="card"><div class="big">46.7%</div><div class="lbl">평균 준수율</div></div>
+   <div class="card"><div class="big">🔥 0</div><div class="lbl">무위반 스트릭(일)</div></div>
+   <div class="card"><div class="big">7</div><div class="lbl">누적 위반(❌) 수</div></div>
+ </div>
+
+ <h2>📅 매매일지 달력 (✓ = 기록한 날)</h2>
+ <div class="cals"><table class="cal"><caption>2026년 6월</caption><thead><tr><th>일</th><th>월</th><th>화</th><th>수</th><th>목</th><th>금</th><th>토</th></tr></thead><tbody><tr><td class="empty"></td><td class="off"><span class="dnum">1</span></td><td class="off"><span class="dnum">2</span></td><td class="off"><span class="dnum">3</span></td><td class="off"><span class="dnum">4</span></td><td class="off"><span class="dnum">5</span></td><td class="off"><span class="dnum">6</span></td></tr><tr><td class="off"><span class="dnum">7</span></td><td class="off"><span class="dnum">8</span></td><td class="off"><span class="dnum">9</span></td><td class="off"><span class="dnum">10</span></td><td class="off"><span class="dnum">11</span></td><td class="off"><span class="dnum">12</span></td><td class="off"><span class="dnum">13</span></td></tr><tr><td class="off"><span class="dnum">14</span></td><td class="off"><span class="dnum">15</span></td><td class="off"><span class="dnum">16</span></td><td class="off"><span class="dnum">17</span></td><td class="off"><span class="dnum">18</span></td><td class="off"><span class="dnum">19</span></td><td class="off"><span class="dnum">20</span></td></tr><tr><td class="off"><span class="dnum">21</span></td><td class="off"><span class="dnum">22</span></td><td class="off"><span class="dnum">23</span></td><td class="off"><span class="dnum">24</span></td><td class="off"><span class="dnum">25</span></td><td class="off"><span class="dnum">26</span></td><td class="off"><span class="dnum">27</span></td></tr><tr><td class="off"><span class="dnum">28</span></td><td class="off"><span class="dnum">29</span></td><td class="on" style="background:#d4a72c" title="2026-06-30 · 준수율 47%"><span class="dnum">30</span><span class="chk">✓</span><span class="pct">47%</span></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td></tr></tbody></table></div>
+ <div class="legend">준수율:
+   <span style="background:#cf222e"></span>~39
+   <span style="background:#d4a72c"></span>40–59
+   <span style="background:#30a14e"></span>60–79
+   <span style="background:#216e39"></span>80+
+   <span style="background:#ebedf0"></span>채점불가
+ </div>
+
+ <h2>🔁 반복 위반 카운터 — "같은 실수 몇 번?"</h2>
+ <div class="vrow"><div class="vlabel"><b>W3</b> 충동/뇌피셜 금지</div><div class="vbar"><div class="vfill" style="width:100%">1회</div></div><div class="vdates">2026-06-30</div></div><div class="vrow"><div class="vlabel"><b>T1</b> 명시적 진입 신호</div><div class="vbar"><div class="vfill" style="width:100%">1회</div></div><div class="vdates">2026-06-30</div></div><div class="vrow"><div class="vlabel"><b>T2</b> 추격매 금지(선취매)</div><div class="vbar"><div class="vfill" style="width:100%">1회</div></div><div class="vdates">2026-06-30</div></div><div class="vrow"><div class="vlabel"><b>T3</b> 시초 뇌동매수 금지</div><div class="vbar"><div class="vfill" style="width:100%">1회</div></div><div class="vdates">2026-06-30</div></div><div class="vrow"><div class="vlabel"><b>H1</b> 손절가 설정(-2%)</div><div class="vbar"><div class="vfill" style="width:100%">1회</div></div><div class="vdates">2026-06-30</div></div><div class="vrow"><div class="vlabel"><b>H4</b> 칼손절(버티기 금지)</div><div class="vbar"><div class="vfill" style="width:100%">1회</div></div><div class="vdates">2026-06-30</div></div><div class="vrow"><div class="vlabel"><b>E2</b> 욕심 제어</div><div class="vbar"><div class="vfill" style="width:100%">1회</div></div><div class="vdates">2026-06-30</div></div>
+
+ <footer>generated by trading-coach · build_dashboard.py · 김민우(네프콘 BUY_TRADING_DATA)와 무관한 본인 일지 기록</footer>
+</body></html>
