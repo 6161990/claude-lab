@@ -40,45 +40,51 @@ def _table_cells(line):
 
 
 def parse_rulebook(path):
-    """TRADING_RULES.md를 파싱해 (개인기준[(항목,값)], 카테고리[(제목,[(ID,규칙)])]) 반환.
+    """TRADING_RULES.md를 파싱해 (개인기준[(항목,값)], 핵심[(ID,규칙)], 기타[(소제목,[(ID,규칙)])]) 반환.
     룰북이 단일 출처이므로 대시보드는 코드에 규칙을 복제하지 않는다."""
     if not os.path.exists(path):
-        return [], []
+        return [], [], []
     with open(path, encoding="utf-8") as f:
         lines = f.read().splitlines()
 
-    criteria, categories = [], []
-    section = None          # "criteria" | "rules" | None
-    cur_cat = None
+    criteria, core, others = [], [], []
+    mode = None          # "criteria" | "core" | "others" | None
+    cur_sub = None
     for ln in lines:
         if ln.startswith("## 내 기준"):
-            section = "criteria"
-            continue
+            mode = "criteria"; continue
+        if ln.startswith("## 핵심"):
+            mode = "core"; continue
+        if ln.startswith("## 기타"):
+            mode = "others"; cur_sub = None; continue
+        if ln.startswith("## "):
+            mode = None; continue
         if ln.startswith("### "):
-            section = "rules"
-            cur_cat = (_strip_md(ln[4:]), [])
-            categories.append(cur_cat)
+            if mode == "others":
+                cur_sub = (_strip_md(ln[4:]), [])
+                others.append(cur_sub)
             continue
-        if ln.startswith("#"):          # 다른 ## 섹션 진입
-            section = None
-            continue
+        if ln.startswith("#"):          # 문서 제목 등
+            mode = None; continue
         cells = _table_cells(ln)
         if not cells or len(cells) < 2:
             continue
         c0, c1 = _strip_md(cells[0]), _strip_md(cells[1])
-        if not c0 or c0.startswith("-") or c0 in ("항목", "ID"):
+        if not c0 or c0.startswith("-") or c0 in ("항목", "ID", "기호"):
             continue                    # 헤더/구분선
-        if section == "criteria":
+        if mode == "criteria":
             criteria.append((c0, c1))
-        elif section == "rules" and cur_cat is not None and re.match(r"^[A-Z]\d+$", c0):
-            cur_cat[1].append((c0, c1))
-    return criteria, categories
+        elif mode == "core" and re.match(r"^[A-Z]\d+$", c0):
+            core.append((c0, c1))
+        elif mode == "others" and cur_sub is not None and re.match(r"^[A-Z]\d+$", c0):
+            cur_sub[1].append((c0, c1))
+    return criteria, core, others
 
 
 def color_for(score):
     """준수율 → 색. 결과가 아니라 원칙 준수도를 색으로."""
     if score is None:
-        return "#ebedf0"  # 기록은 있으나 채점 불가
+        return "#9e9e9e"  # 기록은 있으나 채점 불가
     if score >= 80:
         return "#216e39"
     if score >= 60:
@@ -160,41 +166,50 @@ def main():
     months = sorted({(int(d[:4]), int(d[5:7])) for d in dates})
     cals = "".join(render_calendar(y, m, log) for y, m in months) or "<p>아직 기록 없음.</p>"
 
-    # --- 반복 위반 카운터 ---
+    # --- 반복 위반 카운터 (가로 막대 그래프) ---
     max_fail = max(fail_counter.values(), default=1)
     viol_rows = []
     for rid, n in fail_counter.most_common():
-        name = RULE_NAMES.get(rid, rid)
-        w = int(n / max_fail * 100)
-        dlist = ", ".join(fail_dates[rid])
+        name = _html.escape(RULE_NAMES.get(rid, rid))
+        w = max(round(n / max_fail * 100), 6)
+        dlist = _html.escape(", ".join(fail_dates[rid]))
         viol_rows.append(
-            f'<div class="vrow"><div class="vlabel"><b>{rid}</b> {name}</div>'
-            f'<div class="vbar"><div class="vfill" style="width:{w}%">{n}회</div></div>'
-            f'<div class="vdates">{dlist}</div></div>'
+            f'<div class="bar" title="{rid} {name} · {dlist}">'
+            f'<span class="blabel"><b>{rid}</b> {name}</span>'
+            f'<span class="btrack"><span class="bfill" style="width:{w}%"></span></span>'
+            f'<span class="bcount">{n}</span></div>'
         )
-    viol_html = "".join(viol_rows) or "<p>아직 위반 기록 없음. 🎉</p>"
+    viol_html = "".join(viol_rows) or '<p class="ok">아직 위반 없음 🎉</p>'
 
     # --- 매매원칙 (룰북 파싱) ---
-    criteria, categories = parse_rulebook(args.rules_md)
+    criteria, core, others = parse_rulebook(args.rules_md)
     crit_html = "".join(
         f'<div class="crit"><div class="ck">{_html.escape(k)}</div>'
         f'<div class="cv">{_html.escape(v)}</div></div>'
         for k, v in criteria
     )
-    cat_html = ""
-    for title, rules in categories:
+    core_html = "".join(
+        f'<div class="core"><span class="cid">{_html.escape(rid)}</span>'
+        f'<span class="crule">{_html.escape(rule)}</span></div>'
+        for rid, rule in core
+    )
+    principles_html = ""
+    if criteria or core_html:
+        principles_html = (
+            '<h2>📋 내 매매원칙 — 핵심 4 (이것만은 매일)</h2>'
+            + (f'<div class="crits">{crit_html}</div>' if crit_html else "")
+            + (f'<div class="cores">{core_html}</div>' if core_html else "")
+        )
+
+    # --- 기타 매매원칙 (맨 아래) ---
+    other_cats = ""
+    for title, rules in others:
         items = "".join(
             f'<li><b>{_html.escape(rid)}</b> {_html.escape(rule)}</li>' for rid, rule in rules
         )
         if items:
-            cat_html += f'<div class="rcat"><h3>{_html.escape(title)}</h3><ul>{items}</ul></div>'
-    principles_html = ""
-    if criteria or cat_html:
-        principles_html = (
-            '<h2>📋 내 매매원칙</h2>'
-            + (f'<div class="crits">{crit_html}</div>' if crit_html else "")
-            + (f'<div class="rcats">{cat_html}</div>' if cat_html else "")
-        )
+            other_cats += f'<div class="rcat"><h3>{_html.escape(title)}</h3><ul>{items}</ul></div>'
+    other_html = f'<h2>📌 기타 매매원칙</h2><div class="rcats">{other_cats}</div>' if other_cats else ""
 
     total_days = len(dates)
     period = f"{dates[0]} ~ {dates[-1]}" if dates else "—"
@@ -206,44 +221,54 @@ def main():
 <title>트레이딩 원칙 준수 대시보드</title>
 <style>
  :root {{ font-family: -apple-system, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif; }}
- body {{ margin:0; background:#0d1117; color:#e6edf3; padding:24px; }}
+ body {{ margin:0; background:#ffffff; color:#1f2328; padding:24px; }}
  h1 {{ font-size:22px; margin:0 0 4px; }}
- .sub {{ color:#8b949e; font-size:13px; margin-bottom:20px; }}
+ .sub {{ color:#57606a; font-size:13px; margin-bottom:20px; }}
  .cards {{ display:flex; gap:12px; flex-wrap:wrap; margin-bottom:24px; }}
- .card {{ background:#161b22; border:1px solid #30363d; border-radius:10px; padding:14px 18px; min-width:120px; }}
+ .card {{ background:#f6f8fa; border:1px solid #d0d7de; border-radius:10px; padding:14px 18px; min-width:120px; }}
  .card .big {{ font-size:26px; font-weight:700; }}
- .card .lbl {{ color:#8b949e; font-size:12px; }}
- h2 {{ font-size:16px; border-bottom:1px solid #30363d; padding-bottom:6px; margin:28px 0 14px; }}
+ .card .lbl {{ color:#57606a; font-size:12px; }}
+ h2 {{ font-size:16px; border-bottom:1px solid #d0d7de; padding-bottom:6px; margin:28px 0 14px; }}
+ /* 달력 + 위반 그래프 2단 */
+ .board {{ display:flex; gap:24px; align-items:flex-start; flex-wrap:wrap; }}
+ .board .col {{ flex:1; min-width:300px; }}
  .cals {{ display:flex; gap:18px; flex-wrap:wrap; }}
- table.cal {{ border-collapse:collapse; background:#161b22; border:1px solid #30363d; border-radius:8px; overflow:hidden; }}
- table.cal caption {{ font-weight:700; padding:8px; background:#21262d; }}
- table.cal th {{ color:#8b949e; font-size:11px; padding:4px 0; width:42px; }}
- table.cal td {{ height:58px; width:58px; text-align:center; vertical-align:top; border:1px solid #0d1117; position:relative; padding:2px; }}
- table.cal th {{ width:58px; }}
- td.empty {{ background:#0d1117; border-color:#0d1117; }}
- td.off .dnum {{ color:#484f58; font-size:12px; }}
+ table.cal {{ border-collapse:collapse; background:#fff; border:1px solid #d0d7de; border-radius:8px; overflow:hidden; }}
+ table.cal caption {{ font-weight:700; padding:8px; background:#f6f8fa; }}
+ table.cal th {{ color:#57606a; font-size:11px; padding:4px 0; width:58px; }}
+ table.cal td {{ height:58px; width:58px; text-align:center; vertical-align:top; border:1px solid #eaeef2; position:relative; padding:2px; }}
+ td.empty {{ background:#fff; border-color:#fff; }}
+ td.off .dnum {{ color:#afb8c1; font-size:12px; }}
  td.on {{ color:#fff; }}
- td.on .dnum {{ font-size:11px; opacity:.9; display:block; font-weight:700; }}
+ td.on .dnum {{ font-size:11px; opacity:.95; display:block; font-weight:700; }}
  td.on .pct {{ display:block; font-size:11px; opacity:.95; }}
- td.on .sym {{ display:block; font-size:9px; line-height:1.1; margin-top:1px; word-break:keep-all; opacity:.95; }}
- .crits {{ display:flex; gap:10px; flex-wrap:wrap; margin-bottom:16px; }}
- .crit {{ background:#161b22; border:1px solid #30363d; border-radius:8px; padding:8px 12px; }}
- .crit .ck {{ color:#8b949e; font-size:11px; }}
+ td.on .sym {{ display:block; font-size:9px; line-height:1.1; margin-top:1px; word-break:keep-all; opacity:.97; }}
+ .legend {{ font-size:12px; color:#57606a; margin-top:10px; }}
+ .legend span {{ display:inline-block; width:12px; height:12px; border-radius:2px; vertical-align:middle; margin:0 4px 0 10px; border:1px solid #d0d7de; }}
+ /* 위반 막대 그래프 */
+ .bar {{ display:flex; align-items:center; gap:8px; margin-bottom:9px; }}
+ .bar .blabel {{ width:120px; font-size:12px; text-align:right; color:#57606a; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }}
+ .bar .blabel b {{ color:#1f2328; }}
+ .bar .btrack {{ flex:1; background:#f0f1f3; border-radius:4px; height:18px; }}
+ .bar .bfill {{ display:block; height:18px; background:linear-gradient(90deg,#fa8b8b,#cf222e); border-radius:4px; }}
+ .bar .bcount {{ width:24px; font-size:13px; font-weight:700; color:#cf222e; }}
+ .ok {{ color:#1a7f37; font-size:14px; }}
+ /* 매매원칙 */
+ .crits {{ display:flex; gap:10px; flex-wrap:wrap; margin-bottom:14px; }}
+ .crit {{ background:#f6f8fa; border:1px solid #d0d7de; border-radius:8px; padding:8px 12px; }}
+ .crit .ck {{ color:#57606a; font-size:11px; }}
  .crit .cv {{ font-size:13px; font-weight:600; }}
+ .cores {{ display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:10px; }}
+ .core {{ display:flex; align-items:center; gap:10px; background:#ddf4ff; border:1px solid #54aeff; border-radius:8px; padding:10px 14px; }}
+ .core .cid {{ font-weight:800; color:#0969da; font-size:14px; }}
+ .core .crule {{ font-size:13px; font-weight:600; }}
  .rcats {{ display:flex; gap:16px; flex-wrap:wrap; }}
- .rcat {{ background:#161b22; border:1px solid #30363d; border-radius:8px; padding:6px 16px 10px; flex:1; min-width:240px; }}
- .rcat h3 {{ font-size:13px; color:#58a6ff; margin:10px 0 4px; }}
+ .rcat {{ background:#f6f8fa; border:1px solid #d0d7de; border-radius:8px; padding:6px 16px 10px; flex:1; min-width:220px; }}
+ .rcat h3 {{ font-size:13px; color:#0969da; margin:10px 0 4px; }}
  .rcat ul {{ margin:0; padding-left:16px; }}
- .rcat li {{ font-size:12px; line-height:1.55; color:#c9d1d9; }}
- .rcat li b {{ color:#e6edf3; }}
- .legend {{ font-size:12px; color:#8b949e; margin-top:10px; }}
- .legend span {{ display:inline-block; width:12px; height:12px; border-radius:2px; vertical-align:middle; margin:0 4px 0 10px; }}
- .vrow {{ margin-bottom:12px; }}
- .vlabel {{ font-size:13px; margin-bottom:3px; }}
- .vbar {{ background:#21262d; border-radius:5px; overflow:hidden; }}
- .vfill {{ background:#cf222e; color:#fff; font-size:12px; font-weight:700; padding:3px 8px; white-space:nowrap; border-radius:5px; min-width:32px; }}
- .vdates {{ color:#8b949e; font-size:11px; margin-top:2px; }}
- footer {{ color:#484f58; font-size:11px; margin-top:32px; }}
+ .rcat li {{ font-size:12px; line-height:1.55; color:#424a53; }}
+ .rcat li b {{ color:#1f2328; }}
+ footer {{ color:#afb8c1; font-size:11px; margin-top:32px; }}
 </style></head><body>
  <h1>🥊 트레이딩 원칙 준수 대시보드</h1>
  <div class="sub">본인 매매일지 기록 집계 · 기간 {period} · 결과가 아니라 <b>원칙 준수</b>를 추적</div>
@@ -257,18 +282,25 @@ def main():
 
  {principles_html}
 
- <h2>📅 매매일지 달력 (✓ = 기록한 날, 칸 아래 = 거래 종목)</h2>
- <div class="cals">{cals}</div>
- <div class="legend">준수율:
-   <span style="background:#cf222e"></span>~39
-   <span style="background:#d4a72c"></span>40–59
-   <span style="background:#30a14e"></span>60–79
-   <span style="background:#216e39"></span>80+
-   <span style="background:#ebedf0"></span>채점불가
+ <div class="board">
+   <div class="col">
+     <h2>📅 매매일지 달력 (✓ = 기록한 날, 칸 아래 = 종목)</h2>
+     <div class="cals">{cals}</div>
+     <div class="legend">준수율:
+       <span style="background:#cf222e"></span>~39
+       <span style="background:#d4a72c"></span>40–59
+       <span style="background:#30a14e"></span>60–79
+       <span style="background:#216e39"></span>80+
+       <span style="background:#9e9e9e"></span>채점불가
+     </div>
+   </div>
+   <div class="col">
+     <h2>🔁 반복 위반 — "같은 실수 몇 번?"</h2>
+     {viol_html}
+   </div>
  </div>
 
- <h2>🔁 반복 위반 카운터 — "같은 실수 몇 번?"</h2>
- {viol_html}
+ {other_html}
 
  <footer>generated by trading-coach · build_dashboard.py · 김민우(네프콘 BUY_TRADING_DATA)와 무관한 본인 일지 기록</footer>
 </body></html>
