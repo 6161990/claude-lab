@@ -1,4 +1,7 @@
 .generated
+data/
+__pycache__/
+*.pyc
 HELP.md
 .gradle
 build/
