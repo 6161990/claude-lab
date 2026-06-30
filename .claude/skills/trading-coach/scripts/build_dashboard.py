@@ -174,6 +174,28 @@ def main():
         )
     viol_html = "".join(viol_rows) or "<p>아직 위반 기록 없음. 🎉</p>"
 
+    # --- 매매원칙 (룰북 파싱) ---
+    criteria, categories = parse_rulebook(args.rules_md)
+    crit_html = "".join(
+        f'<div class="crit"><div class="ck">{_html.escape(k)}</div>'
+        f'<div class="cv">{_html.escape(v)}</div></div>'
+        for k, v in criteria
+    )
+    cat_html = ""
+    for title, rules in categories:
+        items = "".join(
+            f'<li><b>{_html.escape(rid)}</b> {_html.escape(rule)}</li>' for rid, rule in rules
+        )
+        if items:
+            cat_html += f'<div class="rcat"><h3>{_html.escape(title)}</h3><ul>{items}</ul></div>'
+    principles_html = ""
+    if criteria or cat_html:
+        principles_html = (
+            '<h2>📋 내 매매원칙</h2>'
+            + (f'<div class="crits">{crit_html}</div>' if crit_html else "")
+            + (f'<div class="rcats">{cat_html}</div>' if cat_html else "")
+        )
+
     total_days = len(dates)
     period = f"{dates[0]} ~ {dates[-1]}" if dates else "—"
     avg_s = f"{avg}%" if avg is not None else "—"
@@ -196,13 +218,24 @@ def main():
  table.cal {{ border-collapse:collapse; background:#161b22; border:1px solid #30363d; border-radius:8px; overflow:hidden; }}
  table.cal caption {{ font-weight:700; padding:8px; background:#21262d; }}
  table.cal th {{ color:#8b949e; font-size:11px; padding:4px 0; width:42px; }}
- table.cal td {{ height:46px; width:42px; text-align:center; vertical-align:top; border:1px solid #0d1117; position:relative; }}
+ table.cal td {{ height:58px; width:58px; text-align:center; vertical-align:top; border:1px solid #0d1117; position:relative; padding:2px; }}
+ table.cal th {{ width:58px; }}
  td.empty {{ background:#0d1117; border-color:#0d1117; }}
  td.off .dnum {{ color:#484f58; font-size:12px; }}
  td.on {{ color:#fff; }}
- td.on .dnum {{ font-size:11px; opacity:.85; display:block; }}
- td.on .chk {{ font-size:13px; font-weight:700; }}
- td.on .pct {{ display:block; font-size:10px; opacity:.95; }}
+ td.on .dnum {{ font-size:11px; opacity:.9; display:block; font-weight:700; }}
+ td.on .pct {{ display:block; font-size:11px; opacity:.95; }}
+ td.on .sym {{ display:block; font-size:9px; line-height:1.1; margin-top:1px; word-break:keep-all; opacity:.95; }}
+ .crits {{ display:flex; gap:10px; flex-wrap:wrap; margin-bottom:16px; }}
+ .crit {{ background:#161b22; border:1px solid #30363d; border-radius:8px; padding:8px 12px; }}
+ .crit .ck {{ color:#8b949e; font-size:11px; }}
+ .crit .cv {{ font-size:13px; font-weight:600; }}
+ .rcats {{ display:flex; gap:16px; flex-wrap:wrap; }}
+ .rcat {{ background:#161b22; border:1px solid #30363d; border-radius:8px; padding:6px 16px 10px; flex:1; min-width:240px; }}
+ .rcat h3 {{ font-size:13px; color:#58a6ff; margin:10px 0 4px; }}
+ .rcat ul {{ margin:0; padding-left:16px; }}
+ .rcat li {{ font-size:12px; line-height:1.55; color:#c9d1d9; }}
+ .rcat li b {{ color:#e6edf3; }}
  .legend {{ font-size:12px; color:#8b949e; margin-top:10px; }}
  .legend span {{ display:inline-block; width:12px; height:12px; border-radius:2px; vertical-align:middle; margin:0 4px 0 10px; }}
  .vrow {{ margin-bottom:12px; }}
@@ -222,7 +255,9 @@ def main():
    <div class="card"><div class="big">{sum(fail_counter.values())}</div><div class="lbl">누적 위반(❌) 수</div></div>
  </div>
 
- <h2>📅 매매일지 달력 (✓ = 기록한 날)</h2>
+ {principles_html}
+
+ <h2>📅 매매일지 달력 (✓ = 기록한 날, 칸 아래 = 거래 종목)</h2>
  <div class="cals">{cals}</div>
  <div class="legend">준수율:
    <span style="background:#cf222e"></span>~39
