@@ -15,6 +15,7 @@ import argparse
 import calendar
 import html as _html
 import json
+import math
 import os
 import re
 from collections import Counter, defaultdict
@@ -24,6 +25,56 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from update_scorecard import RULE_NAMES  # 룰 ID→이름 단일 출처
 
 WEEKDAYS = ["일", "월", "화", "수", "목", "금", "토"]
+
+# 규칙 ID 앞글자 → 한글 카테고리 (영문 약자 대신 한글 표기용)
+CAT_KO = {"M": "지수", "W": "종목", "T": "타이밍", "H": "리스크", "E": "기록"}
+
+# 도넛 세그먼트 색 (규칙별 고정 → 월이 바뀌어도 색 일관)
+DONUT_PALETTE = [
+    "#cf222e", "#fb8500", "#d4a72c", "#1a7f37", "#0969da",
+    "#8250df", "#bf3989", "#e16f24", "#2da44e", "#0550ae",
+    "#57606a", "#953800", "#116329", "#6639ba", "#a40e26",
+]
+_DSIZE, _DR, _DSW = 160, 58, 26
+_DCX = _DCY = _DSIZE / 2
+
+
+def ko_label(rid):
+    """W2 → '종목 · 매수 근거…' 식 한글 라벨. 약자 노출 안 함."""
+    return RULE_NAMES.get(rid, rid)
+
+
+def render_donut(title, counter, color_of):
+    """단일 도넛(SVG) + 범례. counter: {rule_id: count}. 월별로 재사용."""
+    total = sum(counter.values())
+    if total == 0:
+        return (f'<div class="donut-box"><div class="dtitle">{_html.escape(title)}</div>'
+                f'<p class="ok">위반 없음 🎉</p></div>')
+    circ = 2 * math.pi * _DR
+    segs, legend, acc = [], [], 0.0
+    for rid, n in counter.most_common():
+        frac = n / total
+        seg = frac * circ
+        color = color_of(rid)
+        name = _html.escape(ko_label(rid))
+        segs.append(
+            f'<circle cx="{_DCX}" cy="{_DCY}" r="{_DR}" fill="none" stroke="{color}" '
+            f'stroke-width="{_DSW}" stroke-dasharray="{seg:.2f} {circ - seg:.2f}" '
+            f'stroke-dashoffset="{-acc:.2f}" transform="rotate(-90 {_DCX} {_DCY})">'
+            f'<title>{name} {n}회 ({frac * 100:.0f}%)</title></circle>'
+        )
+        acc += seg
+        legend.append(
+            f'<div class="lgi"><span class="sw" style="background:{color}"></span>'
+            f'{name} <b>{n}</b> <span class="lgp">{frac * 100:.0f}%</span></div>'
+        )
+    svg = (
+        f'<svg viewBox="0 0 {_DSIZE} {_DSIZE}" width="160" height="160">{"".join(segs)}'
+        f'<text x="{_DCX}" y="{_DCY - 1}" text-anchor="middle" class="dcenter">{total}</text>'
+        f'<text x="{_DCX}" y="{_DCY + 16}" text-anchor="middle" class="dcsub">위반</text></svg>'
+    )
+    return (f'<div class="donut-box"><div class="dtitle">{_html.escape(title)}</div>'
+            f'<div class="donut">{svg}<div class="legend2">{"".join(legend)}</div></div></div>')
 
 
 def _strip_md(s):
@@ -166,46 +217,42 @@ def main():
     months = sorted({(int(d[:4]), int(d[5:7])) for d in dates})
     cals = "".join(render_calendar(y, m, log) for y, m in months) or "<p>아직 기록 없음.</p>"
 
-    # --- 반복 위반 카운터 (가로 막대 그래프) ---
-    max_fail = max(fail_counter.values(), default=1)
-    viol_rows = []
-    for rid, n in fail_counter.most_common():
-        name = _html.escape(RULE_NAMES.get(rid, rid))
-        w = max(round(n / max_fail * 100), 6)
-        dlist = _html.escape(", ".join(fail_dates[rid]))
-        viol_rows.append(
-            f'<div class="bar" title="{rid} {name} · {dlist}">'
-            f'<span class="blabel"><b>{rid}</b> {name}</span>'
-            f'<span class="btrack"><span class="bfill" style="width:{w}%"></span></span>'
-            f'<span class="bcount">{n}</span></div>'
-        )
-    viol_html = "".join(viol_rows) or '<p class="ok">아직 위반 없음 🎉</p>'
-
-    # --- 매매원칙 (룰북 파싱) ---
-    criteria, core, others = parse_rulebook(args.rules_md)
-    crit_html = "".join(
-        f'<div class="crit"><div class="ck">{_html.escape(k)}</div>'
-        f'<div class="cv">{_html.escape(v)}</div></div>'
-        for k, v in criteria
+    # --- 반복 위반: 월별 도넛 그래프 ---
+    month_fail = defaultdict(Counter)
+    for d in dates:
+        ym = d[:7]
+        for rid, v in log[d].get("verdicts", {}).items():
+            if v == "fail":
+                month_fail[ym][rid] += 1
+    color_map = {rid: DONUT_PALETTE[i % len(DONUT_PALETTE)]
+                 for i, rid in enumerate(sorted(fail_counter))}
+    color_of = lambda r: color_map.get(r, "#57606a")
+    donuts = "".join(
+        render_donut(f"{ym[:4]}년 {int(ym[5:7])}월", month_fail[ym], color_of)
+        for ym in sorted(month_fail)
     )
+    viol_html = donuts or '<p class="ok">아직 위반 없음 🎉</p>'
+
+    # --- 매매원칙 (룰북 파싱) · 핵심 4 규칙만 노출(개인 파라미터 카드는 제외) ---
+    _criteria, core, others = parse_rulebook(args.rules_md)
     core_html = "".join(
-        f'<div class="core"><span class="cid">{_html.escape(rid)}</span>'
+        f'<div class="core"><span class="cid">{_html.escape(CAT_KO.get(rid[0], rid))}</span>'
         f'<span class="crule">{_html.escape(rule)}</span></div>'
         for rid, rule in core
     )
     principles_html = ""
-    if criteria or core_html:
+    if core_html:
         principles_html = (
             '<h2>📋 내 매매원칙 — 핵심 4 (이것만은 매일)</h2>'
-            + (f'<div class="crits">{crit_html}</div>' if crit_html else "")
-            + (f'<div class="cores">{core_html}</div>' if core_html else "")
+            f'<div class="cores">{core_html}</div>'
         )
 
-    # --- 기타 매매원칙 (맨 아래) ---
+    # --- 기타 매매원칙 (맨 아래) · 영문 약자 대신 한글명 ---
     other_cats = ""
     for title, rules in others:
         items = "".join(
-            f'<li><b>{_html.escape(rid)}</b> {_html.escape(rule)}</li>' for rid, rule in rules
+            f'<li><b>{_html.escape(ko_label(rid))}</b> — {_html.escape(rule)}</li>'
+            for rid, rule in rules
         )
         if items:
             other_cats += f'<div class="rcat"><h3>{_html.escape(title)}</h3><ul>{items}</ul></div>'
@@ -245,19 +292,19 @@ def main():
  td.on .sym {{ display:block; font-size:9px; line-height:1.1; margin-top:1px; word-break:keep-all; opacity:.97; }}
  .legend {{ font-size:12px; color:#57606a; margin-top:10px; }}
  .legend span {{ display:inline-block; width:12px; height:12px; border-radius:2px; vertical-align:middle; margin:0 4px 0 10px; border:1px solid #d0d7de; }}
- /* 위반 막대 그래프 */
- .bar {{ display:flex; align-items:center; gap:8px; margin-bottom:9px; }}
- .bar .blabel {{ width:120px; font-size:12px; text-align:right; color:#57606a; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }}
- .bar .blabel b {{ color:#1f2328; }}
- .bar .btrack {{ flex:1; background:#f0f1f3; border-radius:4px; height:18px; }}
- .bar .bfill {{ display:block; height:18px; background:linear-gradient(90deg,#fa8b8b,#cf222e); border-radius:4px; }}
- .bar .bcount {{ width:24px; font-size:13px; font-weight:700; color:#cf222e; }}
+ /* 위반 도넛 그래프 (월별) */
+ .donut-box {{ margin-bottom:18px; }}
+ .dtitle {{ font-size:13px; font-weight:700; color:#1f2328; margin-bottom:6px; }}
+ .donut {{ display:flex; gap:14px; align-items:center; flex-wrap:wrap; }}
+ .dcenter {{ font-size:26px; font-weight:800; fill:#1f2328; }}
+ .dcsub {{ font-size:10px; fill:#57606a; }}
+ .legend2 {{ font-size:12px; }}
+ .legend2 .lgi {{ display:flex; align-items:center; gap:6px; margin-bottom:3px; color:#424a53; }}
+ .legend2 .sw {{ width:11px; height:11px; border-radius:2px; display:inline-block; }}
+ .legend2 b {{ color:#1f2328; }}
+ .legend2 .lgp {{ color:#57606a; }}
  .ok {{ color:#1a7f37; font-size:14px; }}
  /* 매매원칙 */
- .crits {{ display:flex; gap:10px; flex-wrap:wrap; margin-bottom:14px; }}
- .crit {{ background:#f6f8fa; border:1px solid #d0d7de; border-radius:8px; padding:8px 12px; }}
- .crit .ck {{ color:#57606a; font-size:11px; }}
- .crit .cv {{ font-size:13px; font-weight:600; }}
  .cores {{ display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:10px; }}
  .core {{ display:flex; align-items:center; gap:10px; background:#ddf4ff; border:1px solid #54aeff; border-radius:8px; padding:10px 14px; }}
  .core .cid {{ font-weight:800; color:#0969da; font-size:14px; }}
