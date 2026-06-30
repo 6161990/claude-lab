@@ -1,0 +1,25 @@
+{
+  "2026-06-30": {
+    "verdicts": {
+      "M1": "pass",
+      "M2": "partial",
+      "W1": "pass",
+      "W2": "pass",
+      "W3": "fail",
+      "T1": "fail",
+      "T2": "fail",
+      "T3": "fail",
+      "H1": "fail",
+      "H2": "partial",
+      "H3": "na",
+      "H4": "fail",
+      "H5": "na",
+      "H6": "pass",
+      "E1": "pass",
+      "E2": "fail",
+      "E3": "pass"
+    },
+    "score": 46.7,
+    "note": "지수읽기·종목선택·복기는 A급, 실행(추격·늦은손절·난잡)이 D급"
+  }
+}
