@@ -1,0 +1,190 @@
+{
+  "stock_code": "278470",
+  "stock_name": "에이피알",
+  "base_period": "2026.1Q",
+  "yoy_period": "2025.1Q",
+  "financial_type": "C",
+  "growth": {
+    "category_name": "성장성",
+    "category_key": "growth",
+    "average_grade": "A+",
+    "metrics": [
+      {
+        "name": "매출성장률",
+        "key": "revenue_growth",
+        "value": 123.06,
+        "formatted_value": "+123.1%",
+        "grade": "A+",
+        "unit": "%",
+        "description": "전년동기 대비 매출액 증가율"
+      },
+      {
+        "name": "영업이익성장률",
+        "key": "operating_income_growth",
+        "value": 166.82,
+        "formatted_value": "+166.8%",
+        "grade": "A+",
+        "unit": "%",
+        "description": "전년동기 대비 영업이익 증가율"
+      },
+      {
+        "name": "순이익성장률",
+        "key": "net_income_growth",
+        "value": 134.88,
+        "formatted_value": "+134.9%",
+        "grade": "A+",
+        "unit": "%",
+        "description": "전년동기 대비 순이익 증가율"
+      },
+      {
+        "name": "총자산성장률",
+        "key": "total_assets_growth",
+        "value": 63.97,
+        "formatted_value": "+64.0%",
+        "grade": "A+",
+        "unit": "%",
+        "description": "전년동기 대비 총자산 증가율"
+      }
+    ]
+  },
+  "profitability": {
+    "category_name": "수익성",
+    "category_key": "profitability",
+    "average_grade": "A+",
+    "metrics": [
+      {
+        "name": "ROE",
+        "key": "roe",
+        "value": 98.5,
+        "formatted_value": "+98.5%",
+        "grade": "A+",
+        "unit": "%",
+        "description": "자기자본이익률 (순이익/자본)"
+      },
+      {
+        "name": "ROA",
+        "key": "roa",
+        "value": 54.39,
+        "formatted_value": "+54.4%",
+        "grade": "A+",
+        "unit": "%",
+        "description": "총자산이익률 (순이익/총자산)"
+      },
+      {
+        "name": "영업이익률",
+        "key": "operating_margin",
+        "value": 24.54,
+        "formatted_value": "+24.5%",
+        "grade": "A+",
+        "unit": "%",
+        "description": "매출액 대비 영업이익 비율"
+      },
+      {
+        "name": "순이익률",
+        "key": "net_margin",
+        "value": 19.77,
+        "formatted_value": "+19.8%",
+        "grade": "A+",
+        "unit": "%",
+        "description": "매출액 대비 순이익 비율"
+      }
+    ]
+  },
+  "stability": {
+    "category_name": "안정성",
+    "category_key": "stability",
+    "average_grade": "A",
+    "metrics": [
+      {
+        "name": "부채비율",
+        "key": "debt_ratio",
+        "value": 88.12,
+        "formatted_value": "+88.1%",
+        "grade": "A",
+        "unit": "%",
+        "description": "총부채/자기자본 (낮을수록 안정적)"
+      },
+      {
+        "name": "유동비율",
+        "key": "current_ratio",
+        "value": 202.83,
+        "formatted_value": "+202.8%",
+        "grade": "A+",
+        "unit": "%",
+        "description": "유동자산/유동부채 (높을수록 안정적)"
+      },
+      {
+        "name": "영업CF/순이익",
+        "key": "operating_cf_ratio",
+        "value": 3.67,
+        "formatted_value": "+3.7%",
+        "grade": "C",
+        "unit": "%",
+        "description": "영업현금흐름/순이익 비율"
+      },
+      {
+        "name": "FCF/순이익",
+        "key": "fcf_ratio",
+        "value": 2.22,
+        "formatted_value": "+2.2%",
+        "grade": "B",
+        "unit": "%",
+        "description": "잉여현금흐름/순이익 비율"
+      }
+    ]
+  },
+  "valuation": {
+    "category_name": "밸류에이션",
+    "category_key": "valuation",
+    "average_grade": "D",
+    "metrics": [
+      {
+        "name": "PER",
+        "key": "per",
+        "value": 50.04,
+        "formatted_value": "50.04배",
+        "grade": "D",
+        "unit": "배",
+        "description": "주가수익비율 (낮을수록 저평가)"
+      },
+      {
+        "name": "PBR",
+        "key": "pbr",
+        "value": 32.37,
+        "formatted_value": "32.37배",
+        "grade": "D",
+        "unit": "배",
+        "description": "주가순자산비율 (낮을수록 저평가)"
+      },
+      {
+        "name": "EPS",
+        "key": "eps",
+        "value": 7704.0,
+        "formatted_value": "7,704원",
+        "grade": "-",
+        "unit": "원",
+        "description": "주당순이익"
+      },
+      {
+        "name": "BPS",
+        "key": "bps",
+        "value": 11910.0,
+        "formatted_value": "1.2만원",
+        "grade": "-",
+        "unit": "원",
+        "description": "주당순자산"
+      },
+      {
+        "name": "배당수익률",
+        "key": "dividend_yield",
+        "value": null,
+        "formatted_value": "-",
+        "grade": "-",
+        "unit": "%",
+        "description": "주당배당금/주가"
+      }
+    ]
+  },
+  "overall_grade": "A",
+  "status": "success"
+}
