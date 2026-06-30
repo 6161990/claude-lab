@@ -29,11 +29,11 @@ WEEKDAYS = ["일", "월", "화", "수", "목", "금", "토"]
 # 규칙 ID 앞글자 → 한글 카테고리 (영문 약자 대신 한글 표기용)
 CAT_KO = {"M": "지수", "W": "종목", "T": "타이밍", "H": "리스크", "E": "기록"}
 
-# 도넛 세그먼트 색 (규칙별 고정 → 월이 바뀌어도 색 일관)
+# 도넛 세그먼트 색 — 채도 낮춘 차분한 톤 (규칙별 고정 → 월이 바뀌어도 일관)
 DONUT_PALETTE = [
-    "#cf222e", "#fb8500", "#d4a72c", "#1a7f37", "#0969da",
-    "#8250df", "#bf3989", "#e16f24", "#2da44e", "#0550ae",
-    "#57606a", "#953800", "#116329", "#6639ba", "#a40e26",
+    "#5b7c99", "#a07e56", "#7a9e7e", "#9c7a8a", "#c08a5e",
+    "#6d8a96", "#8a7ca8", "#b0846f", "#7f9183", "#94789a",
+    "#8c9bb0", "#a8906a", "#6f8f88", "#9e8090", "#b09a72",
 ]
 _DSIZE, _DR, _DSW = 160, 58, 26
 _DCX = _DCY = _DSIZE / 2
@@ -49,7 +49,7 @@ def render_donut(title, counter, color_of):
     total = sum(counter.values())
     if total == 0:
         return (f'<div class="donut-box"><div class="dtitle">{_html.escape(title)}</div>'
-                f'<p class="ok">위반 없음 🎉</p></div>')
+                f'<p class="ok">위반 없음</p></div>')
     circ = 2 * math.pi * _DR
     segs, legend, acc = [], [], 0.0
     for rid, n in counter.most_common():
@@ -132,17 +132,72 @@ def parse_rulebook(path):
     return criteria, core, others
 
 
+def _md_inline(s):
+    s = _html.escape(s)
+    s = re.sub(r"\*\*(.+?)\*\*", r"<strong>\1</strong>", s)
+    s = re.sub(r"`(.+?)`", r"<code>\1</code>", s)
+    s = re.sub(r"\[(.+?)\]\((.+?)\)", r'<a href="\2" target="_blank" rel="noopener">\1</a>', s)
+    return s
+
+
+def _md_table(rows):
+    parsed = [c for c in (_table_cells(r) for r in rows) if c]
+    if not parsed:
+        return ""
+    header, body = parsed[0], parsed[1:]
+    if body and all(set(c) <= set("-: ") for c in body[0]):  # 구분선 제거
+        body = body[1:]
+    th = "".join(f"<th>{_md_inline(c)}</th>" for c in header)
+    trs = "".join("<tr>" + "".join(f"<td>{_md_inline(c)}</td>" for c in r) + "</tr>" for r in body)
+    return f'<table class="md"><thead><tr>{th}</tr></thead><tbody>{trs}</tbody></table>'
+
+
+def md_to_html(md):
+    """피드백 .md(내가 직접 쓰는 포맷)를 상세 패널용 HTML로 변환."""
+    lines = md.splitlines()
+    out, i = [], 0
+    while i < len(lines):
+        ln = lines[i]
+        if not ln.strip():
+            i += 1; continue
+        if ln.startswith("### "):
+            out.append(f"<h4>{_md_inline(ln[4:])}</h4>"); i += 1; continue
+        if ln.startswith("## "):
+            out.append(f"<h3>{_md_inline(ln[3:])}</h3>"); i += 1; continue
+        if ln.startswith("# "):
+            out.append(f"<h2>{_md_inline(ln[2:])}</h2>"); i += 1; continue
+        if ln.startswith("---"):
+            out.append("<hr>"); i += 1; continue
+        if ln.startswith(">"):
+            buf = []
+            while i < len(lines) and lines[i].startswith(">"):
+                buf.append(_md_inline(lines[i].lstrip(">").strip())); i += 1
+            out.append("<blockquote>" + "<br>".join(buf) + "</blockquote>"); continue
+        if ln.lstrip().startswith("|"):
+            tbl = []
+            while i < len(lines) and lines[i].lstrip().startswith("|"):
+                tbl.append(lines[i]); i += 1
+            out.append(_md_table(tbl)); continue
+        if ln.lstrip().startswith(("- ", "* ")):
+            buf = []
+            while i < len(lines) and lines[i].lstrip().startswith(("- ", "* ")):
+                buf.append(f"<li>{_md_inline(lines[i].lstrip()[2:])}</li>"); i += 1
+            out.append("<ul>" + "".join(buf) + "</ul>"); continue
+        out.append(f"<p>{_md_inline(ln)}</p>"); i += 1
+    return "\n".join(out)
+
+
 def color_for(score):
     """준수율 → 색. 결과가 아니라 원칙 준수도를 색으로."""
     if score is None:
-        return "#9e9e9e"  # 기록은 있으나 채점 불가
+        return "#c4c9d0"  # 기록은 있으나 채점 불가
     if score >= 80:
-        return "#216e39"
+        return "#3f7d5a"
     if score >= 60:
-        return "#30a14e"
+        return "#6b9b80"
     if score >= 40:
-        return "#d4a72c"
-    return "#cf222e"
+        return "#c4a35a"
+    return "#bd7b73"
 
 
 def render_calendar(year, month, log):
@@ -164,8 +219,9 @@ def render_calendar(year, month, log):
                 sym_html = f'<span class="sym">{sym}</span>' if sym else ""
                 tip = f"{key} · 준수율 {s}" + (f" · {sym}" if sym else "")
                 cells.append(
-                    f'<td class="on" style="background:{bg}" title="{tip}">'
-                    f'<span class="dnum">{d} ✓</span>'
+                    f'<td class="on" style="background:{bg}" title="{tip}" '
+                    f'data-date="{key}" onclick="showDay(\'{key}\')">'
+                    f'<span class="dnum">{d}</span>'
                     f'<span class="pct">{s}</span>{sym_html}</td>'
                 )
             else:
@@ -181,6 +237,7 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--log", default="coach_feedback/coach_log.json")
     ap.add_argument("--rules-md", default="TRADING_RULES.md", help="매매원칙 출처")
+    ap.add_argument("--feedback-dir", default="coach_feedback", help="일별 상세 피드백 .md 위치")
     ap.add_argument("--out", default="docs/index.html")
     args = ap.parse_args()
 
@@ -231,7 +288,7 @@ def main():
         render_donut(f"{ym[:4]}년 {int(ym[5:7])}월", month_fail[ym], color_of)
         for ym in sorted(month_fail)
     )
-    viol_html = donuts or '<p class="ok">아직 위반 없음 🎉</p>'
+    viol_html = donuts or '<p class="ok">아직 위반 없음</p>'
 
     # --- 매매원칙 (룰북 파싱) · 핵심 4 규칙만 노출(개인 파라미터 카드는 제외) ---
     _criteria, core, others = parse_rulebook(args.rules_md)
@@ -243,7 +300,7 @@ def main():
     principles_html = ""
     if core_html:
         principles_html = (
-            '<h2>📋 내 매매원칙 — 핵심 4 (이것만은 매일)</h2>'
+            '<h2>내 매매원칙 — 핵심 4 (이것만은 매일)</h2>'
             f'<div class="cores">{core_html}</div>'
         )
 
@@ -256,7 +313,35 @@ def main():
         )
         if items:
             other_cats += f'<div class="rcat"><h3>{_html.escape(title)}</h3><ul>{items}</ul></div>'
-    other_html = f'<h2>📌 기타 매매원칙</h2><div class="rcats">{other_cats}</div>' if other_cats else ""
+    other_html = f'<h2>기타 매매원칙</h2><div class="rcats">{other_cats}</div>' if other_cats else ""
+
+    # --- 일별 한 줄 요약 피드 + 날짜 클릭 상세(피드백 .md) ---
+    feed_items, detail_blocks = [], []
+    for idx, d in enumerate(reversed(dates)):
+        e = log[d]
+        score = e.get("score")
+        s = f"{score:.0f}%" if score is not None else "—"
+        bg = color_for(score)
+        sym = _html.escape(e.get("symbol", "") or "")
+        note = _html.escape(e.get("note", "") or "")
+        feed_items.append(
+            f'<div class="feed" data-date="{d}" onclick="showDay(\'{d}\')">'
+            f'<span class="fbadge" style="background:{bg}">{s}</span>'
+            f'<span class="fmeta"><span class="fdate">{d}</span>'
+            f'<span class="fsym">{sym}</span></span>'
+            f'<span class="fnote">{note}</span></div>'
+        )
+        fp = os.path.join(args.feedback_dir, f"{d}.md")
+        if os.path.exists(fp):
+            with open(fp, encoding="utf-8") as fh:
+                body = md_to_html(fh.read())
+        else:
+            body = f"<p class='muted'>이 날의 상세 피드백 파일이 없습니다 ({d}).</p>"
+        show = "block" if idx == 0 else "none"
+        detail_blocks.append(f'<div class="detail" id="detail-{d}" style="display:{show}">{body}</div>')
+    feed_html = "".join(feed_items) or '<p class="muted">아직 기록 없음.</p>'
+    detail_html = "".join(detail_blocks) or '<p class="muted">기록이 쌓이면 여기에 상세 분석이 표시됩니다.</p>'
+    latest = dates[-1] if dates else ""
 
     total_days = len(dates)
     period = f"{dates[0]} ~ {dates[-1]}" if dates else "—"
@@ -268,88 +353,136 @@ def main():
 <title>트레이딩 원칙 준수 대시보드</title>
 <style>
  :root {{ font-family: -apple-system, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif; }}
- body {{ margin:0; background:#ffffff; color:#1f2328; padding:24px; }}
- h1 {{ font-size:22px; margin:0 0 4px; }}
- .sub {{ color:#57606a; font-size:13px; margin-bottom:20px; }}
- .cards {{ display:flex; gap:12px; flex-wrap:wrap; margin-bottom:24px; }}
- .card {{ background:#f6f8fa; border:1px solid #d0d7de; border-radius:10px; padding:14px 18px; min-width:120px; }}
- .card .big {{ font-size:26px; font-weight:700; }}
+ body {{ margin:0; background:#ffffff; color:#24292f; padding:28px; max-width:1180px; }}
+ h1 {{ font-size:21px; margin:0 0 4px; font-weight:700; }}
+ .sub {{ color:#57606a; font-size:13px; margin-bottom:22px; }}
+ .muted {{ color:#57606a; font-size:13px; }}
+ .cards {{ display:flex; gap:12px; flex-wrap:wrap; margin-bottom:8px; }}
+ .card {{ background:#f6f8fa; border:1px solid #d8dee4; border-radius:10px; padding:14px 18px; min-width:118px; }}
+ .card .big {{ font-size:25px; font-weight:700; }}
  .card .lbl {{ color:#57606a; font-size:12px; }}
- h2 {{ font-size:16px; border-bottom:1px solid #d0d7de; padding-bottom:6px; margin:28px 0 14px; }}
- /* 달력 + 위반 그래프 2단 */
- .board {{ display:flex; gap:24px; align-items:flex-start; flex-wrap:wrap; }}
+ h2 {{ font-size:15px; border-bottom:1px solid #e1e4e8; padding-bottom:6px; margin:30px 0 14px; font-weight:600; }}
+ .board {{ display:flex; gap:28px; align-items:flex-start; flex-wrap:wrap; }}
  .board .col {{ flex:1; min-width:300px; }}
  .cals {{ display:flex; gap:18px; flex-wrap:wrap; }}
- table.cal {{ border-collapse:collapse; background:#fff; border:1px solid #d0d7de; border-radius:8px; overflow:hidden; }}
- table.cal caption {{ font-weight:700; padding:8px; background:#f6f8fa; }}
- table.cal th {{ color:#57606a; font-size:11px; padding:4px 0; width:58px; }}
- table.cal td {{ height:58px; width:58px; text-align:center; vertical-align:top; border:1px solid #eaeef2; position:relative; padding:2px; }}
+ table.cal {{ border-collapse:collapse; background:#fff; border:1px solid #d8dee4; border-radius:8px; overflow:hidden; }}
+ table.cal caption {{ font-weight:600; padding:8px; background:#f6f8fa; font-size:13px; }}
+ table.cal th {{ color:#8a939d; font-size:11px; padding:4px 0; width:54px; font-weight:500; }}
+ table.cal td {{ height:54px; width:54px; text-align:center; vertical-align:top; border:1px solid #eef1f4; position:relative; padding:3px 2px; }}
  td.empty {{ background:#fff; border-color:#fff; }}
- td.off .dnum {{ color:#afb8c1; font-size:12px; }}
- td.on {{ color:#fff; }}
- td.on .dnum {{ font-size:11px; opacity:.95; display:block; font-weight:700; }}
- td.on .pct {{ display:block; font-size:11px; opacity:.95; }}
- td.on .sym {{ display:block; font-size:9px; line-height:1.1; margin-top:1px; word-break:keep-all; opacity:.97; }}
- .legend {{ font-size:12px; color:#57606a; margin-top:10px; }}
- .legend span {{ display:inline-block; width:12px; height:12px; border-radius:2px; vertical-align:middle; margin:0 4px 0 10px; border:1px solid #d0d7de; }}
- /* 위반 도넛 그래프 (월별) */
- .donut-box {{ margin-bottom:18px; }}
- .dtitle {{ font-size:13px; font-weight:700; color:#1f2328; margin-bottom:6px; }}
- .donut {{ display:flex; gap:14px; align-items:center; flex-wrap:wrap; }}
- .dcenter {{ font-size:26px; font-weight:800; fill:#1f2328; }}
- .dcsub {{ font-size:10px; fill:#57606a; }}
+ td.off .dnum {{ color:#c2c8ce; font-size:12px; }}
+ td.on {{ color:#fff; cursor:pointer; }}
+ td.on:hover {{ filter:brightness(0.94); }}
+ td.on.sel {{ outline:3px solid #2f4858; outline-offset:-3px; }}
+ td.on .dnum {{ font-size:11px; opacity:.9; display:block; font-weight:600; }}
+ td.on .pct {{ display:block; font-size:12px; font-weight:700; }}
+ td.on .sym {{ display:block; font-size:9px; line-height:1.1; margin-top:1px; word-break:keep-all; opacity:.95; }}
+ .legend {{ font-size:11px; color:#8a939d; margin-top:10px; }}
+ .legend span {{ display:inline-block; width:11px; height:11px; border-radius:2px; vertical-align:middle; margin:0 3px 0 10px; }}
+ /* 위반 도넛 (월별) */
+ .donut-box {{ margin-bottom:16px; }}
+ .dtitle {{ font-size:13px; font-weight:600; color:#24292f; margin-bottom:6px; }}
+ .donut {{ display:flex; gap:16px; align-items:center; flex-wrap:wrap; }}
+ .dcenter {{ font-size:24px; font-weight:700; fill:#24292f; }}
+ .dcsub {{ font-size:10px; fill:#8a939d; }}
  .legend2 {{ font-size:12px; }}
- .legend2 .lgi {{ display:flex; align-items:center; gap:6px; margin-bottom:3px; color:#424a53; }}
- .legend2 .sw {{ width:11px; height:11px; border-radius:2px; display:inline-block; }}
- .legend2 b {{ color:#1f2328; }}
- .legend2 .lgp {{ color:#57606a; }}
- .ok {{ color:#1a7f37; font-size:14px; }}
- /* 매매원칙 */
- .cores {{ display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:10px; }}
- .core {{ display:flex; align-items:center; gap:10px; background:#ddf4ff; border:1px solid #54aeff; border-radius:8px; padding:10px 14px; }}
- .core .cid {{ font-weight:800; color:#0969da; font-size:14px; }}
- .core .crule {{ font-size:13px; font-weight:600; }}
+ .legend2 .lgi {{ display:flex; align-items:center; gap:7px; margin-bottom:4px; color:#424a53; }}
+ .legend2 .sw {{ width:10px; height:10px; border-radius:2px; display:inline-block; }}
+ .legend2 b {{ color:#24292f; }}
+ .legend2 .lgp {{ color:#8a939d; }}
+ .ok {{ color:#3f7d5a; font-size:13px; }}
+ /* 핵심 원칙 */
+ .cores {{ display:grid; grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); gap:10px; }}
+ .core {{ display:flex; align-items:center; gap:10px; background:#f6f8fa; border:1px solid #d8dee4; border-radius:8px; padding:11px 14px; }}
+ .core .cid {{ font-weight:700; color:#2f4858; font-size:12px; background:#e7ecf0; padding:2px 8px; border-radius:5px; white-space:nowrap; }}
+ .core .crule {{ font-size:13px; font-weight:500; }}
+ /* 일별 피드 */
+ .feed {{ display:flex; align-items:center; gap:11px; padding:9px 11px; border:1px solid #e8ebef; border-radius:8px; margin-bottom:6px; cursor:pointer; }}
+ .feed:hover {{ background:#f6f8fa; }}
+ .feed.sel {{ border-color:#2f4858; background:#f0f3f5; }}
+ .feed .fbadge {{ color:#fff; font-size:11px; font-weight:700; padding:3px 8px; border-radius:10px; min-width:40px; text-align:center; }}
+ .feed .fmeta {{ display:flex; flex-direction:column; line-height:1.25; }}
+ .feed .fdate {{ font-size:12px; font-weight:600; }}
+ .feed .fsym {{ font-size:11px; color:#8a939d; }}
+ .feed .fnote {{ font-size:12px; color:#424a53; flex:1; }}
+ /* 상세 패널 */
+ .detailwrap {{ border:1px solid #d8dee4; border-radius:10px; padding:6px 24px 20px; background:#fbfcfd; }}
+ .detail h2 {{ font-size:17px; border:0; margin:16px 0 4px; }}
+ .detail h3 {{ font-size:14px; margin:18px 0 6px; border-bottom:1px solid #eef1f4; padding-bottom:4px; }}
+ .detail h4 {{ font-size:13px; margin:12px 0 4px; color:#57606a; }}
+ .detail p {{ font-size:13px; line-height:1.65; }}
+ .detail ul {{ font-size:13px; line-height:1.65; padding-left:18px; }}
+ .detail blockquote {{ border-left:3px solid #d8dee4; margin:10px 0; padding:6px 14px; color:#57606a; font-size:13px; background:#f6f8fa; border-radius:0 6px 6px 0; }}
+ .detail hr {{ border:0; border-top:1px solid #eef1f4; margin:16px 0; }}
+ .detail code {{ background:#eef1f4; padding:1px 5px; border-radius:3px; font-size:12px; }}
+ table.md {{ border-collapse:collapse; width:100%; font-size:12px; margin:10px 0; }}
+ table.md th, table.md td {{ border:1px solid #e8ebef; padding:6px 9px; text-align:left; vertical-align:top; }}
+ table.md th {{ background:#f6f8fa; font-weight:600; }}
+ /* 기타 원칙 */
  .rcats {{ display:flex; gap:16px; flex-wrap:wrap; }}
- .rcat {{ background:#f6f8fa; border:1px solid #d0d7de; border-radius:8px; padding:6px 16px 10px; flex:1; min-width:220px; }}
- .rcat h3 {{ font-size:13px; color:#0969da; margin:10px 0 4px; }}
+ .rcat {{ background:#f6f8fa; border:1px solid #d8dee4; border-radius:8px; padding:6px 16px 10px; flex:1; min-width:220px; }}
+ .rcat h3 {{ font-size:13px; color:#2f4858; margin:10px 0 4px; }}
  .rcat ul {{ margin:0; padding-left:16px; }}
- .rcat li {{ font-size:12px; line-height:1.55; color:#424a53; }}
- .rcat li b {{ color:#1f2328; }}
- footer {{ color:#afb8c1; font-size:11px; margin-top:32px; }}
+ .rcat li {{ font-size:12px; line-height:1.6; color:#424a53; }}
+ .rcat li b {{ color:#24292f; }}
+ footer {{ color:#c2c8ce; font-size:11px; margin-top:34px; }}
 </style></head><body>
- <h1>🥊 트레이딩 원칙 준수 대시보드</h1>
+ <h1>트레이딩 원칙 준수 대시보드</h1>
  <div class="sub">본인 매매일지 기록 집계 · 기간 {period} · 결과가 아니라 <b>원칙 준수</b>를 추적</div>
 
  <div class="cards">
    <div class="card"><div class="big">{total_days}</div><div class="lbl">기록일수</div></div>
    <div class="card"><div class="big">{avg_s}</div><div class="lbl">평균 준수율</div></div>
-   <div class="card"><div class="big">🔥 {streak}</div><div class="lbl">무위반 스트릭(일)</div></div>
-   <div class="card"><div class="big">{sum(fail_counter.values())}</div><div class="lbl">누적 위반(❌) 수</div></div>
+   <div class="card"><div class="big">{streak}</div><div class="lbl">무위반 스트릭(일)</div></div>
+   <div class="card"><div class="big">{sum(fail_counter.values())}</div><div class="lbl">누적 위반 수</div></div>
  </div>
 
  {principles_html}
 
  <div class="board">
    <div class="col">
-     <h2>📅 매매일지 달력 (✓ = 기록한 날, 칸 아래 = 종목)</h2>
+     <h2>매매일지 달력 <span class="muted" style="font-weight:400">— 칸을 클릭하면 상세</span></h2>
      <div class="cals">{cals}</div>
-     <div class="legend">준수율:
-       <span style="background:#cf222e"></span>~39
-       <span style="background:#d4a72c"></span>40–59
-       <span style="background:#30a14e"></span>60–79
-       <span style="background:#216e39"></span>80+
-       <span style="background:#9e9e9e"></span>채점불가
+     <div class="legend">준수율
+       <span style="background:#bd7b73"></span>~39
+       <span style="background:#c4a35a"></span>40–59
+       <span style="background:#6b9b80"></span>60–79
+       <span style="background:#3f7d5a"></span>80+
+       <span style="background:#c4c9d0"></span>채점불가
      </div>
-   </div>
-   <div class="col">
-     <h2>🔁 반복 위반 — "같은 실수 몇 번?"</h2>
+     <h2>반복 위반 — 같은 실수 몇 번?</h2>
      {viol_html}
    </div>
+   <div class="col">
+     <h2>일별 한 줄 요약 <span class="muted" style="font-weight:400">— 클릭하면 상세</span></h2>
+     {feed_html}
+   </div>
  </div>
+
+ <h2 id="detailtop">상세 분석</h2>
+ <div class="detailwrap" id="detailwrap">{detail_html}</div>
 
  {other_html}
 
  <footer>generated by trading-coach · build_dashboard.py · 김민우(네프콘 BUY_TRADING_DATA)와 무관한 본인 일지 기록</footer>
+ <script>
+ function showDay(d) {{
+   var ds = document.querySelectorAll('.detail');
+   for (var i=0;i<ds.length;i++) ds[i].style.display='none';
+   var el = document.getElementById('detail-'+d);
+   if (el) el.style.display='block';
+   var sel = document.querySelectorAll('[data-date]');
+   for (var j=0;j<sel.length;j++) sel[j].classList.toggle('sel', sel[j].getAttribute('data-date')===d);
+   var top = document.getElementById('detailtop');
+   if (top) top.scrollIntoView({{behavior:'smooth', block:'start'}});
+ }}
+ window.addEventListener('DOMContentLoaded', function() {{
+   var d = "{latest}";
+   if (!d) return;
+   var sel = document.querySelectorAll('[data-date]');
+   for (var j=0;j<sel.length;j++) sel[j].classList.toggle('sel', sel[j].getAttribute('data-date')===d);
+ }});
+ </script>
 </body></html>
 """
 
