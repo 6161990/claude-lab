@@ -46,7 +46,7 @@ description: "한국시장 트레이딩 매매일지(텍스트 붙여넣기 또�
 `coach_feedback/<YYYY-MM-DD>.md` 생성:
 - **헤더**: 날짜 · 준수율 % · 한 줄 총평.
 - **✅ 잘한 점 / ❌ 위반·개선 / ⚠️ 아슬아슬** 요약.
-- **규칙별 채점표**: ID · 규칙 · 판정 · 근거(인용) · 코칭.
+- **규칙별 채점표**: 규칙(한글명) · 판정 · 근거(인용) · 코칭. *영문 코드 대신 한글 규칙명 사용.*
 - **🎯 오늘의 액션 아이템 1개**: 내일 딱 하나만 고치기 (과부하 금지 — 훈련사는 한 번에 하나).
 - **반복 위반 경고**: 누적 로그 참조하여 "N일 연속 ○○ 위반" 같은 패턴 명시.
 
@@ -55,11 +55,15 @@ description: "한국시장 트레이딩 매매일지(텍스트 붙여넣기 또�
 python3 .claude/skills/trading-coach/scripts/update_scorecard.py \
     --date <YYYY-MM-DD> \
     --rules <verdicts.json> \
+    --reasons <reasons.json> \
+    --symbol "<종목명>" \
     --note "<한 줄 총평>" \
     --log coach_feedback/coach_log.json \
     --out coach_feedback/SCORECARD.md
 ```
 - `verdicts.json`: `{"W1":"pass","T2":"fail",...}` (pass/partial/fail/na).
+- `reasons.json`: 위반(`fail`) 규칙의 **한 줄 근거** `{"T2":"거래대금 터진 뒤 뒤늦게 진입", ...}` → 대시보드 "반복 위반"에 *어느 날·무엇 때문에*로 표시된다. 근거는 일지 사실 기반으로 간결하게.
+- 사용자에게 보이는 글(피드백 리포트·근거·대시보드)에는 **영문 규칙코드(W3/T3 등) 노출 금지** → 항상 한글 규칙명으로 풀어 쓴다. 코드는 내부 채점용으로만.
 - 같은 날짜는 덮어쓰기(증분). `coach_log.json` 갱신 후 `SCORECARD.md` 재생성:
   일자별 준수율 추이 · 규칙별 누적 위반 빈도 TOP · 연속 무위반 스트릭 · 추세(개선/악화).
 - **채점은 Claude(STEP 3)가, 집계·렌더만 스크립트가** 담당해 드리프트 방지.

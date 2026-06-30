@@ -274,21 +274,37 @@ def main():
     months = sorted({(int(d[:4]), int(d[5:7])) for d in dates})
     cals = "".join(render_calendar(y, m, log) for y, m in months) or "<p>아직 기록 없음.</p>"
 
-    # --- 반복 위반: 월별 도넛 그래프 ---
+    # --- 반복 위반: 월별 도넛 + 근거(어느 날·무엇 때문에) ---
     month_fail = defaultdict(Counter)
+    month_reasons = defaultdict(lambda: defaultdict(list))  # ym -> rid -> [(date, reason)]
     for d in dates:
         ym = d[:7]
+        rs = log[d].get("reasons", {})
         for rid, v in log[d].get("verdicts", {}).items():
             if v == "fail":
                 month_fail[ym][rid] += 1
+                month_reasons[ym][rid].append((d, rs.get(rid, "")))
     color_map = {rid: DONUT_PALETTE[i % len(DONUT_PALETTE)]
                  for i, rid in enumerate(sorted(fail_counter))}
     color_of = lambda r: color_map.get(r, "#57606a")
-    donuts = "".join(
-        render_donut(f"{ym[:4]}년 {int(ym[5:7])}월", month_fail[ym], color_of)
-        for ym in sorted(month_fail)
-    )
-    viol_html = donuts or '<p class="ok">아직 위반 없음</p>'
+
+    viol_parts = []
+    for ym in sorted(month_fail):
+        donut = render_donut(f"{ym[:4]}년 {int(ym[5:7])}월", month_fail[ym], color_of)
+        rsn_rows = []
+        for rid, _n in month_fail[ym].most_common():
+            name = _html.escape(ko_label(rid))
+            sw = color_of(rid)
+            for dd, reason in month_reasons[ym][rid]:
+                md = f"{int(dd[5:7])}/{int(dd[8:10])}"
+                why = _html.escape(reason) if reason else "근거 미기록"
+                rsn_rows.append(
+                    f'<div class="rsn"><span class="rdot" style="background:{sw}"></span>'
+                    f'<span class="rrule">{name}</span><span class="rday">{md}</span>'
+                    f'<span class="rwhy">{why}</span></div>'
+                )
+        viol_parts.append(donut + (f'<div class="reasons">{"".join(rsn_rows)}</div>' if rsn_rows else ""))
+    viol_html = "".join(viol_parts) or '<p class="ok">아직 위반 없음</p>'
 
     # --- 매매원칙 (룰북 파싱) · 핵심 4 규칙만 노출(개인 파라미터 카드는 제외) ---
     _criteria, core, others = parse_rulebook(args.rules_md)
@@ -353,7 +369,7 @@ def main():
 <title>트레이딩 원칙 준수 대시보드</title>
 <style>
  :root {{ font-family: -apple-system, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif; }}
- body {{ margin:0; background:#ffffff; color:#24292f; padding:28px; max-width:1180px; }}
+ body {{ margin:0; background:#ffffff; color:#24292f; padding:28px; max-width:1320px; }}
  h1 {{ font-size:21px; margin:0 0 4px; font-weight:700; }}
  .sub {{ color:#57606a; font-size:13px; margin-bottom:22px; }}
  .muted {{ color:#57606a; font-size:13px; }}
@@ -362,8 +378,18 @@ def main():
  .card .big {{ font-size:25px; font-weight:700; }}
  .card .lbl {{ color:#57606a; font-size:12px; }}
  h2 {{ font-size:15px; border-bottom:1px solid #e1e4e8; padding-bottom:6px; margin:30px 0 14px; font-weight:600; }}
- .board {{ display:flex; gap:28px; align-items:flex-start; flex-wrap:wrap; }}
- .board .col {{ flex:1; min-width:300px; }}
+ /* 신문형 2단: 사이드바(달력·위반·요약) + 본문(상세 분석) */
+ .layout {{ display:grid; grid-template-columns:408px 1fr; gap:32px; align-items:start; }}
+ @media (max-width:980px) {{ .layout {{ grid-template-columns:1fr; }} }}
+ .sidebar h2:first-child {{ margin-top:6px; }}
+ .main h2:first-child {{ margin-top:6px; }}
+ /* 위반 근거 (어느 날·무엇 때문에) */
+ .reasons {{ margin:6px 0 4px; }}
+ .rsn {{ display:flex; align-items:center; gap:8px; font-size:12px; padding:5px 0; border-bottom:1px solid #f0f2f4; line-height:1.45; }}
+ .rsn .rdot {{ width:8px; height:8px; border-radius:2px; flex:0 0 auto; }}
+ .rsn .rrule {{ font-weight:600; color:#24292f; white-space:nowrap; }}
+ .rsn .rday {{ color:#8a939d; font-size:11px; white-space:nowrap; }}
+ .rsn .rwhy {{ color:#57606a; }}
  .cals {{ display:flex; gap:18px; flex-wrap:wrap; }}
  table.cal {{ border-collapse:collapse; background:#fff; border:1px solid #d8dee4; border-radius:8px; overflow:hidden; }}
  table.cal caption {{ font-weight:600; padding:8px; background:#f6f8fa; font-size:13px; }}
@@ -439,9 +465,9 @@ def main():
 
  {principles_html}
 
- <div class="board">
-   <div class="col">
-     <h2>매매일지 달력 <span class="muted" style="font-weight:400">— 칸을 클릭하면 상세</span></h2>
+ <div class="layout">
+   <div class="sidebar">
+     <h2>매매일지 달력 <span class="muted" style="font-weight:400">— 클릭=상세</span></h2>
      <div class="cals">{cals}</div>
      <div class="legend">준수율
        <span style="background:#bd7b73"></span>~39
@@ -452,17 +478,15 @@ def main():
      </div>
      <h2>반복 위반 — 같은 실수 몇 번?</h2>
      {viol_html}
-   </div>
-   <div class="col">
-     <h2>일별 한 줄 요약 <span class="muted" style="font-weight:400">— 클릭하면 상세</span></h2>
+     <h2>일별 한 줄 요약 <span class="muted" style="font-weight:400">— 클릭=상세</span></h2>
      {feed_html}
    </div>
+   <div class="main">
+     <h2 id="detailtop">상세 분석</h2>
+     <div class="detailwrap" id="detailwrap">{detail_html}</div>
+     {other_html}
+   </div>
  </div>
-
- <h2 id="detailtop">상세 분석</h2>
- <div class="detailwrap" id="detailwrap">{detail_html}</div>
-
- {other_html}
 
  <footer>generated by trading-coach · build_dashboard.py · 김민우(네프콘 BUY_TRADING_DATA)와 무관한 본인 일지 기록</footer>
  <script>

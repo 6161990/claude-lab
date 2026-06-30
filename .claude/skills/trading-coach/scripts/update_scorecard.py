@@ -131,6 +131,7 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--date", required=True, help="거래일 YYYY-MM-DD")
     ap.add_argument("--rules", required=True, help="verdicts.json 경로")
+    ap.add_argument("--reasons", default="", help="위반 근거 {규칙ID: '한 줄 근거'} json 경로(선택)")
     ap.add_argument("--symbol", default="", help="거래 종목명(여러 개면 쉼표 구분)")
     ap.add_argument("--note", default="", help="한 줄 총평")
     ap.add_argument("--log", default="coach_feedback/coach_log.json")
@@ -143,10 +144,16 @@ def main():
     if bad:
         raise SystemExit(f"알 수 없는 판정값: {bad} (pass/partial/fail/na 만 허용)")
 
+    reasons = {}
+    if args.reasons:
+        with open(args.reasons, encoding="utf-8") as f:
+            reasons = json.load(f)
+
     log = load_log(args.log)
     log[args.date] = {  # 같은 날짜 덮어쓰기 = 증분
         "symbol": args.symbol,
         "verdicts": verdicts,
+        "reasons": reasons,
         "score": compliance_rate(verdicts),
         "note": args.note,
     }
