@@ -13,8 +13,10 @@ coach_log.json을 읽어 GitHub Pages용 **자체완결 HTML**(외부 의존 0)�
 """
 import argparse
 import calendar
+import html as _html
 import json
 import os
+import re
 from collections import Counter, defaultdict
 
 import sys
@@ -22,6 +24,55 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from update_scorecard import RULE_NAMES  # 룰 ID→이름 단일 출처
 
 WEEKDAYS = ["일", "월", "화", "수", "목", "금", "토"]
+
+
+def _strip_md(s):
+    """마크다운 강조(**, `) 제거 + 좌우 공백 정리."""
+    return re.sub(r"[*`]", "", s).strip()
+
+
+def _table_cells(line):
+    """| a | b | c | → ['a','b','c'] (양끝 빈칸 제거). 표 행이 아니면 None."""
+    if not line.lstrip().startswith("|"):
+        return None
+    parts = [c.strip() for c in line.strip().strip("|").split("|")]
+    return parts
+
+
+def parse_rulebook(path):
+    """TRADING_RULES.md를 파싱해 (개인기준[(항목,값)], 카테고리[(제목,[(ID,규칙)])]) 반환.
+    룰북이 단일 출처이므로 대시보드는 코드에 규칙을 복제하지 않는다."""
+    if not os.path.exists(path):
+        return [], []
+    with open(path, encoding="utf-8") as f:
+        lines = f.read().splitlines()
+
+    criteria, categories = [], []
+    section = None          # "criteria" | "rules" | None
+    cur_cat = None
+    for ln in lines:
+        if ln.startswith("## 내 기준"):
+            section = "criteria"
+            continue
+        if ln.startswith("### "):
+            section = "rules"
+            cur_cat = (_strip_md(ln[4:]), [])
+            categories.append(cur_cat)
+            continue
+        if ln.startswith("#"):          # 다른 ## 섹션 진입
+            section = None
+            continue
+        cells = _table_cells(ln)
+        if not cells or len(cells) < 2:
+            continue
+        c0, c1 = _strip_md(cells[0]), _strip_md(cells[1])
+        if not c0 or c0.startswith("-") or c0 in ("항목", "ID"):
+            continue                    # 헤더/구분선
+        if section == "criteria":
+            criteria.append((c0, c1))
+        elif section == "rules" and cur_cat is not None and re.match(r"^[A-Z]\d+$", c0):
+            cur_cat[1].append((c0, c1))
+    return criteria, categories
 
 
 def color_for(score):
@@ -52,10 +103,13 @@ def render_calendar(year, month, log):
                 score = log[key].get("score")
                 bg = color_for(score)
                 s = f"{score:.0f}%" if score is not None else "—"
+                sym = _html.escape(log[key].get("symbol", "") or "")
+                sym_html = f'<span class="sym">{sym}</span>' if sym else ""
+                tip = f"{key} · 준수율 {s}" + (f" · {sym}" if sym else "")
                 cells.append(
-                    f'<td class="on" style="background:{bg}" title="{key} · 준수율 {s}">'
-                    f'<span class="dnum">{d}</span><span class="chk">✓</span>'
-                    f'<span class="pct">{s}</span></td>'
+                    f'<td class="on" style="background:{bg}" title="{tip}">'
+                    f'<span class="dnum">{d} ✓</span>'
+                    f'<span class="pct">{s}</span>{sym_html}</td>'
                 )
             else:
                 cells.append(f'<td class="off"><span class="dnum">{d}</span></td>')
@@ -69,6 +123,7 @@ def render_calendar(year, month, log):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--log", default="coach_feedback/coach_log.json")
+    ap.add_argument("--rules-md", default="TRADING_RULES.md", help="매매원칙 출처")
     ap.add_argument("--out", default="docs/index.html")
     args = ap.parse_args()
 

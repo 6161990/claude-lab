@@ -131,6 +131,7 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--date", required=True, help="거래일 YYYY-MM-DD")
     ap.add_argument("--rules", required=True, help="verdicts.json 경로")
+    ap.add_argument("--symbol", default="", help="거래 종목명(여러 개면 쉼표 구분)")
     ap.add_argument("--note", default="", help="한 줄 총평")
     ap.add_argument("--log", default="coach_feedback/coach_log.json")
     ap.add_argument("--out", default="coach_feedback/SCORECARD.md")
@@ -144,6 +145,7 @@ def main():
 
     log = load_log(args.log)
     log[args.date] = {  # 같은 날짜 덮어쓰기 = 증분
+        "symbol": args.symbol,
         "verdicts": verdicts,
         "score": compliance_rate(verdicts),
         "note": args.note,
