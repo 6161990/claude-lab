@@ -288,23 +288,11 @@ def main():
                  for i, rid in enumerate(sorted(fail_counter))}
     color_of = lambda r: color_map.get(r, "#57606a")
 
-    viol_parts = []
-    for ym in sorted(month_fail):
-        donut = render_donut(f"{ym[:4]}년 {int(ym[5:7])}월", month_fail[ym], color_of)
-        rsn_rows = []
-        for rid, _n in month_fail[ym].most_common():
-            name = _html.escape(ko_label(rid))
-            sw = color_of(rid)
-            for dd, reason in month_reasons[ym][rid]:
-                md = f"{int(dd[5:7])}/{int(dd[8:10])}"
-                why = _html.escape(reason) if reason else "근거 미기록"
-                rsn_rows.append(
-                    f'<div class="rsn"><span class="rdot" style="background:{sw}"></span>'
-                    f'<span class="rrule">{name}</span><span class="rday">{md}</span>'
-                    f'<span class="rwhy">{why}</span></div>'
-                )
-        viol_parts.append(donut + (f'<div class="reasons">{"".join(rsn_rows)}</div>' if rsn_rows else ""))
-    viol_html = "".join(viol_parts) or '<p class="ok">아직 위반 없음</p>'
+    # 근거(어느 날·무엇 때문에)는 오른쪽 상세 패널에 있으므로 여기선 도넛+건수/%만.
+    viol_html = "".join(
+        render_donut(f"{ym[:4]}년 {int(ym[5:7])}월", month_fail[ym], color_of)
+        for ym in sorted(month_fail)
+    ) or '<p class="ok">아직 위반 없음</p>'
 
     # --- 매매원칙 (룰북 파싱) · 핵심 4 규칙만 노출(개인 파라미터 카드는 제외) ---
     _criteria, core, others = parse_rulebook(args.rules_md)
@@ -377,19 +365,12 @@ def main():
  .card {{ background:#f6f8fa; border:1px solid #d8dee4; border-radius:10px; padding:14px 18px; min-width:118px; }}
  .card .big {{ font-size:25px; font-weight:700; }}
  .card .lbl {{ color:#57606a; font-size:12px; }}
- h2 {{ font-size:15px; border-bottom:1px solid #e1e4e8; padding-bottom:6px; margin:30px 0 14px; font-weight:600; }}
+ h2 {{ font-size:15px; border-bottom:1px solid #e1e4e8; padding-bottom:7px; margin:44px 0 18px; font-weight:600; }}
  /* 신문형 2단: 사이드바(달력·위반·요약) + 본문(상세 분석) */
  .layout {{ display:grid; grid-template-columns:408px 1fr; gap:32px; align-items:start; }}
  @media (max-width:980px) {{ .layout {{ grid-template-columns:1fr; }} }}
  .sidebar h2:first-child {{ margin-top:6px; }}
  .main h2:first-child {{ margin-top:6px; }}
- /* 위반 근거 (어느 날·무엇 때문에) */
- .reasons {{ margin:6px 0 4px; }}
- .rsn {{ display:flex; align-items:center; gap:8px; font-size:12px; padding:5px 0; border-bottom:1px solid #f0f2f4; line-height:1.45; }}
- .rsn .rdot {{ width:8px; height:8px; border-radius:2px; flex:0 0 auto; }}
- .rsn .rrule {{ font-weight:600; color:#24292f; white-space:nowrap; }}
- .rsn .rday {{ color:#8a939d; font-size:11px; white-space:nowrap; }}
- .rsn .rwhy {{ color:#57606a; }}
  .cals {{ display:flex; gap:18px; flex-wrap:wrap; }}
  table.cal {{ border-collapse:collapse; background:#fff; border:1px solid #d8dee4; border-radius:8px; overflow:hidden; }}
  table.cal caption {{ font-weight:600; padding:8px; background:#f6f8fa; font-size:13px; }}
@@ -406,7 +387,8 @@ def main():
  .legend {{ font-size:11px; color:#8a939d; margin-top:10px; }}
  .legend span {{ display:inline-block; width:11px; height:11px; border-radius:2px; vertical-align:middle; margin:0 3px 0 10px; }}
  /* 위반 도넛 (월별) */
- .donut-box {{ margin-bottom:16px; }}
+ .donut-box {{ margin-bottom:24px; }}
+ .legend {{ margin-bottom:6px; }}
  .dtitle {{ font-size:13px; font-weight:600; color:#24292f; margin-bottom:6px; }}
  .donut {{ display:flex; gap:16px; align-items:center; flex-wrap:wrap; }}
  .dcenter {{ font-size:24px; font-weight:700; fill:#24292f; }}
