@@ -6,7 +6,10 @@
 로그인 성공 후 세션이 파일로 저장되어 이후 자동 재사용됩니다.
 """
 
+from __future__ import annotations
+
 import os
+import re
 import json
 import asyncio
 import random
@@ -225,72 +228,94 @@ class NaverNepconBrowser:
         await self.page.wait_for_load_state("networkidle")
         await random_delay()
 
-        # 제목 추출 (다양한 선택자 시도)
-        title = None
-        for selector in [".viewer_title_content", ".content_head__title", "h1", "[class*='title']"]:
-            title = await self.page.text_content(selector)
-            if title:
-                break
+        # 제목 추출: og:title 메타태그가 가장 깨끗함
+        title = await self.page.evaluate(
+            "() => (document.querySelector('meta[property=\"og:title\"]')||{}).content || ''"
+        )
+        if not title:
+            # 폴백: 뷰어 제목 영역 첫 줄
+            raw = await self.page.text_content(".viewer_title_content") or ""
+            title = raw.strip().split("\n")[0].strip()
         title = title.strip() if title else "(제목 없음)"
 
-        # 본문 추출 (전체 body에서 추출 - 가장 신뢰할 수 있는 방식)
-        content = await self.page.text_content("body")
-        content = content.strip() if content else "(본문 없음)"
+        # 본문 추출: 스마트에디터 본문 컨테이너(.se-main-container)의 컴포넌트를
+        # 문서 순서대로 훑어 텍스트와 이미지를 인라인 마크다운으로 재구성한다.
+        content = await self.page.evaluate(
+            """() => {
+                const root = document.querySelector('.se-main-container');
+                if (!root) return '';
+                // 순서목록/불릿의 마커(1. 2. · 등)는 CSS 생성물이라 innerText에 안 잡힌다.
+                // → 원문과 일치하도록 마커 텍스트를 DOM에 직접 주입한다.
+                root.querySelectorAll('ol').forEach(ol => {
+                    let n = parseInt(ol.getAttribute('start') || '1', 10) || 1;
+                    ol.querySelectorAll(':scope > li').forEach(li => {
+                        const v = parseInt(li.getAttribute('value') || '', 10);
+                        if (!isNaN(v)) n = v;
+                        li.insertAdjacentText('afterbegin', n + '. ');
+                        n++;
+                    });
+                });
+                root.querySelectorAll('ul').forEach(ul => {
+                    ul.querySelectorAll(':scope > li').forEach(li => {
+                        li.insertAdjacentText('afterbegin', '- ');
+                    });
+                });
+                const parts = [];
+                const seen = new Set();
+                const comps = root.querySelectorAll('.se-component, .se_component');
+                const nodes = comps.length ? comps : [root];
+                nodes.forEach(c => {
+                    const img = c.querySelector('img');
+                    if (img) {
+                        const src = img.getAttribute('data-src') || img.src || '';
+                        // 추적 픽셀/빈 gif 제외
+                        const isTracker = /l\\.gif|blank\\.gif|1x1|spacer|\\.gif\\?type=content/i.test(src);
+                        if (src && !seen.has(src) && !isTracker) {
+                            seen.add(src);
+                            const alt = (img.alt || '').trim();
+                            parts.push('![' + alt + '](' + src + ')');
+                        }
+                        const cap = (c.querySelector('.se-caption, figcaption') || {}).innerText;
+                        if (cap && cap.trim()) parts.push('*' + cap.trim() + '*');
+                    } else {
+                        const t = (c.innerText || '').replace(/\\u200b/g, '').trim();
+                        if (t) parts.push(t);
+                    }
+                });
+                return parts.join('\\n\\n').trim();
+            }"""
+        )
+        if not content:
+            # 폴백: 컨테이너 전체 텍스트
+            content = (await self.page.evaluate(
+                "() => { const e=document.querySelector('.se-main-container'); return e?(e.innerText||'').trim():''; }"
+            )).strip()
+        content = content or "(본문 없음)"
 
-        # 게시 날짜 추출 (다양한 선택자 시도)
-        date = None
-        for selector in [".viewer_date", ".content_head__info", ".article_info", "time", "[class*='date']"]:
-            date = await self.page.text_content(selector)
-            if date:
-                break
-        date = date.strip() if date else ""
+        # 게시 날짜 추출: 뷰어 제목 영역 텍스트에서 날짜 패턴 파싱
+        date = ""
+        raw_head = await self.page.text_content(".viewer_title_content") or ""
+        m = re.search(r"\d{4}\.\d{2}\.\d{2}\.?(\s*(오전|오후)\s*\d{1,2}:\d{2})?", raw_head)
+        if m:
+            date = m.group(0).strip()
 
-        # 작성자 추출 (타임아웃 처리)
-        author = "(작성자 미상)"
-        try:
-            for selector in [".viewer_author_link", "[class*='author']"]:
-                try:
-                    author_elem = await self.page.query_selector(selector)
-                    if author_elem:
-                        author = await author_elem.text_content()
-                        if author:
-                            author = author.strip()
-                            break
-                except:
-                    continue
-        except:
-            pass
-
-        result = {
+        # 제목/날짜/이미지 포함 본문만 반환 (그 외 메타는 불필요)
+        return {
             "title": title,
             "content": content,
             "date": date,
-            "author": author,
             "url": post_url,
-            "images": []
         }
 
-        # 이미지 추출 (선택사항)
-        if include_images:
-            images = await self.page.evaluate("""
-                () => {
-                    const imgs = document.querySelectorAll('img');
-                    return Array.from(imgs)
-                        .filter(img => img.src && img.src.length > 10 && img.offsetHeight > 50)
-                        .map(img => ({
-                            src: img.src,
-                            alt: img.alt || '(설명 없음)',
-                            width: img.offsetWidth,
-                            height: img.offsetHeight,
-                            naturalWidth: img.naturalWidth,
-                            naturalHeight: img.naturalHeight
-                        }))
-                        .slice(0, 30);  // 최대 30개
-                }
-            """)
-            result["images"] = images
-
-        return result
+    async def download_image(self, url: str) -> bytes | None:
+        """브라우저 컨텍스트(쿠키/리퍼러 포함)로 이미지 바이트 다운로드"""
+        try:
+            resp = await self.page.context.request.get(url)
+            if resp.ok:
+                return await resp.body()
+        except Exception:
+            pass
+        return None
 
     async def search_nepcon_posts(self, channel_url: str, keyword: str) -> list[dict]:
         """채널 내 키워드 검색
