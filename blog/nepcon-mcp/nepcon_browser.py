@@ -246,18 +246,22 @@ class NaverNepconBrowser:
                 if (!root) return '';
                 // 순서목록/불릿의 마커(1. 2. · 등)는 CSS 생성물이라 innerText에 안 잡힌다.
                 // → 원문과 일치하도록 마커 텍스트를 DOM에 직접 주입한다.
+                // 마커는 li 안쪽 첫 문단(<p>)에 인라인 삽입해야 같은 줄에 붙는다.
+                // (li에 직접 넣으면 블록 <p>와 문단이 분리돼 번호만 따로 떨어짐)
                 root.querySelectorAll('ol').forEach(ol => {
                     let n = parseInt(ol.getAttribute('start') || '1', 10) || 1;
                     ol.querySelectorAll(':scope > li').forEach(li => {
                         const v = parseInt(li.getAttribute('value') || '', 10);
                         if (!isNaN(v)) n = v;
-                        li.insertAdjacentText('afterbegin', n + '. ');
+                        (li.querySelector('p, span, div') || li)
+                            .insertAdjacentText('afterbegin', n + '. ');
                         n++;
                     });
                 });
                 root.querySelectorAll('ul').forEach(ul => {
                     ul.querySelectorAll(':scope > li').forEach(li => {
-                        li.insertAdjacentText('afterbegin', '- ');
+                        (li.querySelector('p, span, div') || li)
+                            .insertAdjacentText('afterbegin', '- ');
                     });
                 });
                 const parts = [];

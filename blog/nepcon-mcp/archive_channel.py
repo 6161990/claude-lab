@@ -282,6 +282,7 @@ async def main():
             return
 
         targets = posts if args.limit == 0 else posts[: args.limit]
+        audit = []  # 감사 로그: (제목, 본문길이, 기대이미지, 저장이미지, 오류)
         for i, p in enumerate(targets, 1):
             try:
                 full = await browser.read_nepcon_post(p["url"])
@@ -292,21 +293,53 @@ async def main():
                 if year and year != "2026":
                     title = f"{year}년 {title}"
                 base = safe_name(title)
+                body_content = full.get("content", "")
                 # 본문을 이미지 base64 내장 HTML로 변환 + 원본 이미지는 images/에 저장
-                body_html = await build_body_html(
-                    browser, full.get("content", ""), base, img_dir
+                body_html, n_exp, n_saved = await build_body_html(
+                    browser, body_content, base, img_dir
                 )
                 doc = render_html(title, full.get("date", ""), body_html)
                 fname = f"{base}.html"
                 (html_dir / fname).write_text(doc, encoding="utf-8")
-                print(f"[{i}/{len(targets)}] 저장: {fname}", file=sys.stderr)
+                audit.append((base, len(body_content), n_exp, n_saved, ""))
+                flag = "" if n_exp == n_saved else f"  ⚠ 이미지 {n_saved}/{n_exp}"
+                print(f"[{i}/{len(targets)}] 저장: {fname}{flag}", file=sys.stderr)
             except Exception as e:
+                audit.append((p.get("title", "?"), 0, 0, 0, str(e)))
                 print(f"[{i}/{len(targets)}] 실패: {p['url']} -> {e}", file=sys.stderr)
             await random_delay(0.8, 1.6)
 
         # 작성자별 폴더 구성 후 전체 목록 페이지 재생성
         build_index(out_root)
-        print(f"\n완료: {author_root.resolve()} (html/, images/) + 목록 {out_root/'index.html'}", file=sys.stderr)
+
+        # 감사 리포트 저장 + 요약
+        audit_rows = [
+            {"title": t, "content_len": cl, "img_expected": ne,
+             "img_saved": ns, "error": err}
+            for (t, cl, ne, ns, err) in audit
+        ]
+        (author_root / "_audit.json").write_text(
+            json.dumps(audit_rows, ensure_ascii=False, indent=2), encoding="utf-8"
+        )
+        n_total = len(audit)
+        n_err = sum(1 for r in audit if r[4])
+        n_imgmiss = sum(1 for r in audit if r[2] != r[3])
+        n_short = sum(1 for r in audit if not r[4] and r[1] < 50)
+        tot_exp = sum(r[2] for r in audit)
+        tot_saved = sum(r[3] for r in audit)
+        print("\n===== 감사(AUDIT) 요약 =====", file=sys.stderr)
+        print(f"글 {n_total}개 | 오류 {n_err} | 이미지 누락글 {n_imgmiss} | 본문<50자 {n_short}",
+              file=sys.stderr)
+        print(f"이미지 기대 {tot_exp} / 저장 {tot_saved} (실패 {tot_exp - tot_saved})",
+              file=sys.stderr)
+        for (t, cl, ne, ns, err) in audit:
+            if err:
+                print(f"  [오류] {t}: {err}", file=sys.stderr)
+            elif ne != ns:
+                print(f"  [이미지] {t}: {ns}/{ne}", file=sys.stderr)
+            elif cl < 50:
+                print(f"  [짧음] {t}: 본문 {cl}자", file=sys.stderr)
+        print(f"\n완료: {author_root.resolve()} + 목록 {out_root/'index.html'}", file=sys.stderr)
 
 
 if __name__ == "__main__":
