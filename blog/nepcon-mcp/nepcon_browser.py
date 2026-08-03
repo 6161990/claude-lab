@@ -266,25 +266,24 @@ class NaverNepconBrowser:
                 });
                 const parts = [];
                 const seen = new Set();
+                const isTracker = (src) =>
+                    /l\\.gif|blank\\.gif|1x1|spacer|\\.gif\\?type=content/i.test(src);
                 const comps = root.querySelectorAll('.se-component, .se_component');
                 const nodes = comps.length ? comps : [root];
+                // 한 컴포넌트에 텍스트와 이미지가 함께 있을 수 있으므로(예: 텍스트 문단에
+                // 추적 픽셀 삽입) 배타적으로 처리하지 않고 텍스트·이미지를 각각 수집한다.
                 nodes.forEach(c => {
-                    const img = c.querySelector('img');
-                    if (img) {
+                    const t = (c.innerText || '').replace(/\\u200b/g, '').trim();
+                    if (t) parts.push(t);
+                    c.querySelectorAll('img').forEach(img => {
                         const src = img.getAttribute('data-src') || img.src || '';
-                        // 추적 픽셀/빈 gif 제외
-                        const isTracker = /l\\.gif|blank\\.gif|1x1|spacer|\\.gif\\?type=content/i.test(src);
-                        if (src && !seen.has(src) && !isTracker) {
+                        if (src && !seen.has(src) && !isTracker(src)) {
                             seen.add(src);
-                            const alt = (img.alt || '').trim();
-                            parts.push('![' + alt + '](' + src + ')');
+                            parts.push('![' + (img.alt || '').trim() + '](' + src + ')');
                         }
-                        const cap = (c.querySelector('.se-caption, figcaption') || {}).innerText;
-                        if (cap && cap.trim()) parts.push('*' + cap.trim() + '*');
-                    } else {
-                        const t = (c.innerText || '').replace(/\\u200b/g, '').trim();
-                        if (t) parts.push(t);
-                    }
+                    });
+                    const cap = (c.querySelector('.se-caption, figcaption') || {}).innerText;
+                    if (cap && cap.trim()) parts.push('*' + cap.trim() + '*');
                 });
                 return parts.join('\\n\\n').trim();
             }"""
@@ -295,6 +294,12 @@ class NaverNepconBrowser:
                 "() => { const e=document.querySelector('.se-main-container'); return e?(e.innerText||'').trim():''; }"
             )).strip()
         content = content or "(본문 없음)"
+
+        # 감사용: 컨테이너 전체 원문 텍스트(마커 주입 반영 상태)
+        full_text = await self.page.evaluate(
+            "() => { const e=document.querySelector('.se-main-container');"
+            " return e ? (e.innerText || '').replace(/\\u200b/g,'') : ''; }"
+        )
 
         # 게시 날짜 추출: 뷰어 제목 영역 텍스트에서 날짜 패턴 파싱
         date = ""
@@ -309,6 +314,7 @@ class NaverNepconBrowser:
             "content": content,
             "date": date,
             "url": post_url,
+            "full_text": full_text,
         }
 
     async def download_image(self, url: str) -> bytes | None:

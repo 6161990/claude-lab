@@ -54,7 +54,9 @@ def _img_mime(ext: str) -> str:
     }.get(ext, "image/jpeg")
 
 
-IMG_MD = re.compile(r"!\[([^\]]*)\]\((https?://[^)]+)\)")
+# URL 안에 괄호가 들어가는 경우(예: 파일명 ...(20251119131126).jpg)가 있어
+# 한 줄 전체를 탐욕적으로 잡아 마지막 ')' 까지 URL로 인식한다.
+IMG_MD = re.compile(r"!\[([^\]]*)\]\((https?://.+)\)")
 
 
 async def build_body_html(browser, content: str, base: str, img_dir: Path):
@@ -301,11 +303,19 @@ async def main():
                 doc = render_html(title, full.get("date", ""), body_html)
                 fname = f"{base}.html"
                 (html_dir / fname).write_text(doc, encoding="utf-8")
-                audit.append((base, len(body_content), n_exp, n_saved, ""))
-                flag = "" if n_exp == n_saved else f"  ⚠ 이미지 {n_saved}/{n_exp}"
-                print(f"[{i}/{len(targets)}] 저장: {fname}{flag}", file=sys.stderr)
+                # 텍스트 누락 감사: 추출 텍스트(이미지 제외) vs 컨테이너 원문 길이 비교
+                recon_txt = re.sub(r"\s", "", IMG_MD.sub("", body_content))
+                full_txt = re.sub(r"\s", "", full.get("full_text", "") or "")
+                coverage = (len(recon_txt) / len(full_txt)) if full_txt else 1.0
+                audit.append((base, len(body_content), n_exp, n_saved, "", round(coverage, 3)))
+                flags = ""
+                if n_exp != n_saved:
+                    flags += f"  ⚠ 이미지 {n_saved}/{n_exp}"
+                if coverage < 0.97:
+                    flags += f"  ⚠ 텍스트누락 {coverage:.0%}"
+                print(f"[{i}/{len(targets)}] 저장: {fname}{flags}", file=sys.stderr)
             except Exception as e:
-                audit.append((p.get("title", "?"), 0, 0, 0, str(e)))
+                audit.append((p.get("title", "?"), 0, 0, 0, str(e), 0.0))
                 print(f"[{i}/{len(targets)}] 실패: {p['url']} -> {e}", file=sys.stderr)
             await random_delay(0.8, 1.6)
 
@@ -315,8 +325,8 @@ async def main():
         # 감사 리포트 저장 + 요약
         audit_rows = [
             {"title": t, "content_len": cl, "img_expected": ne,
-             "img_saved": ns, "error": err}
-            for (t, cl, ne, ns, err) in audit
+             "img_saved": ns, "error": err, "text_coverage": cov}
+            for (t, cl, ne, ns, err, cov) in audit
         ]
         (author_root / "_audit.json").write_text(
             json.dumps(audit_rows, ensure_ascii=False, indent=2), encoding="utf-8"
@@ -325,20 +335,23 @@ async def main():
         n_err = sum(1 for r in audit if r[4])
         n_imgmiss = sum(1 for r in audit if r[2] != r[3])
         n_short = sum(1 for r in audit if not r[4] and r[1] < 50)
+        n_txtmiss = sum(1 for r in audit if not r[4] and r[5] < 0.97)
         tot_exp = sum(r[2] for r in audit)
         tot_saved = sum(r[3] for r in audit)
         print("\n===== 감사(AUDIT) 요약 =====", file=sys.stderr)
-        print(f"글 {n_total}개 | 오류 {n_err} | 이미지 누락글 {n_imgmiss} | 본문<50자 {n_short}",
-              file=sys.stderr)
+        print(f"글 {n_total}개 | 오류 {n_err} | 이미지 누락글 {n_imgmiss} | "
+              f"본문<50자 {n_short} | 텍스트누락(<97%) {n_txtmiss}", file=sys.stderr)
         print(f"이미지 기대 {tot_exp} / 저장 {tot_saved} (실패 {tot_exp - tot_saved})",
               file=sys.stderr)
-        for (t, cl, ne, ns, err) in audit:
+        for (t, cl, ne, ns, err, cov) in audit:
             if err:
                 print(f"  [오류] {t}: {err}", file=sys.stderr)
             elif ne != ns:
                 print(f"  [이미지] {t}: {ns}/{ne}", file=sys.stderr)
             elif cl < 50:
                 print(f"  [짧음] {t}: 본문 {cl}자", file=sys.stderr)
+            elif cov < 0.97:
+                print(f"  [텍스트누락] {t}: {cov:.0%}", file=sys.stderr)
         print(f"\n완료: {author_root.resolve()} + 목록 {out_root/'index.html'}", file=sys.stderr)
 
 
