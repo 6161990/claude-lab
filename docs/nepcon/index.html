@@ -5,23 +5,53 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>네프콘 아카이브</title>
 <style>
+  * { box-sizing: border-box; }
   body { font-family: -apple-system, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
-         max-width: 860px; margin: 40px auto; padding: 0 16px; line-height: 1.6; color: #222; }
-  h1 { font-size: 1.7rem; }
-  .author { margin: 2rem 0; }
-  .author h2 { font-size: 1.2rem; border-bottom: 2px solid #333; padding-bottom: .3rem; }
+         margin: 0; line-height: 1.6; color: #222; background: #fafafa; }
+  .wrap { display: flex; align-items: flex-start; }
+  /* 사이드바 */
+  .side { position: sticky; top: 0; height: 100vh; width: 240px; flex-shrink: 0;
+          background: #1f2937; color: #e5e7eb; padding: 20px 14px; overflow-y: auto; }
+  .side h1 { font-size: 1.2rem; margin: 0 0 14px; color: #fff; }
+  .side #q { width: 100%; padding: 8px 10px; border: none; border-radius: 6px;
+             margin-bottom: 14px; font-size: .9rem; }
+  .nav { display: flex; justify-content: space-between; align-items: center;
+         padding: 8px 10px; border-radius: 6px; color: #cbd5e1; text-decoration: none;
+         font-size: .92rem; margin-bottom: 2px; cursor: pointer; }
+  .nav:hover { background: #374151; color: #fff; }
+  .nav.active { background: #2563eb; color: #fff; }
+  .nav b { font-weight: 600; font-size: .8rem; opacity: .8; }
+  /* 본문 */
+  .main { flex: 1; max-width: 860px; margin: 0 auto; padding: 30px 24px; }
+  .author { margin-bottom: 2.5rem; scroll-margin-top: 12px; }
+  .author h2 { font-size: 1.25rem; border-bottom: 2px solid #333; padding-bottom: .3rem; }
   .author h2 .cnt { color: #888; font-size: .9rem; font-weight: normal; }
   ul { list-style: none; padding: 0; }
-  li { padding: .35rem 0; border-bottom: 1px solid #f0f0f0; display: flex; gap: .6rem; }
+  li { padding: .35rem 0; border-bottom: 1px solid #eee; display: flex; gap: .6rem; }
   li .d { color: #999; font-size: .85rem; min-width: 6.5rem; flex-shrink: 0; }
-  a { color: #1a56db; text-decoration: none; }
-  a:hover { text-decoration: underline; }
+  li a { color: #1a56db; text-decoration: none; }
+  li a:hover { text-decoration: underline; }
+  .empty { color: #aaa; padding: .5rem 0; display: none; }
+  @media (max-width: 640px) {
+    .wrap { flex-direction: column; }
+    .side { position: static; height: auto; width: 100%; }
+  }
 </style>
 </head>
 <body>
-<h1>네프콘 아카이브</h1>
-<p>총 258개 · 작성자 2명</p>
-<section class="author">
+<div class="wrap">
+  <aside class="side">
+    <h1>📁 네프콘 아카이브</h1>
+    <input id="q" placeholder="🔍 제목 검색">
+    <nav id="nav">
+      <a class="nav active" data-t="all">전체 <b>351</b></a>
+      <a class="nav" data-t="a0">리버스페스 <b>128</b></a>
+      <a class="nav" data-t="a1">손절남 <b>93</b></a>
+      <a class="nav" data-t="a2">트레이더김씨 <b>130</b></a>
+    </nav>
+  </aside>
+  <main class="main">
+<section class="author" id="a0">
   <h2>리버스페스 <span class="cnt">(128개)</span></h2>
   <ul>
     <li><span class="d">2026.08.27. 오후 8:12</span><a href="%EB%A6%AC%EB%B2%84%EC%8A%A4%ED%8E%98%EC%8A%A4/html/08%EF%BC%8F27%28%EB%AA%A9%29%20%EB%A7%A4%EB%A7%A4%EC%9D%BC%EC%A7%80.html">08/27(목) 매매일지</a></li>
@@ -153,8 +183,108 @@
     <li><span class="d">2025.11.26. 오후 5:29</span><a href="%EB%A6%AC%EB%B2%84%EC%8A%A4%ED%8E%98%EC%8A%A4/html/2025%EB%85%84%2011%EF%BC%8F26%20%EB%89%B4%EC%8A%A4%EB%A7%A4%EB%A7%A4%EA%B0%80%20%EC%96%B4%EB%A0%A4%EC%9A%B4%20%EC%9D%B4%EC%9C%A0.html">2025년 11/26  뉴스매매가 어려운 이유</a></li>
     <li><span class="d">2025.11.25. 오후 6:01</span><a href="%EB%A6%AC%EB%B2%84%EC%8A%A4%ED%8E%98%EC%8A%A4/html/2025%EB%85%84%2011%EF%BC%8F25%20%EC%89%BD%EC%A7%80%EC%95%8A%EB%84%A4.html">2025년 11/25 쉽지않네</a></li>
   </ul>
+  <p class="empty">검색 결과가 없습니다.</p>
 </section>
-<section class="author">
+<section class="author" id="a1">
+  <h2>손절남 <span class="cnt">(93개)</span></h2>
+  <ul>
+    <li><span class="d">2026.08.27. 오후 1:57</span><a href="%EC%86%90%EC%A0%88%EB%82%A8/html/2026-08-27%20SK%ED%95%98%EC%9D%B4%EB%8B%89%EC%8A%A4.html">2026-08-27 SK하이닉스</a></li>
+    <li><span class="d">2026.08.26. 오후 4:23</span><a href="%EC%86%90%EC%A0%88%EB%82%A8/html/2026-08-25~26%20%ED%95%9C%EB%AF%B8%EC%95%BD%ED%92%88.html">2026-08-25~26 한미약품</a></li>
+    <li><span class="d">2026.08.20. 오후 8:00</span><a href="%EC%86%90%EC%A0%88%EB%82%A8/html/2026-08-21%28%EA%B8%88%29%20%EA%B4%80%EC%8B%AC%EC%A2%85%EB%AA%A9.html">2026-08-21(금) 관심종목</a></li>
+    <li><span class="d">2026.07.31. 오전 10:46</span><a href="%EC%86%90%EC%A0%88%EB%82%A8/html/%EC%98%A4~~%EB%9E%9C%EB%A7%8C%EC%9D%98%20%EB%A7%A4%EB%A7%A4%EC%9D%BC%EC%A7%80..html">오~~랜만의 매매일지.</a></li>
+    <li><span class="d">2026.06.19. 오후 8:03</span><a href="%EC%86%90%EC%A0%88%EB%82%A8/html/2026-06-19%EB%A7%A4%EB%A7%A4%EC%9D%BC%EC%A7%80.html">2026-06-19매매일지</a></li>
+    <li><span class="d">2026.06.18. 오후 5:21</span><a href="%EC%86%90%EC%A0%88%EB%82%A8/html/2026-06-18%20%EB%A7%A4%EB%A7%A4%EC%9D%BC%EC%A7%80.html">2026-06-18 매매일지</a></li>
+    <li><span class="d">2026.06.17. 오후 4:08</span><a href="%EC%86%90%EC%A0%88%EB%82%A8/html/2026-06-17%EB%A7%A4%EB%A7%A4%EC%9D%BC%EC%A7%80.html">2026-06-17매매일지</a></li>
+    <li><span class="d">2026.06.15. 오후 4:51</span><a href="%EC%86%90%EC%A0%88%EB%82%A8/html/2026-06-15%EB%A7%A4%EB%A7%A4%EC%9D%BC%EC%A7%80.html">2026-06-15매매일지</a></li>
+    <li><span class="d">2026.06.11. 오후 8:18</span><a href="%EC%86%90%EC%A0%88%EB%82%A8/html/2026-06-11%EB%A7%A4%EB%A7%A4%EC%9D%BC%EC%A7%80.html">2026-06-11매매일지</a></li>
+    <li><span class="d">2026.06.10. 오후 2:21</span><a href="%EC%86%90%EC%A0%88%EB%82%A8/html/2026-06-10%20%EB%A7%A4%EB%A7%A4%EC%9D%BC%EC%A7%80.html">2026-06-10 매매일지</a></li>
+    <li><span class="d">2026.06.08. 오후 4:29</span><a href="%EC%86%90%EC%A0%88%EB%82%A8/html/2026-06-08%20%EB%A7%A4%EB%A7%A4%EC%9D%BC%EC%A7%80.html">2026-06-08 매매일지</a></li>
+    <li><span class="d">2026.06.04. 오후 9:01</span><a href="%EC%86%90%EC%A0%88%EB%82%A8/html/2026-06-03%20~%2004%20%EB%A7%A4%EB%A7%A4%EC%9D%BC%EC%A7%80.html">2026-06-03 ~ 04 매매일지</a></li>
+    <li><span class="d">2026.06.01. 오후 5:07</span><a href="%EC%86%90%EC%A0%88%EB%82%A8/html/2026-06-01%EB%A7%A4%EB%A7%A4%EC%9D%BC%EC%A7%80.html">2026-06-01매매일지</a></li>
+    <li><span class="d">2026.05.29. 오후 4:37</span><a href="%EC%86%90%EC%A0%88%EB%82%A8/html/2026-05-29%EB%A7%A4%EB%A7%A4%EC%9D%BC%EC%A7%80.html">2026-05-29매매일지</a></li>
+    <li><span class="d">2026.05.27. 오후 12:15</span><a href="%EC%86%90%EC%A0%88%EB%82%A8/html/2026-05-27%20%EB%A7%A4%EB%A7%A4%EC%9D%BC%EC%A7%80.html">2026-05-27 매매일지</a></li>
+    <li><span class="d">2026.05.22. 오후 4:13</span><a href="%EC%86%90%EC%A0%88%EB%82%A8/html/2026-05-22%20%EB%A7%A4%EB%A7%A4%EC%9D%BC%EC%A7%80.html">2026-05-22 매매일지</a></li>
+    <li><span class="d">2026.05.20. 오후 4:33</span><a href="%EC%86%90%EC%A0%88%EB%82%A8/html/2026-05-20%EB%A7%A4%EB%A7%A4%EC%9D%BC%EC%A7%80.html">2026-05-20매매일지</a></li>
+    <li><span class="d">2026.05.15. 오후 3:46</span><a href="%EC%86%90%EC%A0%88%EB%82%A8/html/2026-05-15%20%EB%A7%A4%EB%A7%A4%EC%9D%BC%EC%A7%80.html">2026-05-15 매매일지</a></li>
+    <li><span class="d">2026.05.14. 오후 7:49</span><a href="%EC%86%90%EC%A0%88%EB%82%A8/html/2025-05-14%20%EB%A7%A4%EB%A7%A4%EC%9D%BC%EC%A7%80.html">2025-05-14 매매일지</a></li>
+    <li><span class="d">2026.05.11. 오후 4:26</span><a href="%EC%86%90%EC%A0%88%EB%82%A8/html/2026-05-11%EB%A7%A4%EB%A7%A4%EC%9D%BC%EC%A7%80.html">2026-05-11매매일지</a></li>
+    <li><span class="d">2026.05.08. 오후 5:26</span><a href="%EC%86%90%EC%A0%88%EB%82%A8/html/2026-05-08%20%ED%98%84%EB%8C%80%EC%9D%98%20%EB%82%A0..html">2026-05-08 현대의 날.</a></li>
+    <li><span class="d">2026.05.07. 오전 10:56</span><a href="%EC%86%90%EC%A0%88%EB%82%A8/html/2026-05-07%20%EC%99%B8%EA%B5%AD%EC%9D%B8%20%EC%B0%A8%EC%9D%B5%EC%8B%A4%ED%98%84%20%EC%A4%91%20%3F%3F.html">2026-05-07 외국인 차익실현 중 ??</a></li>
+    <li><span class="d">2026.05.06. 오전 11:31</span><a href="%EC%86%90%EC%A0%88%EB%82%A8/html/2026-05-06%20%EC%97%AD%EB%8C%80%EA%B8%89%20%ED%8F%AC%EB%AA%A8%EC%9D%98%20%EC%9E%A5..html">2026-05-06 역대급 포모의 장.</a></li>
+    <li><span class="d">2026.05.04. 오후 1:11</span><a href="%EC%86%90%EC%A0%88%EB%82%A8/html/2026-05-04%20%EB%8C%80%EB%8B%A8%ED%95%9C%20%EB%B6%88%EC%9E%A5%EC%9E%85%EB%8B%88%EB%8B%A4..html">2026-05-04  대단한 불장입니다.</a></li>
+    <li><span class="d">2026.04.28. 오후 12:27</span><a href="%EC%86%90%EC%A0%88%EB%82%A8/html/2026-04-28%20%EB%A7%A4%EB%A7%A4%EC%9D%BC%EC%A7%80.html">2026-04-28 매매일지</a></li>
+    <li><span class="d">2026.04.23. 오후 12:55</span><a href="%EC%86%90%EC%A0%88%EB%82%A8/html/2026-04-22%20%EB%A7%A4%EB%A7%A4%EC%9D%BC%EC%A7%80.html">2026-04-22 매매일지</a></li>
+    <li><span class="d">2026.04.22. 오전 11:20</span><a href="%EC%86%90%EC%A0%88%EB%82%A8/html/2026-04-22%20%EB%A7%A4%EB%A7%A4%EC%9D%BC%EC%A7%80%20%282%29.html">2026-04-22 매매일지</a></li>
+    <li><span class="d">2026.04.21. 오후 12:59</span><a href="%EC%86%90%EC%A0%88%EB%82%A8/html/2026-04-21%20%EB%A7%A4%EB%A7%A4%EC%9D%BC%EC%A7%80.html">2026-04-21 매매일지</a></li>
+    <li><span class="d">2026.04.20. 오전 11:17</span><a href="%EC%86%90%EC%A0%88%EB%82%A8/html/2026-04-20%20%EB%A7%A4%EB%A7%A4%EC%9D%BC%EC%A7%80.html">2026-04-20 매매일지</a></li>
+    <li><span class="d">2026.04.17. 오후 1:28</span><a href="%EC%86%90%EC%A0%88%EB%82%A8/html/2026-04-17%20%EB%A7%A4%EB%A7%A4%EC%9D%BC%EC%A7%80.html">2026-04-17 매매일지</a></li>
+    <li><span class="d">2026.04.15. 오전 11:58</span><a href="%EC%86%90%EC%A0%88%EB%82%A8/html/2026-04-15%20%EB%A7%A4%EB%A7%A4%EC%9D%BC%EC%A7%80.html">2026-04-15 매매일지</a></li>
+    <li><span class="d">2026.04.13. 오전 11:54</span><a href="%EC%86%90%EC%A0%88%EB%82%A8/html/2026-04-13%20%EB%A7%A4%EB%A7%A4%EC%9D%BC%EC%A7%80.html">2026-04-13 매매일지</a></li>
+    <li><span class="d">2026.04.09. 오전 9:44</span><a href="%EC%86%90%EC%A0%88%EB%82%A8/html/2026-04-09%20%EC%A3%BC%EC%8B%9D%EC%9D%80%20%EC%97%AD%EC%8B%9C%EB%82%98%20%EC%95%8C%20%EC%88%98%EA%B0%80%20%EC%97%86%EB%84%A4%EC%9A%94...html">2026-04-09 주식은 역시나 알 수가 없네요..</a></li>
+    <li><span class="d">2026.04.03. 오후 1:55</span><a href="%EC%86%90%EC%A0%88%EB%82%A8/html/2026-04-03%20%EB%A7%A4%EB%A7%A4%EC%9D%BC%EC%A7%80.html">2026-04-03 매매일지</a></li>
+    <li><span class="d">2026.04.02. 오후 1:59</span><a href="%EC%86%90%EC%A0%88%EB%82%A8/html/2026-04-02%ED%8A%B8%EB%9F%BC%ED%94%84%20X%EC%9E%90%EC%8B%9D%EC%9D%B4...html">2026-04-02트럼프 X자식이..</a></li>
+    <li><span class="d">2026.04.01. 오후 3:51</span><a href="%EC%86%90%EC%A0%88%EB%82%A8/html/2026-04-01%20%EB%A7%A4%EB%A7%A4%EC%9D%BC%EC%A7%80.html">2026-04-01 매매일지</a></li>
+    <li><span class="d">2026.03.31. 오후 12:43</span><a href="%EC%86%90%EC%A0%88%EB%82%A8/html/2026-03-31%20%EB%B0%98%EB%8F%84%EC%B2%B4%20%EA%BA%BC%EC%A0%B8%20%21.html">2026-03-31 반도체 꺼져 !</a></li>
+    <li><span class="d">2026.03.27. 오후 8:55</span><a href="%EC%86%90%EC%A0%88%EB%82%A8/html/2026-03-27%20%EC%A3%BC%EB%A7%90%EC%97%90%20%EC%96%B4%EB%96%A4%EB%89%B4%EC%8A%A4%EA%B0%80%20%EB%82%98%EC%98%AC%EA%B9%8C...html">2026-03-27 주말에 어떤뉴스가 나올까..</a></li>
+    <li><span class="d">2026.03.26. 오후 6:36</span><a href="%EC%86%90%EC%A0%88%EB%82%A8/html/2026-03-26%20%EC%95%88%EC%A0%84%ED%95%98%EA%B2%8C%20%EB%A7%A4%EB%A7%A4%ED%95%A9%EC%8B%9C%EB%8B%A4.html">2026-03-26 안전하게 매매합시다</a></li>
+    <li><span class="d">2026.03.25. 오후 12:06</span><a href="%EC%86%90%EC%A0%88%EB%82%A8/html/2026-03-25%20%ED%99%94%ED%95%B4%EB%AA%A8%EB%93%9C%3F%3F.html">2026-03-25 화해모드??</a></li>
+    <li><span class="d">2026.03.20. 오후 1:19</span><a href="%EC%86%90%EC%A0%88%EB%82%A8/html/2026-03-20%20%EC%9D%B4%EB%B2%88%20%EC%A3%BC%EB%8A%94%20%EC%98%81%20~%20%EC%9E%98%20%EC%95%88%20%EB%A7%9E%EB%84%A4%EC%9A%94.html">2026-03-20 이번 주는 영 ~ 잘 안 맞네요</a></li>
+    <li><span class="d">2026.03.19. 오전 11:21</span><a href="%EC%86%90%EC%A0%88%EB%82%A8/html/2026-03-19%20%EB%B0%98%EB%8F%84%EC%B2%B4%EB%8A%94%20%EB%82%B4%EA%B0%80%20%EC%82%AC%EB%A9%B4%20%EA%BC%AD%20%EB%B9%A0%EC%A7%80%EB%8D%94%EB%9D%BC.html">2026-03-19 반도체는 내가 사면 꼭 빠지더라</a></li>
+    <li><span class="d">2026.03.17. 오후 2:35</span><a href="%EC%86%90%EC%A0%88%EB%82%A8/html/2026-03-17%20%EC%86%90%EC%A0%88%EC%9D%98%20%ED%95%98%EB%A3%A8%20%E3%85%9C.html">2026-03-17 손절의 하루 ㅜ</a></li>
+    <li><span class="d">2026.03.16. 오후 2:44</span><a href="%EC%86%90%EC%A0%88%EB%82%A8/html/2026-03-16%20%EC%83%81%EC%8A%B9%20%EB%AA%A8%EB%A9%98%ED%85%80%EC%9D%B4%20%EC%97%86%EB%8B%A4..html">2026-03-16 상승 모멘텀이 없다.</a></li>
+    <li><span class="d">2026.03.12. 오후 6:35</span><a href="%EC%86%90%EC%A0%88%EB%82%A8/html/2026-03-12%20%EB%A7%A4%EB%A7%A4%EC%9D%BC%EC%A7%80.html">2026-03-12 매매일지</a></li>
+    <li><span class="d">2026.03.11. 오후 4:19</span><a href="%EC%86%90%EC%A0%88%EB%82%A8/html/2026-03-11%20%EC%A0%84%EC%9F%81%EA%B7%B8%EB%A7%8C%21%21.html">2026-03-11 전쟁그만!!</a></li>
+    <li><span class="d">2026.03.09. 오후 3:04</span><a href="%EC%86%90%EC%A0%88%EB%82%A8/html/202-03-09%20%EB%B9%84%EC%A4%91%EC%A1%B0%EC%A0%88%20%EC%9E%98%20%ED%95%A9%EC%8B%9C%EB%8B%A4%21.html">202-03-09 비중조절 잘 합시다!</a></li>
+    <li><span class="d">2026.03.06. 오후 5:26</span><a href="%EC%86%90%EC%A0%88%EB%82%A8/html/2026-03-06%20%EC%9D%B4%EC%A0%9C%20%EB%B9%84%EC%A4%91%EC%9D%84%20%EC%A4%84%EC%9D%B4%EC%9E%90..html">2026-03-06 이제 비중을 줄이자.</a></li>
+    <li><span class="d">2026.03.05. 오후 6:42</span><a href="%EC%86%90%EC%A0%88%EB%82%A8/html/2026-03-05%20%ED%95%98%EB%9D%BD%EC%9D%B4%20%EB%84%88%EB%AC%B4%20%EC%8B%AC%ED%96%88%EB%8B%A4...html">2026-03-05 하락이 너무 심했다..</a></li>
+    <li><span class="d">2026.03.04. 오후 4:18</span><a href="%EC%86%90%EC%A0%88%EB%82%A8/html/2026-03-04%20%EC%9A%B0%EB%A6%AC%EB%82%98%EB%9D%BC%EC%97%90%EC%84%9C%20%EC%A0%84%EC%9F%81%EB%82%AC%EB%82%98%EC%9A%94%3F.html">2026-03-04 우리나라에서 전쟁났나요?</a></li>
+    <li><span class="d">2026.03.03. 오후 4:01</span><a href="%EC%86%90%EC%A0%88%EB%82%A8/html/2026-03-03%20%EC%A1%B0%EC%8B%AC%EC%A1%B0%EC%8B%AC%21%21.html">2026-03-03 조심조심!!</a></li>
+    <li><span class="d">2026.02.27. 오후 3:45</span><a href="%EC%86%90%EC%A0%88%EB%82%A8/html/2026-02-27%202%EC%9B%94%20%EC%88%98%EA%B3%A0%ED%96%88%EC%96%B4%EC%9A%94%20~%5E%5E.html">2026-02-27   2월 수고했어요 ~^^</a></li>
+    <li><span class="d">2026.02.26. 오전 11:14</span><a href="%EC%86%90%EC%A0%88%EB%82%A8/html/2026-02-26%20%EC%98%A4%EB%8A%98%20%EA%B3%A0%EC%A0%90%20%EB%82%98%EC%98%A4%EB%8B%88%3F%21.html">2026-02-26 오늘 고점 나오니?!</a></li>
+    <li><span class="d">2026.02.25. 오후 4:27</span><a href="%EC%86%90%EC%A0%88%EB%82%A8/html/2026-02-25%20%ED%95%A0%20%EB%A7%90%20%EC%97%86%EB%8A%94%20%EC%9E%A5..html">2026-02-25 할 말 없는 장.</a></li>
+    <li><span class="d">2026.02.23. 오전 9:31</span><a href="%EC%86%90%EC%A0%88%EB%82%A8/html/2026-02-23%20%EA%B4%80%EC%84%B8%20%EA%B7%B8%EB%9F%B0%EA%B1%B4%20%EB%82%9C%20%EC%9E%98%20%EB%AA%A8%EB%A5%B4%EA%B2%A0%EA%B3%A0.html">2026-02-23  관세 그런건 난 잘 모르겠고</a></li>
+    <li><span class="d">2026.02.19. 오후 3:54</span><a href="%EC%86%90%EC%A0%88%EB%82%A8/html/2026-02-19%20%EC%96%B8%EC%A0%9C%EA%B9%8C%EC%A7%80%20%EC%98%A4%EB%A5%B4%EB%83%90.html">2026-02-19 언제까지 오르냐</a></li>
+    <li><span class="d">2026.02.12. 오전 9:40</span><a href="%EC%86%90%EC%A0%88%EB%82%A8/html/2026-02-12%20%EC%9B%90%EC%B9%99%20%EB%8C%80%EC%9D%91%E3%85%9C%E3%85%9C.html">2026-02-12 원칙 대응ㅜㅜ</a></li>
+    <li><span class="d">2026.02.09. 오후 12:26</span><a href="%EC%86%90%EC%A0%88%EB%82%A8/html/2026-02-09%EB%8B%A4%EC%8B%9C%20%ED%8F%AC%EB%AA%A8%20%EC%8B%9C%EC%9E%91%EC%9D%B8%EA%B0%80%EC%9A%94%3F%3F.html">2026-02-09다시 포모 시작인가요??</a></li>
+    <li><span class="d">2026.02.06. 오후 3:56</span><a href="%EC%86%90%EC%A0%88%EB%82%A8/html/2026-02-06%20%EB%B0%9C%20%EB%A7%A4%EB%8F%84%EC%9D%98%20%EC%A0%95%EC%84%9D..html">2026-02-06 발 매도의 정석.</a></li>
+    <li><span class="d">2026.02.05. 오후 1:03</span><a href="%EC%86%90%EC%A0%88%EB%82%A8/html/2026-02-05%20%EC%98%A4%EB%8A%98%20%ED%95%98%EB%9D%BD%EC%9D%80%20%EC%9B%94%EC%9A%94%EC%9D%BC%ED%95%98%EA%B3%A0%20%EB%8A%90%EB%82%8C%EC%9D%B4%20%EB%8B%A4%EB%A5%B8%3F.html">2026-02-05 오늘 하락은 월요일하고 느낌이 다른?</a></li>
+    <li><span class="d">2026.02.04. 오후 3:46</span><a href="%EC%86%90%EC%A0%88%EB%82%A8/html/2026-02-04%20%EC%97%87%EB%B0%95%EC%9E%90%EB%A5%BC%20%EC%A1%B0%EC%8B%AC%ED%95%A9%EC%8B%9C%EB%8B%A4..html">2026-02-04  엇박자를 조심합시다.</a></li>
+    <li><span class="d">2026.02.02. 오후 5:05</span><a href="%EC%86%90%EC%A0%88%EB%82%A8/html/2026-02-02%20%EC%A1%B0%EC%A0%95%EC%9D%98%EC%8B%9C%EC%9E%91%3F%3F.html">2026-02-02 조정의시작??</a></li>
+    <li><span class="d">2026.01.28. 오후 5:44</span><a href="%EC%86%90%EC%A0%88%EB%82%A8/html/2026-01-28%20%EB%86%92%EB%8B%A4%EA%B3%A0%20%EC%83%9D%EA%B0%81%ED%95%98%EC%A7%80%20%EB%A7%90%EA%B3%A0%20%EA%B1%8D%20%ED%95%B4%EC%95%BC%EB%90%98%EB%82%98%EC%9A%94%3F.html">2026-01-28 높다고 생각하지 말고 걍 해야되나요?</a></li>
+    <li><span class="d">2026.01.27. 오후 4:23</span><a href="%EC%86%90%EC%A0%88%EB%82%A8/html/2025-01-27%20%EB%B0%98%EB%98%90%EC%B2%B4%20%EB%82%98%EB%8F%84%20%EB%A8%B9%EA%B3%A0%20%EC%8B%B6%EB%8B%A4..html">2025-01-27 반또체 나도 먹고 싶다.</a></li>
+    <li><span class="d">2026.01.26. 오후 4:10</span><a href="%EC%86%90%EC%A0%88%EB%82%A8/html/2026-01-26%20%EC%BD%94%EC%8A%A4%EB%8B%A5%EC%9D%80%20%EB%86%93%EC%B9%98%EC%A7%80%20%EB%A7%90%EC%9E%90%21.html">2026-01-26 코스닥은 놓치지 말자!</a></li>
+    <li><span class="d">2026.01.22. 오후 5:55</span><a href="%EC%86%90%EC%A0%88%EB%82%A8/html/2026-01-22%20%EC%8B%9C%EC%9E%A5%EA%B3%BC%20%EA%B0%99%EC%9D%B4%20%EB%AF%B8%EC%B9%98%EC%A7%80%20%EB%AA%BB%ED%95%98%EA%B3%A0%20%EC%9E%88%EB%8A%94%20%EC%A4%91..html">2026-01-22 시장과 같이 미치지 못하고 있는 중.</a></li>
+    <li><span class="d">2026.01.16. 오전 10:32</span><a href="%EC%86%90%EC%A0%88%EB%82%A8/html/2026-01-16%20%EC%A0%80%EB%9E%91%20%EC%95%88%20%EB%A7%9E%EB%8A%94%20%EC%9E%A5..html">2026-01-16  저랑 안 맞는 장.</a></li>
+    <li><span class="d">2026.01.12. 오후 3:24</span><a href="%EC%86%90%EC%A0%88%EB%82%A8/html/2026-01-12%20%EA%B8%B0%EB%8C%80%ED%95%98%EB%A9%B4%20%EC%95%88%20%EA%B0%80%EB%8A%94%EA%B1%B4%20%EA%B5%AD%EB%A3%B0.html">2026-01-12 기대하면 안 가는건 국룰</a></li>
+    <li><span class="d">2026.01.09. 오후 5:05</span><a href="%EC%86%90%EC%A0%88%EB%82%A8/html/2026-01-09%20%EA%B1%8D%20%EC%A7%88%EB%9F%AC%EC%95%BC%20%EB%90%98%EB%8A%94%20%EC%9E%A5%EC%9D%B8%20%EA%B0%80%EC%9A%94%3F.html">2026-01-09 걍 질러야 되는 장인 가요?</a></li>
+    <li><span class="d">2026.01.08. 오후 6:23</span><a href="%EC%86%90%EC%A0%88%EB%82%A8/html/2026-01-08%20%EA%B8%B0%EC%A4%80%EC%97%90%20%EB%A7%9E%EB%8A%94%20%EC%A2%85%EB%AA%A9%EC%9D%84%20%EA%B8%B0%EB%8B%A4%EB%A6%AC%EC%9E%90..html">2026-01-08  기준에 맞는 종목을 기다리자.</a></li>
+    <li><span class="d">2026.01.06. 오후 5:06</span><a href="%EC%86%90%EC%A0%88%EB%82%A8/html/2026-01-06%20%EC%9E%A0%EC%A0%95%ED%88%AC%EC%9E%90%EC%9D%98%20%EC%98%A4%EB%A5%98%EC%99%80%20%EC%9D%B4%ED%95%B4.html">2026-01-06 잠정투자의 오류와 이해</a></li>
+    <li><span class="d">2026.01.05. 오전 9:40</span><a href="%EC%86%90%EC%A0%88%EB%82%A8/html/2026-01-05%20%EA%B0%90%EA%B0%81%EC%9D%84%20%EB%81%8C%EC%96%B4%EC%98%AC%EB%A6%AC%EC%9E%90.html">2026-01-05 감각을 끌어올리자</a></li>
+    <li><span class="d">2025.12.24. 오후 3:47</span><a href="%EC%86%90%EC%A0%88%EB%82%A8/html/2025-12-24%20%EB%98%90%EB%98%90%EC%A7%80%EB%85%B8%20....html">2025-12-24 또또지노 ...</a></li>
+    <li><span class="d">2025.12.23. 오후 4:08</span><a href="%EC%86%90%EC%A0%88%EB%82%A8/html/2025-12-23%20%EC%95%8C%EC%A7%80%EB%85%B8.html">2025-12-23 알지노</a></li>
+    <li><span class="d">2025.12.22. 오전 11:45</span><a href="%EC%86%90%EC%A0%88%EB%82%A8/html/2025-12-22%20%ED%99%80%EB%94%A9%20%ED%95%98%EB%A9%B4%20%EB%B9%A0%EC%A7%80%EB%84%A4%20%ED%9D%AC%ED%95%9C%ED%95%98%EB%84%A4~.html">2025-12-22  홀딩 하면 빠지네 희한하네~</a></li>
+    <li><span class="d">2025.12.19. 오후 3:09</span><a href="%EC%86%90%EC%A0%88%EB%82%A8/html/2025-12-19%20%EA%B8%B0%EC%9A%B4%EC%97%86%EB%8A%94%20%EB%A7%A4%EB%A7%A4%EC%9D%BC%EC%A7%80.html">2025-12-19 기운없는 매매일지</a></li>
+    <li><span class="d">2025.12.18. 오전 9:46</span><a href="%EC%86%90%EC%A0%88%EB%82%A8/html/2025-12-18%20%EC%97%AD%EC%8B%9C%EB%82%98%20%EC%89%BD%EA%B2%8C%20%EC%A3%BC%EC%A7%80%20%EC%95%8A%EA%B5%AC%EB%82%98...html">2025-12-18 역시나  쉽게 주지 않구나..</a></li>
+    <li><span class="d">2025.12.16. 오후 4:44</span><a href="%EC%86%90%EC%A0%88%EB%82%A8/html/2025-12-16%20%EC%98%A4%EB%8A%98%20%EC%9E%A5%EC%9D%80%20%EB%AD%94%EA%B0%80%20%EC%8E%84~~%ED%95%98%EB%84%A4%EC%9A%94.html">2025-12-16 오늘 장은 뭔가 쎄~~하네요</a></li>
+    <li><span class="d">2025.12.15. 오후 3:54</span><a href="%EC%86%90%EC%A0%88%EB%82%A8/html/2025-12-15%20%EB%B0%94%EC%9D%B4%EC%98%A4%20%EA%B0%80%EC%A6%88%EC%95%84%20%21%21.html">2025-12-15 바이오 가즈아 !!</a></li>
+    <li><span class="d">2025.12.12. 오후 6:09</span><a href="%EC%86%90%EC%A0%88%EB%82%A8/html/2025-12-12%20%EB%B0%94%EC%81%98%EB%8B%A4%20%EB%B0%94%EB%B9%A0%20%ED%98%84%EB%8C%80%EC%82%AC%ED%9A%8C...html">2025-12-12 바쁘다 바빠 현대사회..</a></li>
+    <li><span class="d">2025.12.10. 오후 4:18</span><a href="%EC%86%90%EC%A0%88%EB%82%A8/html/2025-12-10%20%EC%97%90%EC%9D%B4%EB%B9%84%EC%97%98%EB%B0%94%EC%9D%B4%EC%98%A4%2C%20%ED%81%B4%EB%A1%9C%EB%B4%87.html">2025-12-10 에이비엘바이오, 클로봇</a></li>
+    <li><span class="d">2025.12.09. 오후 3:53</span><a href="%EC%86%90%EC%A0%88%EB%82%A8/html/2025-12-09%20%EC%9D%B4%EC%A0%9C%EB%B6%80%ED%84%B0%20%EC%A2%85%EB%B2%A0%EB%A5%BC%20%EC%A4%84%EC%97%AC%EC%95%BC%EC%A3%A0...html">2025-12-09 이제부터 종베를 줄여야죠..</a></li>
+    <li><span class="d">2025.12.08. 오후 4:37</span><a href="%EC%86%90%EC%A0%88%EB%82%A8/html/2025-12-08%20%EC%9B%90%EC%A0%84%20%EC%9D%B4%20%EC%9E%90%EC%8B%9D%EB%93%A4%21%21.html">2025-12-08 원전  이 자식들!!</a></li>
+    <li><span class="d">2025.12.05. 오후 3:57</span><a href="%EC%86%90%EC%A0%88%EB%82%A8/html/2025-12-05%20%ED%98%84%EB%8C%80%EC%B0%A8%20%EC%96%B4%EC%A0%9C%20%EC%A2%80%20%EA%B0%80%EC%A3%BC%EC%A7%80...html">2025-12-05 현대차 어제 좀 가주지..</a></li>
+    <li><span class="d">2025.12.04. 오후 4:41</span><a href="%EC%86%90%EC%A0%88%EB%82%A8/html/2025-12-04%20%ED%98%84%EB%8C%80%EC%B0%A8%20%EC%88%98%EC%9D%B5%EB%82%B4%EA%B8%B0%20%ED%9E%98%EB%93%9C%EB%84%A4.html">2025-12-04   현대차 수익내기 힘드네</a></li>
+    <li><span class="d">2025.12.02. 오후 4:34</span><a href="%EC%86%90%EC%A0%88%EB%82%A8/html/2025-12-02%20%EB%94%B0%EB%B0%95%EB%94%B0%EB%B0%952.html">2025-12-02 따박따박2</a></li>
+    <li><span class="d">2025.12.01. 오후 9:55</span><a href="%EC%86%90%EC%A0%88%EB%82%A8/html/2025-12-1%20%EB%94%B0%EB%B0%95%EB%94%B0%EB%B0%95.html">2025-12-1 따박따박</a></li>
+    <li><span class="d">2025.12.01. 오후 11:31</span><a href="%EC%86%90%EC%A0%88%EB%82%A8/html/2025%EB%85%84%20%E2%99%A5%EA%B3%A0%EB%AF%BC%EC%83%81%EB%8B%B4%20%EC%A0%84%ED%99%94%EB%8D%B0%EC%9D%B4%ED%8A%B8%20%EC%8B%A0%EC%B2%AD%EC%84%9C%E2%99%A5.html">2025년 ♥고민상담 전화데이트 신청서♥</a></li>
+    <li><span class="d">2025.11.28. 오후 6:08</span><a href="%EC%86%90%EC%A0%88%EB%82%A8/html/2025-11-28%20%EB%A7%A4%EB%A7%A4%EC%9D%BC%EC%A7%80.html">2025-11-28 매매일지</a></li>
+    <li><span class="d">2025.11.27. 오전 9:50</span><a href="%EC%86%90%EC%A0%88%EB%82%A8/html/2025-11-27%20%ED%81%90%EB%A6%AC%EC%98%A4%EC%8B%9C%EC%8A%A4.html">2025-11-27 큐리오시스</a></li>
+    <li><span class="d">2025.11.25. 오후 5:34</span><a href="%EC%86%90%EC%A0%88%EB%82%A8/html/2025-11-25%20%EB%A7%A4%EB%A7%A4%EC%97%86%EC%9D%8C%20%28%EA%B0%9C%EC%9D%B8%EC%A0%81%EC%9D%B8%20%EC%83%9D%EA%B0%81%29.html">2025-11-25 매매없음  (개인적인 생각)</a></li>
+    <li><span class="d">2025.11.24. 오후 8:11</span><a href="%EC%86%90%EC%A0%88%EB%82%A8/html/2025-11-24%20%EB%94%94%EC%95%A4%EB%94%94%ED%8C%8C%EB%A7%88%ED%85%8D.html">2025-11-24 디앤디파마텍</a></li>
+    <li><span class="d">2025.11.17. 오후 3:41</span><a href="%EC%86%90%EC%A0%88%EB%82%A8/html/2025-11-17%20SK%ED%95%98%EC%9D%B4%EB%8B%89%EC%8A%A4%20%EB%A7%A4%EB%A7%A4%EC%9D%BC%EC%A7%80.html">2025-11-17  SK하이닉스  매매일지</a></li>
+  </ul>
+  <p class="empty">검색 결과가 없습니다.</p>
+</section>
+<section class="author" id="a2">
   <h2>트레이더김씨 <span class="cnt">(130개)</span></h2>
   <ul>
     <li><span class="d">2026.08.03. 오후 6:56</span><a href="%ED%8A%B8%EB%A0%88%EC%9D%B4%EB%8D%94%EA%B9%80%EC%94%A8/html/8%EC%9B%943%EC%9D%BC%20%28SK%ED%95%98%EC%9D%B4%EB%8B%89%EC%8A%A4%29.html">8월3일 (SK하이닉스)</a></li>
@@ -288,6 +418,43 @@
     <li><span class="d">2025.11.19. 오후 1:34</span><a href="%ED%8A%B8%EB%A0%88%EC%9D%B4%EB%8D%94%EA%B9%80%EC%94%A8/html/2025%EB%85%84%2011%EC%9B%94%2017%EC%9D%BC%20-%20%28%EC%98%AC%EB%A6%AD%EC%8A%A4%20%2C%20%EC%9D%B8%EB%B2%A4%ED%8B%B0%EC%A7%80%EB%9E%A9%20%2CSK%ED%95%98%EC%9D%B4%EB%8B%89%EC%8A%A4%29.html">2025년 11월 17일 - (올릭스 , 인벤티지랩 ,SK하이닉스)</a></li>
     <li><span class="d">2025.11.17. 오후 9:41</span><a href="%ED%8A%B8%EB%A0%88%EC%9D%B4%EB%8D%94%EA%B9%80%EC%94%A8/html/2025%EB%85%84%20%EC%99%9C%20%EB%85%B8%ED%83%80%EC%97%90%2040%EC%96%B5%EC%9D%B4%EB%9E%80%20%EA%B8%88%EC%95%A1%EC%9D%84%20%EC%83%81%EB%94%B0%ED%95%A0%EC%88%98%20%EC%9E%88%EC%97%88%EB%8A%94%EA%B0%80%3F.html">2025년 왜 노타에 40억이란 금액을 상따할수 있었는가?</a></li>
   </ul>
+  <p class="empty">검색 결과가 없습니다.</p>
 </section>
+  </main>
+</div>
+<script>
+  const navs = [...document.querySelectorAll('.nav')];
+  const secs = [...document.querySelectorAll('.author')];
+  const q = document.getElementById('q');
+  function applyFilter() {
+    const v = q.value.trim().toLowerCase();
+    const active = document.querySelector('.nav.active').dataset.t;
+    secs.forEach(s => {
+      const onAuthor = (active === 'all' || s.id === active);
+      let visible = 0;
+      s.querySelectorAll('li').forEach(li => {
+        const hit = !v || li.textContent.toLowerCase().includes(v);
+        li.style.display = hit ? '' : 'none';
+        if (hit) visible++;
+      });
+      s.style.display = onAuthor ? '' : 'none';
+      const emp = s.querySelector('.empty');
+      if (emp) emp.style.display = (onAuthor && visible === 0) ? 'block' : 'none';
+    });
+  }
+  navs.forEach(a => a.addEventListener('click', e => {
+    e.preventDefault();
+    navs.forEach(x => x.classList.remove('active'));
+    a.classList.add('active');
+    applyFilter();
+    if (a.dataset.t !== 'all') {
+      const el = document.getElementById(a.dataset.t);
+      if (el) el.scrollIntoView({behavior: 'smooth', block: 'start'});
+    } else {
+      window.scrollTo({top: 0, behavior: 'smooth'});
+    }
+  }));
+  q.addEventListener('input', applyFilter);
+</script>
 </body>
 </html>

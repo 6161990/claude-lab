@@ -180,23 +180,87 @@ INDEX_TEMPLATE = """<!DOCTYPE html>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>네프콘 아카이브</title>
 <style>
+  * {{ box-sizing: border-box; }}
   body {{ font-family: -apple-system, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
-         max-width: 860px; margin: 40px auto; padding: 0 16px; line-height: 1.6; color: #222; }}
-  h1 {{ font-size: 1.7rem; }}
-  .author {{ margin: 2rem 0; }}
-  .author h2 {{ font-size: 1.2rem; border-bottom: 2px solid #333; padding-bottom: .3rem; }}
+         margin: 0; line-height: 1.6; color: #222; background: #fafafa; }}
+  .wrap {{ display: flex; align-items: flex-start; }}
+  /* 사이드바 */
+  .side {{ position: sticky; top: 0; height: 100vh; width: 240px; flex-shrink: 0;
+          background: #1f2937; color: #e5e7eb; padding: 20px 14px; overflow-y: auto; }}
+  .side h1 {{ font-size: 1.2rem; margin: 0 0 14px; color: #fff; }}
+  .side #q {{ width: 100%; padding: 8px 10px; border: none; border-radius: 6px;
+             margin-bottom: 14px; font-size: .9rem; }}
+  .nav {{ display: flex; justify-content: space-between; align-items: center;
+         padding: 8px 10px; border-radius: 6px; color: #cbd5e1; text-decoration: none;
+         font-size: .92rem; margin-bottom: 2px; cursor: pointer; }}
+  .nav:hover {{ background: #374151; color: #fff; }}
+  .nav.active {{ background: #2563eb; color: #fff; }}
+  .nav b {{ font-weight: 600; font-size: .8rem; opacity: .8; }}
+  /* 본문 */
+  .main {{ flex: 1; max-width: 860px; margin: 0 auto; padding: 30px 24px; }}
+  .author {{ margin-bottom: 2.5rem; scroll-margin-top: 12px; }}
+  .author h2 {{ font-size: 1.25rem; border-bottom: 2px solid #333; padding-bottom: .3rem; }}
   .author h2 .cnt {{ color: #888; font-size: .9rem; font-weight: normal; }}
   ul {{ list-style: none; padding: 0; }}
-  li {{ padding: .35rem 0; border-bottom: 1px solid #f0f0f0; display: flex; gap: .6rem; }}
+  li {{ padding: .35rem 0; border-bottom: 1px solid #eee; display: flex; gap: .6rem; }}
   li .d {{ color: #999; font-size: .85rem; min-width: 6.5rem; flex-shrink: 0; }}
-  a {{ color: #1a56db; text-decoration: none; }}
-  a:hover {{ text-decoration: underline; }}
+  li a {{ color: #1a56db; text-decoration: none; }}
+  li a:hover {{ text-decoration: underline; }}
+  .empty {{ color: #aaa; padding: .5rem 0; display: none; }}
+  @media (max-width: 640px) {{
+    .wrap {{ flex-direction: column; }}
+    .side {{ position: static; height: auto; width: 100%; }}
+  }}
 </style>
 </head>
 <body>
-<h1>네프콘 아카이브</h1>
-<p>총 {total}개 · 작성자 {n_authors}명</p>
+<div class="wrap">
+  <aside class="side">
+    <h1>📁 네프콘 아카이브</h1>
+    <input id="q" placeholder="🔍 제목 검색">
+    <nav id="nav">
+      <a class="nav active" data-t="all">전체 <b>{total}</b></a>
+{navlinks}
+    </nav>
+  </aside>
+  <main class="main">
 {sections}
+  </main>
+</div>
+<script>
+  const navs = [...document.querySelectorAll('.nav')];
+  const secs = [...document.querySelectorAll('.author')];
+  const q = document.getElementById('q');
+  function applyFilter() {{
+    const v = q.value.trim().toLowerCase();
+    const active = document.querySelector('.nav.active').dataset.t;
+    secs.forEach(s => {{
+      const onAuthor = (active === 'all' || s.id === active);
+      let visible = 0;
+      s.querySelectorAll('li').forEach(li => {{
+        const hit = !v || li.textContent.toLowerCase().includes(v);
+        li.style.display = hit ? '' : 'none';
+        if (hit) visible++;
+      }});
+      s.style.display = onAuthor ? '' : 'none';
+      const emp = s.querySelector('.empty');
+      if (emp) emp.style.display = (onAuthor && visible === 0) ? 'block' : 'none';
+    }});
+  }}
+  navs.forEach(a => a.addEventListener('click', e => {{
+    e.preventDefault();
+    navs.forEach(x => x.classList.remove('active'));
+    a.classList.add('active');
+    applyFilter();
+    if (a.dataset.t !== 'all') {{
+      const el = document.getElementById(a.dataset.t);
+      if (el) el.scrollIntoView({{behavior: 'smooth', block: 'start'}});
+    }} else {{
+      window.scrollTo({{top: 0, behavior: 'smooth'}});
+    }}
+  }}));
+  q.addEventListener('input', applyFilter);
+</script>
 </body>
 </html>
 """
@@ -206,6 +270,7 @@ def build_index(out_root: Path):
     """out_root 하위의 각 작성자 폴더(<author>/html/*.html)를 스캔해
     작성자별로 구분된 목록 페이지(index.html)를 생성한다."""
     sections = []
+    navlinks = []
     total = 0
     n_authors = 0
     for author_dir in sorted(p for p in out_root.iterdir() if p.is_dir()):
@@ -226,21 +291,27 @@ def build_index(out_root: Path):
         if not items:
             continue
         items.sort(key=lambda x: x[0], reverse=True)
+        sec_id = f"a{n_authors}"
         n_authors += 1
         total += len(items)
+        name = html.escape(author_dir.name)
         lis = "\n".join(
             f'    <li><span class="d">{html.escape(dt)}</span>'
             f'<a href="{rel}">{html.escape(ti)}</a></li>'
             for _, ti, dt, rel in items
         )
         sections.append(
-            f'<section class="author">\n'
-            f'  <h2>{html.escape(author_dir.name)} '
-            f'<span class="cnt">({len(items)}개)</span></h2>\n'
-            f"  <ul>\n{lis}\n  </ul>\n</section>"
+            f'<section class="author" id="{sec_id}">\n'
+            f'  <h2>{name} <span class="cnt">({len(items)}개)</span></h2>\n'
+            f'  <ul>\n{lis}\n  </ul>\n'
+            f'  <p class="empty">검색 결과가 없습니다.</p>\n</section>'
+        )
+        navlinks.append(
+            f'      <a class="nav" data-t="{sec_id}">{name} <b>{len(items)}</b></a>'
         )
     doc = INDEX_TEMPLATE.format(
-        total=total, n_authors=n_authors, sections="\n".join(sections)
+        total=total, n_authors=n_authors,
+        navlinks="\n".join(navlinks), sections="\n".join(sections)
     )
     (out_root / "index.html").write_text(doc, encoding="utf-8")
     print(f"목록 페이지 생성: {out_root / 'index.html'} (총 {total}개)", file=sys.stderr)
@@ -285,16 +356,25 @@ async def main():
 
         targets = posts if args.limit == 0 else posts[: args.limit]
         audit = []  # 감사 로그: (제목, 본문길이, 기대이미지, 저장이미지, 오류)
+        used_bases = set()  # 파일명 중복 방지 (같은 제목 글이 여러 개인 경우)
         for i, p in enumerate(targets, 1):
             try:
                 full = await browser.read_nepcon_post(p["url"])
                 title = full.get("title") or p["title"]
                 # 올해(2026)가 아닌 글은 제목 앞에 연도를 붙여 구분 (예: 2025년 11월21일 ...)
+                # 단, 제목에 이미 연도가 들어있으면(예: 2025-01-05) 중복 방지로 생략
                 ym = re.match(r"(\d{4})", full.get("date", "") or "")
                 year = ym.group(1) if ym else ""
-                if year and year != "2026":
+                if year and year != "2026" and year not in title:
                     title = f"{year}년 {title}"
                 base = safe_name(title)
+                # 동일 제목이 이미 있으면 (2), (3)... 을 붙여 파일 덮어쓰기 방지
+                if base in used_bases:
+                    k = 2
+                    while f"{base} ({k})" in used_bases:
+                        k += 1
+                    base = f"{base} ({k})"
+                used_bases.add(base)
                 body_content = full.get("content", "")
                 # 본문을 이미지 base64 내장 HTML로 변환 + 원본 이미지는 images/에 저장
                 body_html, n_exp, n_saved = await build_body_html(

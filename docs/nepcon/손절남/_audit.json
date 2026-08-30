@@ -1,0 +1,746 @@
+[
+  {
+    "title": "2026-08-27 SK하이닉스",
+    "content_len": 1063,
+    "img_expected": 2,
+    "img_saved": 2,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "2026-08-25~26 한미약품",
+    "content_len": 1888,
+    "img_expected": 6,
+    "img_saved": 6,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "2026-08-21(금) 관심종목",
+    "content_len": 566,
+    "img_expected": 0,
+    "img_saved": 0,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "오~~랜만의 매매일지.",
+    "content_len": 1616,
+    "img_expected": 5,
+    "img_saved": 5,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "2026-06-19매매일지",
+    "content_len": 754,
+    "img_expected": 2,
+    "img_saved": 2,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "2026-06-18 매매일지",
+    "content_len": 1231,
+    "img_expected": 4,
+    "img_saved": 4,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "2026-06-17매매일지",
+    "content_len": 2215,
+    "img_expected": 9,
+    "img_saved": 9,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "2026-06-15매매일지",
+    "content_len": 2112,
+    "img_expected": 7,
+    "img_saved": 7,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "2026-06-11매매일지",
+    "content_len": 1385,
+    "img_expected": 4,
+    "img_saved": 4,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "2026-06-10 매매일지",
+    "content_len": 880,
+    "img_expected": 3,
+    "img_saved": 3,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "2026-06-08 매매일지",
+    "content_len": 2222,
+    "img_expected": 7,
+    "img_saved": 7,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "2026-06-03 ~ 04 매매일지",
+    "content_len": 1367,
+    "img_expected": 4,
+    "img_saved": 4,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "2026-06-01매매일지",
+    "content_len": 1158,
+    "img_expected": 4,
+    "img_saved": 4,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "2026-05-29매매일지",
+    "content_len": 641,
+    "img_expected": 2,
+    "img_saved": 2,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "2026-05-27 매매일지",
+    "content_len": 2139,
+    "img_expected": 8,
+    "img_saved": 8,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "2026-05-22 매매일지",
+    "content_len": 1558,
+    "img_expected": 6,
+    "img_saved": 6,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "2026-05-20매매일지",
+    "content_len": 721,
+    "img_expected": 2,
+    "img_saved": 2,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "2026-05-15 매매일지",
+    "content_len": 1816,
+    "img_expected": 6,
+    "img_saved": 6,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "2025-05-14 매매일지",
+    "content_len": 1057,
+    "img_expected": 4,
+    "img_saved": 4,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "2026-05-11매매일지",
+    "content_len": 1493,
+    "img_expected": 4,
+    "img_saved": 4,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "2026-05-08 현대의 날.",
+    "content_len": 1865,
+    "img_expected": 7,
+    "img_saved": 7,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "2026-05-07 외국인 차익실현 중 ??",
+    "content_len": 1578,
+    "img_expected": 6,
+    "img_saved": 6,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "2026-05-06 역대급 포모의 장.",
+    "content_len": 1995,
+    "img_expected": 8,
+    "img_saved": 8,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "2026-05-04 대단한 불장입니다.",
+    "content_len": 1005,
+    "img_expected": 4,
+    "img_saved": 4,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "2026-04-28 매매일지",
+    "content_len": 987,
+    "img_expected": 2,
+    "img_saved": 2,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "2026-04-22 매매일지",
+    "content_len": 2458,
+    "img_expected": 10,
+    "img_saved": 10,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "2026-04-22 매매일지 (2)",
+    "content_len": 2333,
+    "img_expected": 9,
+    "img_saved": 9,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "2026-04-21 매매일지",
+    "content_len": 1215,
+    "img_expected": 4,
+    "img_saved": 4,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "2026-04-20 매매일지",
+    "content_len": 1828,
+    "img_expected": 7,
+    "img_saved": 7,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "2026-04-17 매매일지",
+    "content_len": 1506,
+    "img_expected": 6,
+    "img_saved": 6,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "2026-04-15 매매일지",
+    "content_len": 1298,
+    "img_expected": 4,
+    "img_saved": 4,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "2026-04-13 매매일지",
+    "content_len": 780,
+    "img_expected": 2,
+    "img_saved": 2,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "2026-04-09 주식은 역시나 알 수가 없네요..",
+    "content_len": 1331,
+    "img_expected": 5,
+    "img_saved": 5,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "2026-04-03 매매일지",
+    "content_len": 1834,
+    "img_expected": 7,
+    "img_saved": 7,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "2026-04-02트럼프 X자식이..",
+    "content_len": 967,
+    "img_expected": 3,
+    "img_saved": 3,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "2026-04-01 매매일지",
+    "content_len": 732,
+    "img_expected": 2,
+    "img_saved": 2,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "2026-03-31 반도체 꺼져 !",
+    "content_len": 784,
+    "img_expected": 2,
+    "img_saved": 2,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "2026-03-27 주말에 어떤뉴스가 나올까..",
+    "content_len": 1345,
+    "img_expected": 4,
+    "img_saved": 4,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "2026-03-26 안전하게 매매합시다",
+    "content_len": 3402,
+    "img_expected": 14,
+    "img_saved": 14,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "2026-03-25 화해모드??",
+    "content_len": 1194,
+    "img_expected": 4,
+    "img_saved": 4,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "2026-03-20 이번 주는 영 ~ 잘 안 맞네요",
+    "content_len": 967,
+    "img_expected": 3,
+    "img_saved": 3,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "2026-03-19 반도체는 내가 사면 꼭 빠지더라",
+    "content_len": 1358,
+    "img_expected": 3,
+    "img_saved": 3,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "2026-03-17 손절의 하루 ㅜ",
+    "content_len": 1113,
+    "img_expected": 4,
+    "img_saved": 4,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "2026-03-16 상승 모멘텀이 없다.",
+    "content_len": 1058,
+    "img_expected": 4,
+    "img_saved": 4,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "2026-03-12 매매일지",
+    "content_len": 1138,
+    "img_expected": 4,
+    "img_saved": 4,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "2026-03-11 전쟁그만!!",
+    "content_len": 1249,
+    "img_expected": 4,
+    "img_saved": 4,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "202-03-09 비중조절 잘 합시다!",
+    "content_len": 1297,
+    "img_expected": 4,
+    "img_saved": 4,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "2026-03-06 이제 비중을 줄이자.",
+    "content_len": 724,
+    "img_expected": 2,
+    "img_saved": 2,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "2026-03-05 하락이 너무 심했다..",
+    "content_len": 1096,
+    "img_expected": 3,
+    "img_saved": 3,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "2026-03-04 우리나라에서 전쟁났나요?",
+    "content_len": 1850,
+    "img_expected": 6,
+    "img_saved": 6,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "2026-03-03 조심조심!!",
+    "content_len": 909,
+    "img_expected": 3,
+    "img_saved": 3,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "2026-02-27 2월 수고했어요 ~^^",
+    "content_len": 1629,
+    "img_expected": 6,
+    "img_saved": 6,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "2026-02-26 오늘 고점 나오니?!",
+    "content_len": 2102,
+    "img_expected": 7,
+    "img_saved": 7,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "2026-02-25 할 말 없는 장.",
+    "content_len": 1326,
+    "img_expected": 4,
+    "img_saved": 4,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "2026-02-23 관세 그런건 난 잘 모르겠고",
+    "content_len": 1401,
+    "img_expected": 5,
+    "img_saved": 5,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "2026-02-19 언제까지 오르냐",
+    "content_len": 1074,
+    "img_expected": 4,
+    "img_saved": 4,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "2026-02-12 원칙 대응ㅜㅜ",
+    "content_len": 1078,
+    "img_expected": 2,
+    "img_saved": 2,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "2026-02-09다시 포모 시작인가요??",
+    "content_len": 905,
+    "img_expected": 3,
+    "img_saved": 3,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "2026-02-06 발 매도의 정석.",
+    "content_len": 1621,
+    "img_expected": 5,
+    "img_saved": 5,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "2026-02-05 오늘 하락은 월요일하고 느낌이 다른?",
+    "content_len": 1522,
+    "img_expected": 5,
+    "img_saved": 5,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "2026-02-04 엇박자를 조심합시다.",
+    "content_len": 2420,
+    "img_expected": 9,
+    "img_saved": 9,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "2026-02-02 조정의시작??",
+    "content_len": 1254,
+    "img_expected": 4,
+    "img_saved": 4,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "2026-01-28 높다고 생각하지 말고 걍 해야되나요?",
+    "content_len": 1655,
+    "img_expected": 6,
+    "img_saved": 6,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "2025-01-27 반또체 나도 먹고 싶다.",
+    "content_len": 1306,
+    "img_expected": 4,
+    "img_saved": 4,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "2026-01-26 코스닥은 놓치지 말자!",
+    "content_len": 1780,
+    "img_expected": 6,
+    "img_saved": 6,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "2026-01-22 시장과 같이 미치지 못하고 있는 중.",
+    "content_len": 2283,
+    "img_expected": 9,
+    "img_saved": 9,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "2026-01-16 저랑 안 맞는 장.",
+    "content_len": 1008,
+    "img_expected": 2,
+    "img_saved": 2,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "2026-01-12 기대하면 안 가는건 국룰",
+    "content_len": 938,
+    "img_expected": 3,
+    "img_saved": 3,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "2026-01-09 걍 질러야 되는 장인 가요?",
+    "content_len": 996,
+    "img_expected": 3,
+    "img_saved": 3,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "2026-01-08 기준에 맞는 종목을 기다리자.",
+    "content_len": 1602,
+    "img_expected": 5,
+    "img_saved": 5,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "2026-01-06 잠정투자의 오류와 이해",
+    "content_len": 123,
+    "img_expected": 0,
+    "img_saved": 0,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "2026-01-05 감각을 끌어올리자",
+    "content_len": 1219,
+    "img_expected": 3,
+    "img_saved": 3,
+    "error": "",
+    "text_coverage": 1.035
+  },
+  {
+    "title": "2025-12-24 또또지노 ...",
+    "content_len": 2050,
+    "img_expected": 8,
+    "img_saved": 8,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "2025-12-23 알지노",
+    "content_len": 920,
+    "img_expected": 3,
+    "img_saved": 3,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "2025-12-22 홀딩 하면 빠지네 희한하네~",
+    "content_len": 1980,
+    "img_expected": 8,
+    "img_saved": 8,
+    "error": "",
+    "text_coverage": 1.06
+  },
+  {
+    "title": "2025-12-19 기운없는 매매일지",
+    "content_len": 2636,
+    "img_expected": 11,
+    "img_saved": 11,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "2025-12-18 역시나 쉽게 주지 않구나..",
+    "content_len": 692,
+    "img_expected": 2,
+    "img_saved": 2,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "2025-12-16 오늘 장은 뭔가 쎄~~하네요",
+    "content_len": 1527,
+    "img_expected": 6,
+    "img_saved": 6,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "2025-12-15 바이오 가즈아 !!",
+    "content_len": 1791,
+    "img_expected": 6,
+    "img_saved": 6,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "2025-12-12 바쁘다 바빠 현대사회..",
+    "content_len": 1501,
+    "img_expected": 6,
+    "img_saved": 6,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "2025-12-10 에이비엘바이오, 클로봇",
+    "content_len": 1943,
+    "img_expected": 7,
+    "img_saved": 7,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "2025-12-09 이제부터 종베를 줄여야죠..",
+    "content_len": 1973,
+    "img_expected": 7,
+    "img_saved": 7,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "2025-12-08 원전 이 자식들!!",
+    "content_len": 2386,
+    "img_expected": 9,
+    "img_saved": 9,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "2025-12-05 현대차 어제 좀 가주지..",
+    "content_len": 1183,
+    "img_expected": 3,
+    "img_saved": 3,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "2025-12-04 현대차 수익내기 힘드네",
+    "content_len": 3040,
+    "img_expected": 10,
+    "img_saved": 10,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "2025-12-02 따박따박2",
+    "content_len": 3082,
+    "img_expected": 13,
+    "img_saved": 13,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "2025년 ♥고민상담 전화데이트 신청서♥",
+    "content_len": 596,
+    "img_expected": 1,
+    "img_saved": 1,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "2025-12-1 따박따박",
+    "content_len": 2198,
+    "img_expected": 7,
+    "img_saved": 7,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "2025-11-28 매매일지",
+    "content_len": 1480,
+    "img_expected": 3,
+    "img_saved": 3,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "2025-11-27 큐리오시스",
+    "content_len": 1021,
+    "img_expected": 3,
+    "img_saved": 3,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "2025-11-25 매매없음 (개인적인 생각)",
+    "content_len": 1681,
+    "img_expected": 4,
+    "img_saved": 4,
+    "error": "",
+    "text_coverage": 1.047
+  },
+  {
+    "title": "2025-11-24 디앤디파마텍",
+    "content_len": 308,
+    "img_expected": 1,
+    "img_saved": 1,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "2025-11-17 SK하이닉스 매매일지",
+    "content_len": 1098,
+    "img_expected": 4,
+    "img_saved": 4,
+    "error": "",
+    "text_coverage": 1.0
+  }
+]
