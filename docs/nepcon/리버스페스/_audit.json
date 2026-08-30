@@ -1,0 +1,1026 @@
+[
+  {
+    "title": "08／27(목) 매매일지",
+    "content_len": 5499,
+    "img_expected": 11,
+    "img_saved": 11,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "08／25(화) 매매일지",
+    "content_len": 3411,
+    "img_expected": 6,
+    "img_saved": 6,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "08／20(목) 매매일지",
+    "content_len": 4024,
+    "img_expected": 6,
+    "img_saved": 6,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "08／13(목) 매매일지",
+    "content_len": 5410,
+    "img_expected": 10,
+    "img_saved": 10,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "08／12(수) 매매일지",
+    "content_len": 3828,
+    "img_expected": 7,
+    "img_saved": 7,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "08／11(화) 매매일지",
+    "content_len": 2920,
+    "img_expected": 5,
+    "img_saved": 5,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "08／07(금) 매매일지",
+    "content_len": 3137,
+    "img_expected": 4,
+    "img_saved": 4,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "08／05(수) 매매없는일지",
+    "content_len": 2429,
+    "img_expected": 3,
+    "img_saved": 3,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "08／03(월) 매매일지",
+    "content_len": 4707,
+    "img_expected": 9,
+    "img_saved": 9,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "07／30(목) 매매일지",
+    "content_len": 5803,
+    "img_expected": 11,
+    "img_saved": 11,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "07／28(화) 매매일지",
+    "content_len": 2983,
+    "img_expected": 4,
+    "img_saved": 4,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "07／27(월) 매매일지",
+    "content_len": 3314,
+    "img_expected": 5,
+    "img_saved": 5,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "07／24(금) 매매일지",
+    "content_len": 6475,
+    "img_expected": 11,
+    "img_saved": 11,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "07／23(목) 매매일지",
+    "content_len": 2751,
+    "img_expected": 4,
+    "img_saved": 4,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "07／22(수) 매매일지",
+    "content_len": 4667,
+    "img_expected": 9,
+    "img_saved": 9,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "07／16(목) 매매일지",
+    "content_len": 3313,
+    "img_expected": 5,
+    "img_saved": 5,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "07／15(수) 매매일지",
+    "content_len": 4109,
+    "img_expected": 8,
+    "img_saved": 8,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "07／14(화) 매매일지",
+    "content_len": 5506,
+    "img_expected": 12,
+    "img_saved": 12,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "07／13(월) 매매일지",
+    "content_len": 4787,
+    "img_expected": 8,
+    "img_saved": 8,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "07／10(금) 매매일지",
+    "content_len": 4327,
+    "img_expected": 8,
+    "img_saved": 8,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "07／09(목) 매매일지",
+    "content_len": 4437,
+    "img_expected": 7,
+    "img_saved": 7,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "07／08(수) 매매일지",
+    "content_len": 3553,
+    "img_expected": 5,
+    "img_saved": 5,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "07／07(화) 매매일지",
+    "content_len": 3394,
+    "img_expected": 5,
+    "img_saved": 5,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "07／06(월) 매매일지",
+    "content_len": 3581,
+    "img_expected": 6,
+    "img_saved": 6,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "07／02(목) 매매일지",
+    "content_len": 4717,
+    "img_expected": 7,
+    "img_saved": 7,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "06／30(화) 매매일지",
+    "content_len": 4373,
+    "img_expected": 8,
+    "img_saved": 8,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "06／26(금) 최대손실일지",
+    "content_len": 6830,
+    "img_expected": 13,
+    "img_saved": 13,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "06／25(목) 매매일지",
+    "content_len": 4490,
+    "img_expected": 9,
+    "img_saved": 9,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "06／23(화) 매매일지",
+    "content_len": 5304,
+    "img_expected": 10,
+    "img_saved": 10,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "06／22(월) 매매일지",
+    "content_len": 3134,
+    "img_expected": 5,
+    "img_saved": 5,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "06／19(금) 매매일지",
+    "content_len": 4486,
+    "img_expected": 5,
+    "img_saved": 5,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "06／17(수) 매매일지",
+    "content_len": 5138,
+    "img_expected": 9,
+    "img_saved": 9,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "06／16(화) 매매일지",
+    "content_len": 3839,
+    "img_expected": 7,
+    "img_saved": 7,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "06／15(월) 매매일지",
+    "content_len": 4282,
+    "img_expected": 7,
+    "img_saved": 7,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "06／12(금) 매매일지",
+    "content_len": 4801,
+    "img_expected": 10,
+    "img_saved": 10,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "06／10(수) 매매일지",
+    "content_len": 7435,
+    "img_expected": 14,
+    "img_saved": 14,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "06／08(월) 매매일지",
+    "content_len": 6941,
+    "img_expected": 16,
+    "img_saved": 16,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "06／04(목) 매매일지",
+    "content_len": 6372,
+    "img_expected": 13,
+    "img_saved": 13,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "2026-06-02(화) 매매일지",
+    "content_len": 9181,
+    "img_expected": 19,
+    "img_saved": 19,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "06／01(월) 매매일지",
+    "content_len": 10532,
+    "img_expected": 27,
+    "img_saved": 27,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "05／27(수) 매매일지",
+    "content_len": 5786,
+    "img_expected": 12,
+    "img_saved": 12,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "05／22(금) 매매일지",
+    "content_len": 6044,
+    "img_expected": 12,
+    "img_saved": 12,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "05／21(목) 매매일지",
+    "content_len": 6009,
+    "img_expected": 12,
+    "img_saved": 12,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "05／19(화) 매매일지",
+    "content_len": 7090,
+    "img_expected": 15,
+    "img_saved": 15,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "05／18(월) 매매일지",
+    "content_len": 4783,
+    "img_expected": 10,
+    "img_saved": 10,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "05／15(금) 매매일지",
+    "content_len": 6446,
+    "img_expected": 14,
+    "img_saved": 14,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "05／13(수) 매매일지",
+    "content_len": 4820,
+    "img_expected": 8,
+    "img_saved": 8,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "05／11(월) 매매일지",
+    "content_len": 5228,
+    "img_expected": 11,
+    "img_saved": 11,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "05／04(월) 매매일지",
+    "content_len": 6004,
+    "img_expected": 9,
+    "img_saved": 9,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "04／27(월) 매매일지",
+    "content_len": 4198,
+    "img_expected": 9,
+    "img_saved": 9,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "04／24(금) 매매일지",
+    "content_len": 5419,
+    "img_expected": 12,
+    "img_saved": 12,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "04／22(수) 매매일지",
+    "content_len": 5208,
+    "img_expected": 10,
+    "img_saved": 10,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "04／20(월) 매매일지",
+    "content_len": 5595,
+    "img_expected": 13,
+    "img_saved": 13,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "04／17(금) 매매일지",
+    "content_len": 6005,
+    "img_expected": 13,
+    "img_saved": 13,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "04／14(화) 매매일지",
+    "content_len": 5490,
+    "img_expected": 9,
+    "img_saved": 9,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "04／13(월) 매매일지",
+    "content_len": 3739,
+    "img_expected": 8,
+    "img_saved": 8,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "04／10(금) 매매일지",
+    "content_len": 4364,
+    "img_expected": 8,
+    "img_saved": 8,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "04／09(목) 매매일지",
+    "content_len": 5011,
+    "img_expected": 11,
+    "img_saved": 11,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "04／07(화) 매매일지",
+    "content_len": 6024,
+    "img_expected": 11,
+    "img_saved": 11,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "04／06(월) 매매일지",
+    "content_len": 4111,
+    "img_expected": 8,
+    "img_saved": 8,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "04／01(수) 매매일지",
+    "content_len": 5270,
+    "img_expected": 10,
+    "img_saved": 10,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "03／30(월) 매매일지",
+    "content_len": 2769,
+    "img_expected": 4,
+    "img_saved": 4,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "03／26(목) 매매일지",
+    "content_len": 6741,
+    "img_expected": 14,
+    "img_saved": 14,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "03／24(화) 매매일지",
+    "content_len": 5093,
+    "img_expected": 10,
+    "img_saved": 10,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "03／23(월) 매매일지",
+    "content_len": 6815,
+    "img_expected": 16,
+    "img_saved": 16,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "03／19(목) 한숨",
+    "content_len": 8286,
+    "img_expected": 18,
+    "img_saved": 18,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "03／17(화) 매매일지",
+    "content_len": 5149,
+    "img_expected": 8,
+    "img_saved": 8,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "03／16(월) 매매일지",
+    "content_len": 5819,
+    "img_expected": 11,
+    "img_saved": 11,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "중／장기투자 3번째 종목 매도",
+    "content_len": 5800,
+    "img_expected": 7,
+    "img_saved": 7,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "03／12(목) 매매일지",
+    "content_len": 3481,
+    "img_expected": 6,
+    "img_saved": 6,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "03／11(수) 매매일지",
+    "content_len": 4229,
+    "img_expected": 8,
+    "img_saved": 8,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "03／09(월) 매매일지",
+    "content_len": 4789,
+    "img_expected": 8,
+    "img_saved": 8,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "03／06(금) 매매일지",
+    "content_len": 4190,
+    "img_expected": 7,
+    "img_saved": 7,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "03／05(목) 매매일지",
+    "content_len": 6534,
+    "img_expected": 15,
+    "img_saved": 15,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "03／03(화) 매매일지",
+    "content_len": 6181,
+    "img_expected": 12,
+    "img_saved": 12,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "02／27(금) 매매일지",
+    "content_len": 2569,
+    "img_expected": 6,
+    "img_saved": 6,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "02／26(목) 매매일지",
+    "content_len": 7592,
+    "img_expected": 16,
+    "img_saved": 16,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "02／25(수) 매매일지",
+    "content_len": 10743,
+    "img_expected": 24,
+    "img_saved": 24,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "02／24(화) 매매일지",
+    "content_len": 5379,
+    "img_expected": 10,
+    "img_saved": 10,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "02／23(월) 매매일지",
+    "content_len": 8902,
+    "img_expected": 19,
+    "img_saved": 19,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "02／20(금) 매매일지",
+    "content_len": 7835,
+    "img_expected": 17,
+    "img_saved": 17,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "02／19(목) 매매일지",
+    "content_len": 6531,
+    "img_expected": 13,
+    "img_saved": 13,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "중／장기투자 2번째 종목 매",
+    "content_len": 3932,
+    "img_expected": 7,
+    "img_saved": 7,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "02／12(목) 매매일지",
+    "content_len": 4645,
+    "img_expected": 8,
+    "img_saved": 8,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "02／11(수) 매매일지",
+    "content_len": 5335,
+    "img_expected": 10,
+    "img_saved": 10,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "02／10(화) 매매일지",
+    "content_len": 5535,
+    "img_expected": 10,
+    "img_saved": 10,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "02／09(월) 매매일지",
+    "content_len": 7287,
+    "img_expected": 16,
+    "img_saved": 16,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "02／05(목) 매매일지",
+    "content_len": 4514,
+    "img_expected": 8,
+    "img_saved": 8,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "02／04(수) 확신에 가득찬 배팅..",
+    "content_len": 7517,
+    "img_expected": 14,
+    "img_saved": 14,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "02／03(화) 매매일지",
+    "content_len": 3231,
+    "img_expected": 5,
+    "img_saved": 5,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "02／02(월) 매매일지",
+    "content_len": 5132,
+    "img_expected": 9,
+    "img_saved": 9,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "01／29(목) 매매일지",
+    "content_len": 10172,
+    "img_expected": 24,
+    "img_saved": 24,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "01／28(수) 매매일지",
+    "content_len": 7636,
+    "img_expected": 16,
+    "img_saved": 16,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "01／27(화) 매매일지",
+    "content_len": 5682,
+    "img_expected": 9,
+    "img_saved": 9,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "01／26(월) 매매일지",
+    "content_len": 7325,
+    "img_expected": 12,
+    "img_saved": 12,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "01／20(화) 매매일지",
+    "content_len": 7603,
+    "img_expected": 15,
+    "img_saved": 15,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "01／19(월) 매매일지",
+    "content_len": 7258,
+    "img_expected": 17,
+    "img_saved": 17,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "중／장기종목 첫 종목 매도",
+    "content_len": 3030,
+    "img_expected": 5,
+    "img_saved": 5,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "01／16(금) 매매일지",
+    "content_len": 10376,
+    "img_expected": 24,
+    "img_saved": 24,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "01／14(수) 매매일지",
+    "content_len": 7196,
+    "img_expected": 15,
+    "img_saved": 15,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "01／13(화) 매매일지",
+    "content_len": 6960,
+    "img_expected": 13,
+    "img_saved": 13,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "01／12(월) 매매일지",
+    "content_len": 6273,
+    "img_expected": 12,
+    "img_saved": 12,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "01／09(금) 의심속에서 커지는 상승장",
+    "content_len": 8958,
+    "img_expected": 17,
+    "img_saved": 17,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "01／07(수) 과연 삼성전자는..",
+    "content_len": 6000,
+    "img_expected": 10,
+    "img_saved": 10,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "01／06(화) 불장 동참",
+    "content_len": 5476,
+    "img_expected": 10,
+    "img_saved": 10,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "26／01／05 나만 즐기지 못하는 불장",
+    "content_len": 8586,
+    "img_expected": 19,
+    "img_saved": 19,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "2025년 12／30 25년 마무리",
+    "content_len": 4382,
+    "img_expected": 8,
+    "img_saved": 8,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "2025년 12／29 매매일지",
+    "content_len": 6792,
+    "img_expected": 13,
+    "img_saved": 13,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "2025년 12／26 대주주확정일",
+    "content_len": 6910,
+    "img_expected": 16,
+    "img_saved": 16,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "2025년 12／24 매매일지",
+    "content_len": 8021,
+    "img_expected": 16,
+    "img_saved": 16,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "2025년 12／23 매매일지",
+    "content_len": 7489,
+    "img_expected": 16,
+    "img_saved": 16,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "2025년 12／22 확신은 금물",
+    "content_len": 7485,
+    "img_expected": 15,
+    "img_saved": 15,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "2025년 12／18 너무나 지루했던 시장",
+    "content_len": 4034,
+    "img_expected": 9,
+    "img_saved": 9,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "2025년 12／17 세력을 이기려 하지말자",
+    "content_len": 5148,
+    "img_expected": 10,
+    "img_saved": 10,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "2025년 12／16 신규주 머피의 법칙",
+    "content_len": 5255,
+    "img_expected": 11,
+    "img_saved": 11,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "2025년 12／15 과거일지에 다 나와있다.",
+    "content_len": 4435,
+    "img_expected": 9,
+    "img_saved": 9,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "2025년 12／11 인간의 욕심은 끝이 없고, 같은 실수를 반복한다.",
+    "content_len": 4624,
+    "img_expected": 11,
+    "img_saved": 11,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "2025년 12／10 주도주.. 해야되는데..",
+    "content_len": 5117,
+    "img_expected": 11,
+    "img_saved": 11,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "2025년 12／09 매매가 너무 많네",
+    "content_len": 7618,
+    "img_expected": 17,
+    "img_saved": 17,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "2025년 12／08 이리저리~",
+    "content_len": 4821,
+    "img_expected": 12,
+    "img_saved": 12,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "2025년 12／04 좋은듯 안 좋은듯",
+    "content_len": 8402,
+    "img_expected": 21,
+    "img_saved": 21,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "2025년 12／03 3의 법칙의 1",
+    "content_len": 4885,
+    "img_expected": 9,
+    "img_saved": 9,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "2025년 12／02 모아보니 뉴스매매",
+    "content_len": 6927,
+    "img_expected": 14,
+    "img_saved": 14,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "2025년 \"자신과 맞는 트레이더를 찾아라\"",
+    "content_len": 1235,
+    "img_expected": 0,
+    "img_saved": 0,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "2025년 12／01 과거로 돌아가도 할 수 있을까?",
+    "content_len": 2601,
+    "img_expected": 4,
+    "img_saved": 4,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "2025년 11／28 지나친 욕심이 남긴 흔적",
+    "content_len": 11184,
+    "img_expected": 20,
+    "img_saved": 20,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "2025년 11／26 뉴스매매가 어려운 이유",
+    "content_len": 3192,
+    "img_expected": 6,
+    "img_saved": 6,
+    "error": "",
+    "text_coverage": 1.0
+  },
+  {
+    "title": "2025년 11／25 쉽지않네",
+    "content_len": 4708,
+    "img_expected": 11,
+    "img_saved": 11,
+    "error": "",
+    "text_coverage": 1.0
+  }
+]
