@@ -60,6 +60,7 @@ class NaverNepconBrowser:
         )
 
         session_file = Path(SESSION_PATH)
+        self._session_existed = session_file.exists()
 
         if session_file.exists():
             # 저장된 세션 재사용
@@ -100,15 +101,26 @@ class NaverNepconBrowser:
         if self._playwright:
             await self._playwright.stop()
 
+    async def _is_logged_in(self) -> bool:
+        """네이버 홈에서 로그아웃 링크 존재 여부로 로그인 상태를 안정적으로 판별한다.
+        (로그인 버튼 클래스는 자주 바뀌어 신뢰할 수 없으므로 로그아웃 링크를 positive 신호로 사용)"""
+        try:
+            await self.page.goto(NAVER_HOME_URL)
+            await random_delay()
+            return await self.page.evaluate(
+                "() => !!document.querySelector('a[href*=\"nidlogin.logout\"], "
+                "a[href*=\"/logout\"], [class*=\"logout\"]')"
+            )
+        except Exception:
+            return False
+
     async def _ensure_logged_in(self):
-        """로그인 상태 확인 및 필요 시 로그인 수행"""
-        await self.page.goto(NAVER_HOME_URL)
-        await random_delay()
-
-        # 로그인 여부 확인: 로그인 상태면 사용자 닉네임이 표시됨
-        is_logged_in = await self.page.locator(".MyView-module__link_login___HpHMW").count() == 0
-
-        if not is_logged_in:
+        """로그인 상태 확인 및 필요 시 로그인 수행.
+        세션 파일이 없으면(신규/재로그인) 판별을 신뢰하지 않고 무조건 로그인한다."""
+        if not self._session_existed:
+            await self._login()
+            return
+        if not await self._is_logged_in():
             await self._login()
 
     async def _login(self):
@@ -121,6 +133,30 @@ class NaverNepconBrowser:
         로그인 완료 후 세션 파일이 저장됩니다.
         """
         print("[로그인] 시작...")
+
+        # 수동 로그인 모드: 자격증명이 없으면 자동입력을 건너뛰고
+        # 사용자가 브라우저에서 직접 로그인할 때까지 홈에서 로그인상태를 폴링한다.
+        if not NAVER_ID or not NAVER_PASSWORD:
+            await self.page.goto(NAVER_LOGIN_URL)
+            print("[수동 로그인] 열린 브라우저 창에서 '구독 계정'으로 로그인해 주세요. (최대 300초 대기)")
+            print("[수동 로그인] ※ 페이지를 건드리지 않고 쿠키로만 감지합니다. 천천히 로그인하세요.")
+            logged = False
+            for _ in range(150):
+                await asyncio.sleep(2)
+                # 페이지를 이동시키지 않고 컨텍스트 쿠키만 확인 (로그인 입력 방해 방지)
+                cookies = await self._context.cookies()
+                names = {c["name"] for c in cookies if c.get("value")}
+                # 네이버 로그인 완료 시 설정되는 인증 쿠키
+                if "NID_AUT" in names and "NID_SES" in names:
+                    print("[수동 로그인] 로그인 감지됨! (쿠키 확인)")
+                    logged = True
+                    break
+            if not logged:
+                print("[수동 로그인] 시간 초과 — 로그인 미완료.")
+            await self._context.storage_state(path=SESSION_PATH)
+            print(f"[완료] 세션이 {SESSION_PATH}에 저장되었습니다.")
+            return
+
         await self.page.goto(NAVER_LOGIN_URL)
         await self.page.wait_for_load_state("networkidle")
         await random_delay()

@@ -58,6 +58,46 @@ def _img_mime(ext: str) -> str:
 # 한 줄 전체를 탐욕적으로 잡아 마지막 ')' 까지 URL로 인식한다.
 IMG_MD = re.compile(r"!\[([^\]]*)\]\((https?://.+)\)")
 
+# 본문 추출 JS (nepcon_browser.read_nepcon_post와 동일 로직).
+# MHTML 임포트 등에서 재사용하기 위해 모듈 상수로 노출한다.
+EXTRACT_JS = r"""() => {
+    const root = document.querySelector('.se-main-container');
+    if (!root) return '';
+    root.querySelectorAll('ol').forEach(ol => {
+        let n = parseInt(ol.getAttribute('start') || '1', 10) || 1;
+        ol.querySelectorAll(':scope > li').forEach(li => {
+            const v = parseInt(li.getAttribute('value') || '', 10);
+            if (!isNaN(v)) n = v;
+            (li.querySelector('p, span, div') || li).insertAdjacentText('afterbegin', n + '. ');
+            n++;
+        });
+    });
+    root.querySelectorAll('ul').forEach(ul => {
+        ul.querySelectorAll(':scope > li').forEach(li => {
+            (li.querySelector('p, span, div') || li).insertAdjacentText('afterbegin', '- ');
+        });
+    });
+    const parts = [];
+    const seen = new Set();
+    const isTracker = (src) => /l\.gif|blank\.gif|1x1|spacer|\.gif\?type=content/i.test(src);
+    const comps = root.querySelectorAll('.se-component, .se_component');
+    const nodes = comps.length ? comps : [root];
+    nodes.forEach(c => {
+        const t = (c.innerText || '').replace(/​/g, '').trim();
+        if (t) parts.push(t);
+        c.querySelectorAll('img').forEach(img => {
+            const src = img.getAttribute('data-src') || img.src || '';
+            if (src && !seen.has(src) && !isTracker(src)) {
+                seen.add(src);
+                parts.push('![' + (img.alt || '').trim() + '](' + src + ')');
+            }
+        });
+        const cap = (c.querySelector('.se-caption, figcaption') || {}).innerText;
+        if (cap && cap.trim()) parts.push('*' + cap.trim() + '*');
+    });
+    return parts.join('\n\n').trim();
+}"""
+
 
 async def build_body_html(browser, content: str, base: str, img_dir: Path):
     """본문(텍스트+이미지 마크다운)을 자체포함 HTML로 변환.
@@ -324,6 +364,8 @@ async def main():
     parser.add_argument("--author", default="트레이더김씨", help="작성자(하위 폴더명)")
     parser.add_argument("--list-only", action="store_true")
     parser.add_argument("--index-only", action="store_true", help="목록 페이지만 재생성")
+    parser.add_argument("--update", action="store_true",
+                        help="기존 _index.json에 없는 신규 글만 증분 추가")
     parser.add_argument("--limit", type=int, default=0, help="0이면 전체")
     args = parser.parse_args()
 
@@ -345,18 +387,40 @@ async def main():
         posts = await scroll_collect_posts(browser.page, args.channel_url)
         print(f"\n총 {len(posts)}개 게시글 발견", file=sys.stderr)
 
-        (author_root / "_index.json").write_text(
-            json.dumps(posts, ensure_ascii=False, indent=2), encoding="utf-8"
-        )
-
         if args.list_only:
             for i, p in enumerate(posts, 1):
                 print(f"{i:3d}. {p['title']}")
             return
 
-        targets = posts if args.limit == 0 else posts[: args.limit]
-        audit = []  # 감사 로그: (제목, 본문길이, 기대이미지, 저장이미지, 오류)
+        index_path = author_root / "_index.json"
         used_bases = set()  # 파일명 중복 방지 (같은 제목 글이 여러 개인 경우)
+
+        if args.update:
+            # 증분: 기존 목록에 없는 URL만 신규로 선별
+            prev = []
+            if index_path.exists():
+                prev = json.loads(index_path.read_text(encoding="utf-8"))
+            prev_urls = {p["url"] for p in prev}
+            targets = [p for p in posts if p["url"] not in prev_urls]
+            print(f"신규 글 {len(targets)}개 (기존 {len(prev_urls)}개)", file=sys.stderr)
+            if not targets:
+                print("추가할 신규 글 없음. 최신 상태입니다.", file=sys.stderr)
+                return
+            # 기존 파일명을 seed 하여 신규 파일과의 충돌 방지
+            used_bases = {f.stem for f in html_dir.glob("*.html")}
+            # _index.json 갱신: 신규를 앞에 두고 기존 이어붙임
+            merged = targets + prev
+            index_path.write_text(
+                json.dumps(merged, ensure_ascii=False, indent=2), encoding="utf-8"
+            )
+        else:
+            # 전체 재수집
+            index_path.write_text(
+                json.dumps(posts, ensure_ascii=False, indent=2), encoding="utf-8"
+            )
+            targets = posts if args.limit == 0 else posts[: args.limit]
+
+        audit = []  # 감사 로그: (제목, 본문길이, 기대이미지, 저장이미지, 오류)
         for i, p in enumerate(targets, 1):
             try:
                 full = await browser.read_nepcon_post(p["url"])
@@ -408,7 +472,12 @@ async def main():
              "img_saved": ns, "error": err, "text_coverage": cov}
             for (t, cl, ne, ns, err, cov) in audit
         ]
-        (author_root / "_audit.json").write_text(
+        audit_path = author_root / "_audit.json"
+        if args.update and audit_path.exists():
+            # 증분: 기존 감사 이력 앞에 신규분을 덧붙임
+            prev_audit = json.loads(audit_path.read_text(encoding="utf-8"))
+            audit_rows = audit_rows + prev_audit
+        audit_path.write_text(
             json.dumps(audit_rows, ensure_ascii=False, indent=2), encoding="utf-8"
         )
         n_total = len(audit)
