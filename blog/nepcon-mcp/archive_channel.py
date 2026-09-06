@@ -145,12 +145,16 @@ HTML_TEMPLATE = """<!DOCTYPE html>
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="stocks" content="{stocks_attr}">
 <title>{title}</title>
 <style>
   body {{ font-family: -apple-system, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
          max-width: 800px; margin: 40px auto; padding: 0 16px; line-height: 1.75; color: #222; }}
   h1 {{ font-size: 1.5rem; margin-bottom: .2rem; }}
   .date {{ color: #888; font-size: .9rem; margin-top: 0; }}
+  .tags {{ margin: .4rem 0 0; }}
+  .tags .tag {{ display: inline-block; background: #eef2ff; color: #3730a3;
+               border-radius: 12px; padding: 2px 10px; margin: 2px 4px 2px 0; font-size: .82rem; }}
   hr {{ border: none; border-top: 1px solid #eee; margin: 1.2rem 0; }}
   img {{ max-width: 100%; height: auto; border-radius: 6px; display: block; margin: .6rem auto; }}
   p {{ margin: .5rem 0; }}
@@ -159,6 +163,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
 <body>
 <h1>{title}</h1>
 <p class="date">{date}</p>
+{tags_html}
 <hr>
 {body}
 </body>
@@ -166,9 +171,16 @@ HTML_TEMPLATE = """<!DOCTYPE html>
 """
 
 
-def render_html(title: str, date: str, body_html: str) -> str:
+def render_html(title: str, date: str, body_html: str, stocks=None) -> str:
+    stocks = stocks or []
+    stocks_attr = html.escape(",".join(stocks))
+    tags_html = ""
+    if stocks:
+        chips = "".join(f'<span class="tag">#{html.escape(s)}</span>' for s in stocks)
+        tags_html = f'<div class="tags">{chips}</div>'
     return HTML_TEMPLATE.format(
-        title=html.escape(title), date=html.escape(date or ""), body=body_html
+        title=html.escape(title), date=html.escape(date or ""),
+        body=body_html, stocks_attr=stocks_attr, tags_html=tags_html,
     )
 
 
